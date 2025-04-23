@@ -1,8 +1,8 @@
 
-import Groq from 'groq';
+import { GroqClient } from 'groq';
 
 // Groqクライアントの初期化（APIキーは環境変数または設定から取得）
-const client = new Groq({
+const client = new GroqClient({
   apiKey: process.env.GROQ_API_KEY || '',
 });
 
@@ -29,7 +29,7 @@ export const generateResponse = async (messages: Message[]) => {
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.7,
-      max_tokens: 1024, // max_completion_tokensから修正
+      max_tokens: 1024,
       top_p: 1,
       stream: false,
     });
