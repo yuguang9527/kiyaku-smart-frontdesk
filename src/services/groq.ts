@@ -1,10 +1,8 @@
 
-import { GroqClient } from 'groq';
+import Groq from 'groq';
 
 // Groqクライアントの初期化（APIキーは環境変数または設定から取得）
-const client = new GroqClient({
-  apiKey: process.env.GROQ_API_KEY || '',
-});
+const client = new Groq(process.env.GROQ_API_KEY || '');
 
 interface Message {
   role: 'system' | 'user' | 'assistant';
