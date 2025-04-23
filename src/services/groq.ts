@@ -1,5 +1,5 @@
 
-import { Groq } from 'groq';
+import Groq from 'groq';
 
 // Groqクライアントの初期化（APIキーは環境変数または設定から取得）
 const client = new Groq({
