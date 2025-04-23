@@ -40,4 +40,3 @@ export const generateResponse = async (messages: Message[]) => {
     return '申し訳ございません。ただいま一時的にシステムに問題が発生しております。';
   }
 };
-
