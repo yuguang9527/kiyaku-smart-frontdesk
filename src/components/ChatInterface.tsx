@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ChatBubble from './ChatBubble';
 import { useToast } from '@/components/ui/use-toast';
+import { generateResponse } from '@/services/groq';
 
 interface Message {
   id: string;
@@ -41,44 +41,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [inputMessage, setInputMessage] = useState('');
   const { toast } = useToast();
 
-  // Simple responses for demo purposes
-  const responses = {
-    'チェックイン': 'チェックインは15時からとなっております。お早めにお越しの場合は荷物のお預かりも可能です。',
-    'チェックアウト': 'チェックアウトは10時でございます。レイトチェックアウトをご希望の場合は、フロントまでお知らせください。',
-    '朝食': '朝食は7時から9時まで1階レストランでご用意しております。和食と洋食からお選びいただけます。',
-    '駐車場': '当館には無料駐車場がございます。到着時にフロントへ車のナンバーをお伝えください。',
-    'Wi-Fi': '館内全域でWi-Fiをご利用いただけます。接続情報はお部屋に表示されています。',
-    'check-in': 'Check-in starts from 3:00 PM. We can store your luggage if you arrive earlier.',
-    'check-out': 'Check-out time is 10:00 AM. Please let us know if you need a late check-out.',
-    'breakfast': 'Breakfast is served at our restaurant on the first floor from 7:00 AM to 9:00 AM.',
-    'parking': 'We offer a free parking lot for our guests. Please provide your vehicle information at the front desk.',
-    'wi-fi': 'Wi-Fi is available throughout the building. Connection details are displayed in your room.'
-  };
-
-  const generateResponse = (text: string) => {
-    // For demo purposes, check if the message includes certain keywords
-    const normalizedText = text.toLowerCase();
-    
-    let responseText = '';
-    for (const [keyword, response] of Object.entries(responses)) {
-      if (normalizedText.includes(keyword.toLowerCase())) {
-        responseText = response;
-        break;
-      }
-    }
-    
-    // Default response if no keywords match
-    if (!responseText) {
-      responseText = 'ありがとうございます。他にご質問はございますか？';
-      if (/[a-zA-Z]/.test(text)) {
-        responseText = 'Thank you for your message. Is there anything else I can help you with?';
-      }
-    }
-    
-    return responseText;
-  };
-
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!inputMessage.trim()) return;
@@ -93,17 +56,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     
-    // Simulate AI response after a short delay
-    setTimeout(() => {
+    try {
+      const groqMessages = messages.map(msg => ({
+        role: msg.isUser ? 'user' as const : 'assistant' as const,
+        content: msg.content
+      }));
+      groqMessages.push({ role: 'user', content: inputMessage });
+
+      const aiResponse = await generateResponse(groqMessages);
+      
       const responseMessage = {
         id: (Date.now() + 1).toString(),
-        content: generateResponse(inputMessage),
+        content: aiResponse,
         isUser: false,
         timestamp: formatTime()
       };
       
       setMessages(prev => [...prev, responseMessage]);
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "エラーが発生しました",
+        description: "メッセージを送信できませんでした。もう一度お試しください。",
+      });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
