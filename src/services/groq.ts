@@ -1,5 +1,5 @@
 
-import Groq from 'groq';
+import { Groq } from 'groq-sdk';
 
 // Groqクライアントの初期化（APIキーは環境変数または設定から取得）
 const client = new Groq({
@@ -40,3 +40,4 @@ export const generateResponse = async (messages: Message[]) => {
     return '申し訳ございません。ただいま一時的にシステムに問題が発生しております。';
   }
 };
+
