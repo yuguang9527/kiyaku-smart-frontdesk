@@ -1,7 +1,10 @@
 
-import Groq from 'groq';
+import { Groq } from 'groq';
 
-const client = new Groq();
+// Groqクライアントの初期化（APIキーは環境変数または設定から取得）
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY || '',
+});
 
 interface Message {
   role: 'system' | 'user' | 'assistant';
@@ -26,7 +29,7 @@ export const generateResponse = async (messages: Message[]) => {
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.7,
-      max_completion_tokens: 1024,
+      max_tokens: 1024, // max_completion_tokensから修正
       top_p: 1,
       stream: false,
     });
@@ -37,4 +40,3 @@ export const generateResponse = async (messages: Message[]) => {
     return '申し訳ございません。ただいま一時的にシステムに問題が発生しております。';
   }
 };
-
