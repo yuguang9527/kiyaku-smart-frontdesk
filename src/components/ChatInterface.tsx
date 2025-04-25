@@ -1,12 +1,10 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ChatBubble from './ChatBubble';
 import { useToast } from '@/components/ui/use-toast';
 import { generateResponse } from '@/services/groq';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface Message {
   id: string;
@@ -30,19 +28,41 @@ const formatTime = () => {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   title,
-  hotelInfo = { name: 'Yotta!', greeting: 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' }
+  hotelInfo = { name: 'Yotta!', greeting: '' }
 }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: hotelInfo.greeting,
-      isUser: false,
-      timestamp: formatTime()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const getInitialGreeting = async () => {
+      try {
+        const greeting = await generateResponse([{
+          role: 'user',
+          content: 'お客様への初めての挨拶をお願いします。'
+        }]);
+        
+        setMessages([{
+          id: '1',
+          content: greeting,
+          isUser: false,
+          timestamp: formatTime()
+        }]);
+      } catch (error) {
+        console.error('Error getting initial greeting:', error);
+        // Fallback to a basic greeting if AI fails
+        setMessages([{
+          id: '1',
+          content: 'いらっしゃいませ。ご質問があればお気軽にどうぞ。',
+          isUser: false,
+          timestamp: formatTime()
+        }]);
+      }
+    };
+
+    getInitialGreeting();
+  }, []);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
