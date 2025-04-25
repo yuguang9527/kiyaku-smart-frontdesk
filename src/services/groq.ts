@@ -4,6 +4,7 @@ import { Groq } from 'groq-sdk';
 // Groqクライアントの初期化（APIキーは環境変数または設定から取得）
 const client = new Groq({
   apiKey: import.meta.env.VITE_GROQ_API_KEY || '',
+  dangerouslyAllowBrowser: true, // ブラウザ環境でGroqを使用するためのフラグを追加
 });
 
 interface Message {
