@@ -55,7 +55,9 @@ export const generateResponse = async (messages: Message[]) => {
 - チェックイン時間は午後3時からです。
 - 朝食は朝7時〜9時に提供しています。
 - 英語対応も可能です。
-- 予約確認には予約者名と予約サイトが必要です。`
+- 予約確認には予約者名と予約サイトが必要です。
+- 常にお客様に敬語を使い、丁寧に応対してください。
+- 分からないことは正直にお詫びして、フロントにお問い合わせいただくようご案内ください。`
         },
         ...messages
       ],
@@ -70,7 +72,7 @@ export const generateResponse = async (messages: Message[]) => {
   } catch (error) {
     console.error('Error generating response:', error);
     
-    // Return a fallback message in Japanese
-    return 'ただいま混み合っております。少々お待ちいただくか、フロントまでお越しください。';
+    // Return a more polite fallback message in Japanese
+    return '大変申し訳ございませんが、ただいまシステムが混み合っております。少々お待ちいただくか、フロントデスクまでお越しください。';
   }
 };
