@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import MainNav from '@/components/MainNav';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,8 +16,8 @@ const Index = () => {
   
   const translations = {
     title: {
-      ja: 'Kiyakuスマートフロントデスク',
-      en: 'Kiyaku Smart Front Desk'
+      ja: 'Yotta!スマートフロントデスク',
+      en: 'Yotta! Smart Front Desk'
     },
     welcome: {
       ja: 'ようこそ',
