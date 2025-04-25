@@ -24,8 +24,7 @@ const HotelLogo: React.FC<HotelLogoProps> = ({
   return (
     <div className="flex items-center space-x-2">
       <div className={`font-display ${sizeClasses[size]} ${colorClasses[variant]}`}>
-        <span>桜</span>
-        <span className="font-light text-slate-500">リヤカン</span>
+        <span>Yotte!</span>
       </div>
     </div>
   );

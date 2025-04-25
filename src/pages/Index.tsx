@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainNav from '@/components/MainNav';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -129,10 +128,10 @@ const Index = () => {
                 <ChatInterface 
                   title={language === 'ja' ? "AIサポート" : "AI Support"} 
                   hotelInfo={{
-                    name: 'さくらリヤカン',
+                    name: 'Yotte!',
                     greeting: language === 'ja' 
                       ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-                      : 'Welcome to Sakura Ryokan. How may I assist you today?'
+                      : 'Welcome to Yotte!. How may I assist you today?'
                   }}
                 />
               </CardContent>
