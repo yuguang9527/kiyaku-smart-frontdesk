@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import ChatBubble from './ChatBubble';
 import { useToast } from '@/components/ui/use-toast';
 import { generateResponse } from '@/services/groq';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface Message {
   id: string;
@@ -28,7 +30,7 @@ const formatTime = () => {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   title,
-  hotelInfo = { name: 'さくらリヤカン', greeting: 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' }
+  hotelInfo = { name: 'Yotta!', greeting: 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' }
 }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -39,6 +41,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -55,6 +58,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
+    setIsLoading(true);
     
     try {
       const groqMessages = messages.map(msg => ({
@@ -78,6 +82,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         title: "エラーが発生しました",
         description: "メッセージを送信できませんでした。もう一度お試しください。",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,6 +109,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             timestamp={message.timestamp}
           />
         ))}
+        
+        {isLoading && (
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground animate-pulse">
+            <div className="w-2 h-2 rounded-full bg-primary"></div>
+            <div className="w-2 h-2 rounded-full bg-primary animation-delay-200"></div>
+            <div className="w-2 h-2 rounded-full bg-primary animation-delay-500"></div>
+          </div>
+        )}
       </div>
       
       <form onSubmit={handleSendMessage} className="border-t p-3 flex gap-2">
@@ -112,8 +126,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           onKeyDown={handleKeyDown}
           placeholder="メッセージを入力..."
           className="flex-1"
+          disabled={isLoading}
         />
-        <Button type="submit" size="icon">
+        <Button type="submit" size="icon" disabled={isLoading}>
           <Send className="h-4 w-4" />
         </Button>
       </form>
