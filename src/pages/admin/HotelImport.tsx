@@ -93,7 +93,12 @@ const HotelImport: React.FC = () => {
 
   const onSubmitQA = (data: z.infer<typeof qaSchema>) => {
     console.log("QA submitted:", data);
-    setQAList([...qaList, data]);
+    // Ensure data matches QA interface
+    const newQA: QA = {
+      question: data.question,
+      answer: data.answer
+    };
+    setQAList([...qaList, newQA]);
     qaForm.reset();
     setIsAddQADialogOpen(false);
     toast.success(language === 'ja' ? '質問と回答が追加されました' : 'Question and answer added');
@@ -112,7 +117,11 @@ const HotelImport: React.FC = () => {
           const question = lines[i].trim();
           const answer = lines[i+1].trim();
           if (question && answer) {
-            newQAs.push({ question, answer });
+            // Ensure each new QA item matches the QA interface
+            newQAs.push({ 
+              question, 
+              answer 
+            });
           }
         }
       }
