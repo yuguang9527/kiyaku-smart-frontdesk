@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import HotelImport from "./pages/admin/HotelImport";
 import CustomerSupport from "./pages/customer/CustomerSupport";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             
             {/* Admin pages */}
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/import" element={<HotelImport />} />
             
             {/* Redirect root to customer by default */}
             <Route path="/" element={<Navigate to="/customer" replace />} />
