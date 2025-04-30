@@ -14,6 +14,12 @@ interface Message {
   timestamp: string;
 }
 
+// AIとの会話履歴用の型（Groq APIに渡す用）
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 interface ChatInterfaceProps {
   title: string;
   hotelInfo?: {
@@ -37,22 +43,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
-  // 存储最近的用户问题和AI回答，用于避免重复回答
-  const previousMessagesRef = useRef<{
-    questions: string[];
-    responses: string[];
-  }>({
-    questions: [],
-    responses: []
-  });
+  // 最近の会話履歴を保存
+  const conversationHistoryRef = useRef<ChatMessage[]>([]);
 
   useEffect(() => {
     const getInitialGreeting = async () => {
       try {
+        // SystemメッセージはGroq APIに直接渡さず、ここで初期メッセージを生成
         const greeting = await generateResponse([{
-          role: 'system',
-          content: '你是一位热情友好的旅馆接待员。请用日语向客人问好，简短问候即可，不要重复相同的问候语。'
-        }, {
           role: 'user',
           content: 'お客様への初めての挨拶をお願いします。'
         }]);
@@ -63,22 +61,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           isUser: false,
           timestamp: formatTime()
         }]);
+        
+        // 初期メッセージをチャット履歴に保存
+        conversationHistoryRef.current.push({
+          role: 'assistant',
+          content: greeting
+        });
       } catch (error) {
         console.error('Error getting initial greeting:', error);
-        // Fallback to a basic greeting if AI fails
+        // AIが失敗した場合の基本的な挨拶
+        const fallbackGreeting = 'いらっしゃいませ。ご質問があればお気軽にどうぞ。';
         setMessages([{
           id: '1',
-          content: 'いらっしゃいませ。ご質問があればお気軽にどうぞ。',
+          content: fallbackGreeting,
           isUser: false,
           timestamp: formatTime()
         }]);
+        
+        conversationHistoryRef.current.push({
+          role: 'assistant',
+          content: fallbackGreeting
+        });
       }
     };
 
     getInitialGreeting();
   }, []);
 
-  // 自动滚动到最新消息
+  // 最新メッセージに自動スクロール
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -99,45 +109,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setInputMessage('');
     setIsLoading(true);
     
-    // 检查是否问了相同的问题
-    const isDuplicateQuestion = previousMessagesRef.current.questions.includes(inputMessage);
+    // 会話履歴を更新
+    conversationHistoryRef.current.push({
+      role: 'user',
+      content: inputMessage
+    });
     
     try {
-      const groqMessages = messages.map(msg => ({
-        role: msg.isUser ? 'user' as const : 'assistant' as const,
-        content: msg.content
-      }));
+      // 会話履歴をAPIに渡す（最大10メッセージまで）
+      const recentMessages = [...conversationHistoryRef.current].slice(-10);
       
-      // 添加系统提示，避免重复回答
-      groqMessages.unshift({
-        role: 'system',
-        content: `你是一位热情友好的日本旅馆接待员。请用日语回答客人的问题。
-        1. 回答要简洁明了
-        2. 不要重复以前回答过的相同内容
-        3. 如果客人问了相同的问题，请给出不同的回答方式
-        4. 当被问到关于旅馆的信息，请根据系统提供的信息回答`
+      const aiResponse = await generateResponse(recentMessages);
+      
+      // AIの返答を会話履歴に追加
+      conversationHistoryRef.current.push({
+        role: 'assistant',
+        content: aiResponse
       });
       
-      groqMessages.push({ role: 'user', content: inputMessage });
-      
-      // 如果是重复问题，提醒AI不要重复之前的回答
-      if (isDuplicateQuestion) {
-        groqMessages.push({
-          role: 'system',
-          content: '注意：客人正在重复问相同的问题。请提供不同的回答方式，避免完全重复之前的回答。'
-        });
-      }
-
-      const aiResponse = await generateResponse(groqMessages);
-      
-      // 存储问题和回答，用于后续检查重复
-      previousMessagesRef.current.questions.push(inputMessage);
-      previousMessagesRef.current.responses.push(aiResponse);
-      
-      // 保持历史记录在合理范围内
-      if (previousMessagesRef.current.questions.length > 10) {
-        previousMessagesRef.current.questions.shift();
-        previousMessagesRef.current.responses.shift();
+      // 会話履歴を適切なサイズに保つ
+      if (conversationHistoryRef.current.length > 20) {
+        conversationHistoryRef.current = conversationHistoryRef.current.slice(-20);
       }
       
       const responseMessage = {
