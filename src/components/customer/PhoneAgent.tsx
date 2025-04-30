@@ -9,9 +9,13 @@ type PhoneAgentStatus = 'idle' | 'calling' | 'connected';
 
 interface PhoneAgentProps {
   agentName?: string;
+  phoneNumber?: string;
 }
 
-const PhoneAgent: React.FC<PhoneAgentProps> = ({ agentName = 'Yotta!' }) => {
+const PhoneAgent: React.FC<PhoneAgentProps> = ({ 
+  agentName = 'Yotta!',
+  phoneNumber = '+16504850336'
+}) => {
   const [status, setStatus] = useState<PhoneAgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
@@ -50,6 +54,10 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({ agentName = 'Yotta!' }) => {
     callEnded: {
       ja: '通話が終了しました',
       en: 'Call has ended'
+    },
+    realCall: {
+      ja: '実際に電話をかける',
+      en: 'Make a real call'
     }
   };
 
@@ -76,6 +84,13 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({ agentName = 'Yotta!' }) => {
     toast({
       title: translations.callEnded[language],
     });
+  };
+
+  // 実際に電話をかける
+  const handleRealCall = () => {
+    if (phoneNumber) {
+      window.location.href = `tel:${phoneNumber}`;
+    }
   };
 
   // ミュート切り替え
@@ -112,15 +127,27 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({ agentName = 'Yotta!' }) => {
   return (
     <div className="flex flex-col items-center p-6 space-y-4">
       {status === 'idle' ? (
-        <Button 
-          variant="default" 
-          size="lg" 
-          className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
-          onClick={handleStartCall}
-        >
-          <Phone className="h-5 w-5" />
-          <span>{translations.startCall[language]}</span>
-        </Button>
+        <div className="w-full space-y-4">
+          <Button 
+            variant="default" 
+            size="lg" 
+            className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
+            onClick={handleStartCall}
+          >
+            <Phone className="h-5 w-5" />
+            <span>{translations.startCall[language]}</span>
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full flex items-center gap-2"
+            onClick={handleRealCall}
+          >
+            <Phone className="h-5 w-5" />
+            <span>{translations.realCall[language]}</span>
+          </Button>
+        </div>
       ) : (
         <div className="w-full space-y-4">
           <div className="flex flex-col items-center mb-4 text-center">
