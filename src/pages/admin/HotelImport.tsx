@@ -47,10 +47,16 @@ const bulkImportSchema = z.object({
   }),
 });
 
+// Define the QA type to ensure consistent typing
+interface QA {
+  question: string;
+  answer: string;
+}
+
 const HotelImport: React.FC = () => {
   const { language } = useLanguage();
   const [isAddQADialogOpen, setIsAddQADialogOpen] = useState(false);
-  const [qaList, setQAList] = useState<{question: string, answer: string}[]>([]);
+  const [qaList, setQAList] = useState<QA[]>([]);
   
   // Hotel info form
   const hotelInfoForm = useForm<z.infer<typeof hotelInfoSchema>>({
@@ -99,7 +105,7 @@ const HotelImport: React.FC = () => {
     // Mock parsing of Q&A content
     try {
       const lines = data.qaContent.trim().split('\n');
-      const newQAs: {question: string, answer: string}[] = [];
+      const newQAs: QA[] = [];
       
       for (let i = 0; i < lines.length; i += 2) {
         if (lines[i] && lines[i+1]) {
