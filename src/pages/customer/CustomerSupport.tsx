@@ -5,6 +5,7 @@ import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
 import { MessageSquare, Phone } from 'lucide-react';
 import CustomerNav from '@/components/customer/CustomerNav';
+import PhoneAgent from '@/components/customer/PhoneAgent';
 
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
@@ -68,7 +69,7 @@ const CustomerSupport: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Phone Support */}
+          {/* Phone Support with Agent */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2">
@@ -77,24 +78,28 @@ const CustomerSupport: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center p-6 space-y-4">
-                <Phone className="h-12 w-12 mx-auto text-primary" />
-                <h3 className="text-xl font-semibold">
-                  {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
-                </h3>
-                <p className="text-muted-foreground">
-                  {language === 'ja' 
-                    ? '専門スタッフがお電話でサポートいたします。' 
-                    : 'Our specialist staff will assist you by phone.'}
-                </p>
-                <div className="text-2xl font-semibold text-primary pt-2">
-                  0120-123-456
+              <div className="p-1 space-y-4">
+                {/* 電話エージェントの追加 */}
+                <PhoneAgent agentName="Yotta! Agent" />
+                
+                <div className="text-center p-4">
+                  <h3 className="text-xl font-semibold">
+                    {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
+                  </h3>
+                  <p className="text-muted-foreground mt-2 mb-4">
+                    {language === 'ja' 
+                      ? '専門スタッフがお電話でサポートいたします。' 
+                      : 'Our specialist staff will assist you by phone.'}
+                  </p>
+                  <div className="text-2xl font-semibold text-primary pt-2">
+                    0120-123-456
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ja' 
+                      ? '(24時間・年中無休)' 
+                      : '(24 hours, 365 days)'}
+                  </p>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'ja' 
-                    ? '(24時間・年中無休)' 
-                    : '(24 hours, 365 days)'}
-                </p>
               </div>
             </CardContent>
           </Card>
