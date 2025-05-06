@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import HotelImport from "./pages/admin/HotelImport";
 import CustomerSupport from "./pages/customer/CustomerSupport";
+import TwilioSetup from "./pages/admin/TwilioSetup";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             {/* Admin pages */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/import" element={<HotelImport />} />
+            <Route path="/admin/twilio" element={<TwilioSetup />} />
             
             {/* Redirect root to customer by default */}
             <Route path="/" element={<Navigate to="/customer" replace />} />

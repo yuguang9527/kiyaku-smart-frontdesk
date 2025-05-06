@@ -3,9 +3,11 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
-import { MessageSquare, Phone } from 'lucide-react';
+import { MessageSquare, Phone, ServerIcon } from 'lucide-react';
 import CustomerNav from '@/components/customer/CustomerNav';
 import PhoneAgent from '@/components/customer/PhoneAgent';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
@@ -26,8 +28,22 @@ const CustomerSupport: React.FC = () => {
     phoneSupport: {
       ja: '電話サポート',
       en: 'Phone Support'
+    },
+    twilioEnabled: {
+      ja: 'Twilio AIボイスアシスタントが有効です',
+      en: 'Twilio AI Voice Assistant is enabled'
+    },
+    twilioDescription: {
+      ja: 'この電話番号に掛けると、AIアシスタントが自動で応答します',
+      en: 'When you call this number, our AI assistant will automatically respond'
+    },
+    twilioSetup: {
+      ja: 'Twilio設定を管理',
+      en: 'Manage Twilio Settings'
     }
   };
+
+  const isTwilioEnabled = true; // 実際のアプリではここはAPIで確認
 
   return (
     <div className="flex min-h-screen flex-col washi-bg">
@@ -100,6 +116,29 @@ const CustomerSupport: React.FC = () => {
                       : '(24 hours, 365 days)'}
                   </p>
                 </div>
+                
+                {/* Twilio AIボイスアシスタント情報 */}
+                {isTwilioEnabled && (
+                  <div className="mt-6 border-t pt-4">
+                    <div className="bg-green-50 border border-green-200 rounded-md p-4 text-sm text-green-800">
+                      <h4 className="font-semibold flex items-center gap-2">
+                        <ServerIcon className="h-4 w-4" />
+                        {translations.twilioEnabled[language]}
+                      </h4>
+                      <p className="mt-1">
+                        {translations.twilioDescription[language]}
+                      </p>
+                    </div>
+                    
+                    <div className="mt-4 text-center">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to="/admin/twilio">
+                          {translations.twilioSetup[language]}
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
