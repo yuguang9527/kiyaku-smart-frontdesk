@@ -96,7 +96,7 @@ const CustomerSupport: React.FC = () => {
             <CardContent>
               <div className="p-1 space-y-4">
                 {/* 電話エージェントの追加 */}
-                <PhoneAgent agentName="Yotta! US Support" phoneNumber="+16504850336" />
+                <PhoneAgent agentName="Yotta! US Support" phoneNumber="+16506618978" />
                 
                 <div className="text-center p-4">
                   <h3 className="text-xl font-semibold">
@@ -108,7 +108,7 @@ const CustomerSupport: React.FC = () => {
                       : 'Our specialist staff will assist you by phone.'}
                   </p>
                   <div className="text-2xl font-semibold text-primary pt-2">
-                    +1 (650) 485-0336
+                    +1 (650) 661-8978
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {language === 'ja' 

@@ -5,7 +5,7 @@
 // 注: 実際の使用では環境変数から取得するべきです
 const TWILIO_ACCOUNT_SID = 'YOUR_ACCOUNT_SID_HERE'; 
 const TWILIO_AUTH_TOKEN = 'YOUR_AUTH_TOKEN_HERE';
-const TWILIO_PHONE_NUMBER = '+16504850336'; // 確認済みのTwilio番号
+const TWILIO_PHONE_NUMBER = '+16506618978'; // 確認済みのTwilio番号
 
 // AIの応答を生成するためのgroqサービスをインポート
 import { generateResponse } from './groq';

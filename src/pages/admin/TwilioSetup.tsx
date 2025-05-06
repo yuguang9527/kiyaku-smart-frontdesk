@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import TwilioSimulator from '@/components/admin/TwilioSimulator';
 const TwilioSetup: React.FC = () => {
   const [accountSid, setAccountSid] = useState('');
   const [authToken, setAuthToken] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('+16504850336');
+  const [phoneNumber, setPhoneNumber] = useState('+16506618978');
   const [testNumber, setTestNumber] = useState('');
   const { toast } = useToast();
 

@@ -14,7 +14,7 @@ interface PhoneAgentProps {
 
 const PhoneAgent: React.FC<PhoneAgentProps> = ({ 
   agentName = 'Yotta!',
-  phoneNumber = '+16504850336'
+  phoneNumber = '+16506618978'
 }) => {
   const [status, setStatus] = useState<PhoneAgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
