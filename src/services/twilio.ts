@@ -1,11 +1,11 @@
-
 // Twilio接続サービス
 
 // Twilioのクレデンシャル
 // 注: 実際の使用では環境変数から取得するべきです
-const TWILIO_ACCOUNT_SID = 'YOUR_ACCOUNT_SID_HERE'; 
-const TWILIO_AUTH_TOKEN = 'YOUR_AUTH_TOKEN_HERE';
+const TWILIO_ACCOUNT_SID = 'AC81e62b3089fa4a6d77985129b3036000'; 
+const TWILIO_AUTH_TOKEN = '47004d9657e812409aa2890c540ad521';
 const TWILIO_PHONE_NUMBER = '+16506618978'; // 確認済みのTwilio番号
+const TWILIO_RECOVERY_CODE = '43UVBN4T2L5ARG1SRZ129YJ3'; // リカバリーコード
 
 // AIの応答を生成するためのgroqサービスをインポート
 import { generateResponse } from './groq';

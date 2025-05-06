@@ -19,7 +19,7 @@ const TwilioSimulator: React.FC = () => {
     const callData: TwilioWebhookData = {
       CallSid: `CALL${Math.random().toString(36).substring(2, 11)}`,
       From: incomingNumber,
-      To: '+16504850336',
+      To: '+16506618978',
       CallStatus: 'ringing',
     };
     
