@@ -19,7 +19,7 @@ const TwilioSimulator: React.FC = () => {
     const callData: TwilioWebhookData = {
       CallSid: `CALL${Math.random().toString(36).substring(2, 11)}`,
       From: incomingNumber,
-      To: '+16506618978',
+      To: '+14788001081', // 使用新的Twilio号码
       CallStatus: 'ringing',
     };
     
@@ -40,7 +40,7 @@ const TwilioSimulator: React.FC = () => {
       const callData: TwilioWebhookData = {
         CallSid: `CALL${Math.random().toString(36).substring(2, 11)}`,
         From: incomingNumber,
-        To: '+16506618978',
+        To: '+14788001081', // 使用新的Twilio号码
         CallStatus: 'in-progress',
         SpeechResult: userQuery,
       };

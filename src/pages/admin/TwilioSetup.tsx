@@ -12,7 +12,7 @@ import TwilioSimulator from '@/components/admin/TwilioSimulator';
 const TwilioSetup: React.FC = () => {
   const [accountSid, setAccountSid] = useState('AC81e62b3089fa4a6d77985129b3036000');
   const [authToken, setAuthToken] = useState('47004d9657e812409aa2890c540ad521');
-  const [phoneNumber, setPhoneNumber] = useState('+16506618978');
+  const [phoneNumber, setPhoneNumber] = useState('+14788001081'); // 更新为新的Twilio号码
   const [testNumber, setTestNumber] = useState('');
   const { toast } = useToast();
 
@@ -94,7 +94,7 @@ const TwilioSetup: React.FC = () => {
                   id="phone-number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+16506618978"
+                  placeholder="+14788001081"
                 />
               </div>
 

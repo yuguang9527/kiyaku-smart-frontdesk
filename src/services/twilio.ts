@@ -2,11 +2,11 @@
 // Twilio接続サービス
 
 // Twilioのクレデンシャル
-// 注: 実際の使用では環境変数から取得するべきです
+// 注: 实际使用时应从环境变量获取
 const TWILIO_ACCOUNT_SID = 'AC81e62b3089fa4a6d77985129b3036000'; 
 const TWILIO_AUTH_TOKEN = '47004d9657e812409aa2890c540ad521';
-const TWILIO_PHONE_NUMBER = '+16506618978'; // 確認済みのTwilio番号
-const TWILIO_RECOVERY_CODE = '43UVBN4T2L5ARG1SRZ129YJ3'; // リカバリーコード
+const TWILIO_PHONE_NUMBER = '+14788001081'; // 更新为新的Twilio号码
+const TWILIO_RECOVERY_CODE = '43UVBN4T2L5ARG1SRZ129YJ3'; // 恢复代码
 
 // AIの応答を生成するためのgroqサービスをインポート
 import { generateResponse } from './groq';
@@ -21,7 +21,7 @@ export interface TwilioWebhookData {
 }
 
 /**
- * 着信通話に対する応答XMLを生成
+ * 着信通话に対する応答XMLを生成
  * TwiMLドキュメントとしてレスポンスを返します
  */
 export const generateIncomingCallResponse = (callData: TwilioWebhookData): string => {
