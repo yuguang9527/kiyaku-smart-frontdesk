@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Phone, MicOff, Mic, PhoneOff, Calendar, Search, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -382,7 +381,7 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
             <Button 
               variant="secondary"
               onClick={handleSearchReservation}
-              disabled={status === 'calling' || !reservationId.trim()}
+              disabled={!reservationId.trim()}
             >
               <Search className="h-4 w-4 mr-1" />
               {translations.search[language]}
