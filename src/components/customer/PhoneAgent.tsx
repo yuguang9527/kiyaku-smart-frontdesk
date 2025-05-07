@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
-import { Phone, MicOff, Mic, PhoneOff, Calendar, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Phone, MicOff, Mic, PhoneOff, Calendar, Search, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/hooks/use-language';
 import { recentReservations } from '@/data/reservations';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { initiateOutboundCall } from '@/services/twilio';
 
 type PhoneAgentStatus = 'idle' | 'calling' | 'connected';
 
@@ -25,6 +27,9 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
   const [callDuration, setCallDuration] = useState(0);
   const [reservationId, setReservationId] = useState('');
   const [reservationResult, setReservationResult] = useState<any>(null);
+  const [transcript, setTranscript] = useState<string>('');
+  const [aiResponse, setAiResponse] = useState<string>('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { language } = useLanguage();
   
@@ -94,6 +99,8 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
   // 通話の開始
   const handleStartCall = () => {
     setStatus('calling');
+    setTranscript('');
+    setAiResponse('');
     
     // 1.5秒後に通話が繋がる演出
     setTimeout(() => {
@@ -103,7 +110,84 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
         title: translations.callStarted[language],
         description: `${agentName} ${language === 'ja' ? 'サポートへようこそ。' : 'support at your service.'}`,
       });
+      
+      // シミュレートされた転写を開始
+      startSimulatedTranscription();
     }, 1500);
+  };
+
+  // シミュレートされた転写の開始
+  const startSimulatedTranscription = () => {
+    // シミュレートされたユーザー音声の例
+    const simulatedUserMessages = [
+      { text: language === 'ja' ? 'こんにちは、部屋の予約状況を教えてください' : 'Hello, can you tell me about room availability?', delay: 5000 },
+      { text: language === 'ja' ? '来週末空いている部屋はありますか？' : 'Do you have any rooms available next weekend?', delay: 15000 },
+      { text: language === 'ja' ? '朝食付きのプランはありますか？' : 'Do you have any plans that include breakfast?', delay: 25000 }
+    ];
+    
+    simulatedUserMessages.forEach((message, index) => {
+      setTimeout(() => {
+        if (status === 'connected') {
+          setTranscript(message.text);
+          handleUserMessage(message.text);
+        }
+      }, message.delay);
+    });
+  };
+
+  // ユーザーメッセージの処理
+  const handleUserMessage = async (message: string) => {
+    setIsProcessing(true);
+    
+    // AIレスポンスをシミュレート
+    setTimeout(() => {
+      const responses = {
+        ja: [
+          '当ホテルにお問い合わせいただきありがとうございます。現在の予約状況をお調べします。',
+          '来週末はいくつか空室がございます。ダブルルームが3室、スイートルームが1室ご利用いただけます。ご予約はお早めにお願いいたします。',
+          'はい、朝食付きのプランもございます。和食と洋食からお選びいただけます。朝食付きプランは通常料金に1泊あたり2,000円追加となります。'
+        ],
+        en: [
+          'Thank you for contacting our hotel. Let me check the current reservation status for you.',
+          'We have several rooms available next weekend. There are 3 double rooms and 1 suite room available. We recommend booking early.',
+          'Yes, we do have plans that include breakfast. You can choose between Japanese and Western breakfast. Breakfast plans add $20 per night to the standard rate.'
+        ]
+      };
+      
+      const responseIndex = transcript.includes('朝食') || transcript.includes('breakfast') ? 2 :
+                            transcript.includes('来週') || transcript.includes('next weekend') ? 1 : 0;
+      
+      setAiResponse(responses[language][responseIndex]);
+      setIsProcessing(false);
+    }, 2000);
+  };
+
+  // 実際に電話をかける - Twilioを使って実際の通話を開始
+  const handleRealCall = async () => {
+    if (phoneNumber) {
+      try {
+        const result = await initiateOutboundCall(phoneNumber);
+        
+        if (result.success) {
+          toast({
+            title: language === 'ja' ? '通話を開始しています' : 'Initiating call',
+            description: result.message
+          });
+        } else {
+          toast({
+            title: language === 'ja' ? '通話の開始に失敗しました' : 'Failed to initiate call',
+            description: result.message,
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        toast({
+          title: language === 'ja' ? 'エラーが発生しました' : 'Error occurred',
+          description: String(error),
+          variant: "destructive"
+        });
+      }
+    }
   };
 
   // 通話の終了
@@ -111,17 +195,12 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
     setStatus('idle');
     setCallDuration(0);
     setReservationResult(null);
+    setTranscript('');
+    setAiResponse('');
     stopTimer();
     toast({
       title: translations.callEnded[language],
     });
-  };
-
-  // 実際に電話をかける
-  const handleRealCall = () => {
-    if (phoneNumber) {
-      window.location.href = `tel:${phoneNumber}`;
-    }
   };
 
   // ミュート切り替え
@@ -225,6 +304,36 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
             )}
           </div>
           
+          {/* トランスクリプトと応答の表示 */}
+          {status === 'connected' && (
+            <div className="w-full space-y-3 mb-4">
+              {transcript && (
+                <Card className="p-3 bg-blue-50 text-blue-800">
+                  <div className="text-sm text-blue-600 mb-1 font-medium">
+                    {language === 'ja' ? 'あなた:' : 'You:'}
+                  </div>
+                  <div>{transcript}</div>
+                </Card>
+              )}
+              
+              {(isProcessing || aiResponse) && (
+                <Card className="p-3 bg-green-50 text-green-800">
+                  <div className="text-sm text-green-600 mb-1 font-medium">
+                    {agentName}:
+                  </div>
+                  <div>
+                    {isProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-pulse">{language === 'ja' ? '応答を生成中...' : 'Generating response...'}</div>
+                        <div className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></div>
+                      </div>
+                    ) : aiResponse}
+                  </div>
+                </Card>
+              )}
+            </div>
+          )}
+          
           <div className="flex justify-center gap-4 w-full">
             <Button 
               variant="outline" 
@@ -258,7 +367,7 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
       )}
       
       {/* 予約検索機能 */}
-      {enableReservationLookup && (
+      {enableReservationLookup && status === 'idle' && (
         <div className="w-full mt-4 pt-4 border-t">
           <h4 className="text-md font-medium mb-2">
             {translations.reservationLookup[language]}
@@ -298,6 +407,30 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
               </div>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Twilio Media Streams と AssemblyAI の情報表示 */}
+      {status === 'idle' && (
+        <div className="w-full mt-4 pt-4 border-t">
+          <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm">
+            <div className="flex items-start gap-2">
+              <Server className="h-4 w-4 mt-0.5 text-blue-500" />
+              <div>
+                <h4 className="font-medium text-blue-800">
+                  {language === 'ja' ? 'Twilio Media Streams & AssemblyAI 統合' : 'Twilio Media Streams & AssemblyAI Integration'}
+                </h4>
+                <p className="mt-1 text-blue-700">
+                  {language === 'ja' 
+                    ? 'このシステムはTwilio Media StreamsとAssemblyAIの実時間音声認識を統合して、AIアシスタントとの自然な会話を可能にします。' 
+                    : 'This system integrates Twilio Media Streams with AssemblyAI real-time speech recognition to enable natural conversations with AI assistants.'}
+                </p>
+                <p className="mt-2 text-xs opacity-75">
+                  WebSocket: wss://yourdomain.com:8765
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
