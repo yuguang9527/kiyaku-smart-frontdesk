@@ -1,16 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
-import { MessageSquare, Phone, ServerIcon } from 'lucide-react';
+import { MessageSquare, Phone, ServerIcon, Globe } from 'lucide-react';
 import CustomerNav from '@/components/customer/CustomerNav';
 import PhoneAgent from '@/components/customer/PhoneAgent';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
+  const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
 
   const translations = {
     title: {
@@ -40,20 +42,24 @@ const CustomerSupport: React.FC = () => {
     twilioSetup: {
       ja: 'Twilio設定を管理',
       en: 'Manage Twilio Settings'
+    },
+    selectSupport: {
+      ja: 'サポート方法を選択',
+      en: 'Select Support Method'
     }
   };
 
   const isTwilioEnabled = true; // 実際のアプリではここはAPIで確認
 
   return (
-    <div className="flex min-h-screen flex-col washi-bg">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 to-slate-100">
       <CustomerNav />
-      <main className="flex-1 py-6 px-6 md:px-8 lg:px-10">
-        <div className="mb-6">
-          <h1 className="text-3xl font-display text-primary">
+      <main className="flex-1 py-8 px-6 md:px-10 lg:px-16 max-w-7xl mx-auto w-full">
+        <div className="mb-8">
+          <h1 className="text-4xl font-display text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 font-semibold tracking-tight">
             {translations.title[language]}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-slate-500 mt-2 text-lg">
             {translations.welcome[language]} | {new Date().toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US', { 
               weekday: 'long', 
               year: 'numeric', 
@@ -63,85 +69,148 @@ const CustomerSupport: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Chat Support */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                <span>{translations.chatAssistant[language]}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChatInterface 
-                title={language === 'ja' ? "AIサポート" : "AI Support"} 
-                hotelInfo={{
-                  name: 'Yotta!',
-                  greeting: language === 'ja' 
-                    ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-                    : 'Welcome to Yotta!. How may I assist you today?'
-                }}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Phone Support with Agent */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5" />
-                <span>{translations.phoneSupport[language]}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-1 space-y-4">
-                {/* 電話エージェントの追加 */}
-                <PhoneAgent agentName="Yotta! US Support" phoneNumber="+14788001081" />
-                
-                <div className="text-center p-4">
-                  <h3 className="text-xl font-semibold">
-                    {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
-                  </h3>
-                  <p className="text-muted-foreground mt-2 mb-4">
-                    {language === 'ja' 
-                      ? '専門スタッフがお電話でサポートいたします。' 
-                      : 'Our specialist staff will assist you by phone.'}
-                  </p>
-                  <div className="text-2xl font-semibold text-primary pt-2">
-                    +1 (478) 800-1081
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === 'ja' 
-                      ? '(24時間・年中無休)' 
-                      : '(24 hours, 365 days)'}
-                  </p>
-                </div>
-                
-                {/* Twilio AIボイスアシスタント情報 */}
-                {isTwilioEnabled && (
-                  <div className="mt-6 border-t pt-4">
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4 text-sm text-green-800">
-                      <h4 className="font-semibold flex items-center gap-2">
-                        <ServerIcon className="h-4 w-4" />
-                        {translations.twilioEnabled[language]}
-                      </h4>
-                      <p className="mt-1">
-                        {translations.twilioDescription[language]}
-                      </p>
-                    </div>
-                    
-                    <div className="mt-4 text-center">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link to="/admin/twilio">
-                          {translations.twilioSetup[language]}
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                )}
+        {/* Hero Section */}
+        <div className="mb-10">
+          <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 text-center md:text-left">
+              <h2 className="text-2xl md:text-3xl font-medium text-blue-900">
+                {language === 'ja' ? '24時間365日サポート' : '24/7 Support Available'}
+              </h2>
+              <p className="text-blue-700 md:text-lg max-w-md">
+                {language === 'ja' 
+                  ? 'AI技術を活用した最先端のサポートシステムで、いつでもサポートいたします。' 
+                  : 'Our cutting-edge support system powered by AI is always ready to assist you.'}
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 shadow-md hover:shadow-lg" onClick={() => setActiveTab('chat')}>
+                  <MessageSquare className="mr-2 h-5 w-5" />
+                  {language === 'ja' ? 'チャットを開始' : 'Start Chat'}
+                </Button>
+                <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => setActiveTab('phone')}>
+                  <Phone className="mr-2 h-5 w-5" />
+                  {language === 'ja' ? '電話サポート' : 'Phone Support'}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="w-full md:w-1/3 max-w-xs">
+              <AspectRatio ratio={1/1} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-blue-100 animate-float">
+                <div className="flex items-center justify-center h-full">
+                  <Globe className="h-24 w-24 text-blue-500 opacity-80" />
+                </div>
+              </AspectRatio>
+            </div>
+          </div>
+        </div>
+
+        {/* Support Tabs */}
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden">
+            <button 
+              className={`px-6 py-3 font-medium text-sm ${activeTab === 'chat' 
+                ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white' 
+                : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+              onClick={() => setActiveTab('chat')}
+            >
+              <div className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                {language === 'ja' ? 'チャット' : 'Chat'}
+              </div>
+            </button>
+            <button 
+              className={`px-6 py-3 font-medium text-sm ${activeTab === 'phone' 
+                ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white' 
+                : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+              onClick={() => setActiveTab('phone')}
+            >
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                {language === 'ja' ? '電話' : 'Phone'}
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="grid grid-cols-1 gap-6 animate-fadeIn">
+          {activeTab === 'chat' ? (
+            <Card className="shadow-md border-slate-200 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
+                <CardTitle className="flex items-center gap-2 text-blue-900">
+                  <MessageSquare className="h-5 w-5 text-blue-500" />
+                  <span>{translations.chatAssistant[language]}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 md:p-0">
+                <ChatInterface 
+                  title={language === 'ja' ? "AIサポート" : "AI Support"} 
+                  hotelInfo={{
+                    name: 'Yotta!',
+                    greeting: language === 'ja' 
+                      ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
+                      : 'Welcome to Yotta!. How may I assist you today?'
+                  }}
+                />
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-md border-slate-200">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
+                <CardTitle className="flex items-center gap-2 text-blue-900">
+                  <Phone className="h-5 w-5 text-blue-500" />
+                  <span>{translations.phoneSupport[language]}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {/* 電話エージェントの追加 */}
+                  <PhoneAgent agentName="Yotta! Support" phoneNumber="+14788001081" />
+                  
+                  <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
+                    <h3 className="text-2xl font-semibold text-blue-900">
+                      {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
+                    </h3>
+                    <p className="text-slate-600 mt-3 mb-5">
+                      {language === 'ja' 
+                        ? '専門スタッフがお電話でサポートいたします。' 
+                        : 'Our specialist staff will assist you by phone.'}
+                    </p>
+                    <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
+                      +1 (478) 800-1081
+                    </div>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {language === 'ja' 
+                        ? '(24時間・年中無休)' 
+                        : '(24 hours, 365 days)'}
+                    </p>
+                  </div>
+                  
+                  {/* Twilio AIボイスアシスタント情報 */}
+                  {isTwilioEnabled && (
+                    <div className="mt-8 rounded-xl border border-emerald-100 overflow-hidden">
+                      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 text-emerald-800">
+                        <h4 className="font-semibold flex items-center gap-2 mb-3">
+                          <ServerIcon className="h-5 w-5 text-emerald-500" />
+                          {translations.twilioEnabled[language]}
+                        </h4>
+                        <p className="text-emerald-700">
+                          {translations.twilioDescription[language]}
+                        </p>
+                      </div>
+                      
+                      <div className="flex justify-center p-4 bg-white">
+                        <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" asChild>
+                          <Link to="/admin/twilio">
+                            <ServerIcon className="mr-2 h-4 w-4" />
+                            {translations.twilioSetup[language]}
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </div>
