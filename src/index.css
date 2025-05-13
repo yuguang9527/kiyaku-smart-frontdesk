@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -139,10 +138,17 @@
   animation: pulse 3s ease-in-out infinite;
 }
 
-/* Traditional paper-like texture has been replaced with modern gradient */
-.washi-bg {
-  background-color: hsl(var(--background));
-  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+/* Yonex-inspired styles */
+.yonex-gradient {
+  @apply bg-gradient-to-r from-blue-600 to-blue-500;
+}
+
+.yonex-card {
+  @apply border-0 shadow-md overflow-hidden hover:shadow-lg transition-all duration-300;
+}
+
+.yonex-header {
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white;
 }
 
 /* Glass morphism effect */
