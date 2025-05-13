@@ -10,6 +10,7 @@ import { InfoIcon, Phone, PhoneCall, Server, Mic, Radio } from 'lucide-react';
 import TwilioSimulator from '@/components/admin/TwilioSimulator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { useLanguage } from '@/hooks/use-language';
 
 const TwilioSetup: React.FC = () => {
   const [accountSid, setAccountSid] = useState('AC81e62b3089fa4a6d77985129b3036000');
@@ -19,51 +20,52 @@ const TwilioSetup: React.FC = () => {
   const [assemblyApiKey, setAssemblyApiKey] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('wss://yourdomain.com:8765');
   const { toast } = useToast();
+  const { language } = useLanguage();
 
-  // Twilio的配置保存
+  // Twilio設定の保存
   const handleSaveConfig = () => {
-    // 实际应用中，这里应该将配置保存到后端
-    // 此示例仅使用本地状态
+    // 実際のアプリケーションでは、ここで設定をバックエンドに保存します
+    // このサンプルでは、ローカルステートのみを使用します
     
     toast({
-      title: "Twilio设置已保存",
-      description: "设置已成功保存。电话集成现已启用。",
+      title: "Twilio設定が保存されました",
+      description: "設定の保存に成功しました。電話連携が有効になりました。",
     });
   };
 
-  // 执行测试通话
+  // テスト通話を実行
   const handleTestCall = () => {
     if (!testNumber) {
       toast({
-        title: "需要电话号码",
-        description: "请输入有效的电话号码进行测试通话",
+        title: "電話番号が必要です",
+        description: "テスト通話のために有効な電話番号を入力してください",
         variant: "destructive"
       });
       return;
     }
 
     toast({
-      title: "开始测试通话",
-      description: `正在拨打${testNumber}...需要实际的Twilio账户`,
+      title: "テスト通話を開始します",
+      description: `${testNumber}に発信中...実際のTwilioアカウントが必要です`,
     });
     
-    // 实际的Twilio设置时，这里将调用API进行拨号
+    // 実際のTwilio設定では、ここでAPIを呼び出して発信を行います
   };
 
-  // AssemblyAI的配置保存
+  // AssemblyAI設定の保存
   const handleSaveAssemblyConfig = () => {
     if (!assemblyApiKey) {
       toast({
-        title: "需要API密钥",
-        description: "请输入有效的AssemblyAI API密钥",
+        title: "APIキーが必要です",
+        description: "有効なAssemblyAI APIキーを入力してください",
         variant: "destructive"
       });
       return;
     }
 
     toast({
-      title: "AssemblyAI设置已保存",
-      description: "实时语音识别配置已成功保存。",
+      title: "AssemblyAI設定が保存されました",
+      description: "リアルタイム音声認識の設定が正常に保存されました。",
     });
   };
 
@@ -72,16 +74,16 @@ const TwilioSetup: React.FC = () => {
       <AdminNav />
       <main className="flex-1 py-6 px-6 md:px-8 lg:px-10">
         <div className="mb-6">
-          <h1 className="text-3xl font-display text-primary">Twilio & AssemblyAI 音声集成设置</h1>
+          <h1 className="text-3xl font-display text-primary">Twilio & AssemblyAI 音声連携設定</h1>
           <p className="text-muted-foreground mt-1">
-            配置AI电话应答系统与实时语音识别
+            AI電話応対システムとリアルタイム音声認識の設定
           </p>
         </div>
 
         <Tabs defaultValue="twilio">
           <TabsList className="mb-6 grid w-full grid-cols-2">
-            <TabsTrigger value="twilio">Twilio 配置</TabsTrigger>
-            <TabsTrigger value="assembly">AssemblyAI 实时语音识别</TabsTrigger>
+            <TabsTrigger value="twilio">Twilio 設定</TabsTrigger>
+            <TabsTrigger value="assembly">AssemblyAI リアルタイム音声認識</TabsTrigger>
           </TabsList>
           
           <TabsContent value="twilio" className="space-y-6">
@@ -89,10 +91,10 @@ const TwilioSetup: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Server className="h-5 w-5" />
-                  <span>Twilio账户设置</span>
+                  <span>Twilioアカウント設定</span>
                 </CardTitle>
                 <CardDescription>
-                  请输入Twilio账户信息
+                  Twilioアカウント情報を入力してください
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -116,7 +118,7 @@ const TwilioSetup: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone-number">Twilio电话号码</Label>
+                  <Label htmlFor="phone-number">Twilio電話番号</Label>
                   <Input
                     id="phone-number"
                     value={phoneNumber}
@@ -134,7 +136,7 @@ const TwilioSetup: React.FC = () => {
                     placeholder="wss://yourdomain.com:8765"
                   />
                   <p className="text-sm text-muted-foreground">
-                    用于接收实时音频流的WebSocket服务器URL
+                    リアルタイム音声ストリームを受信するためのWebSocketサーバーURL
                   </p>
                 </div>
 
@@ -142,22 +144,22 @@ const TwilioSetup: React.FC = () => {
                   <div className="flex gap-2">
                     <InfoIcon className="h-5 w-5 text-amber-500" />
                     <div>
-                      <p className="font-medium">重要提示：Twilio Media Streams配置方法</p>
+                      <p className="font-medium">重要：Twilio Media Streams設定方法</p>
                       <ol className="list-decimal list-inside mt-1 space-y-1">
-                        <li>创建Twilio账户并购买电话号码</li>
-                        <li>配置TwiML应用使用&lt;Stream&gt;标签</li>
-                        <li>添加WebSocket URL: <code className="bg-amber-100 px-1">{webhookUrl}</code></li>
-                        <li>使用&lt;Start&gt;&lt;Stream&gt;标签开始Media Stream</li>
-                        <li>确保您的WebSocket服务器可以接收并处理音频流</li>
-                        <li>实时音频将被发送到AssemblyAI进行识别</li>
+                        <li>Twilioアカウントを作成し、電話番号を購入する</li>
+                        <li>&lt;Stream&gt;タグを使用するTwiMLアプリを設定する</li>
+                        <li>WebSocket URL: <code className="bg-amber-100 px-1">{webhookUrl}</code>を追加する</li>
+                        <li>&lt;Start&gt;&lt;Stream&gt;タグを使用してMedia Streamを開始する</li>
+                        <li>WebSocketサーバーが音声ストリームを受信・処理できることを確認する</li>
+                        <li>リアルタイム音声がAssemblyAIに送信され、認識されます</li>
                       </ol>
                     </div>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="outline">取消</Button>
-                <Button onClick={handleSaveConfig}>保存设置</Button>
+                <Button variant="outline">キャンセル</Button>
+                <Button onClick={handleSaveConfig}>設定を保存</Button>
               </CardFooter>
             </Card>
 
@@ -165,15 +167,15 @@ const TwilioSetup: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PhoneCall className="h-5 w-5" />
-                  <span>测试通话</span>
+                  <span>テスト通話</span>
                 </CardTitle>
                 <CardDescription>
-                  进行测试通话来验证设置
+                  設定を確認するためのテスト通話を実行
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="test-number">测试用电话号码</Label>
+                  <Label htmlFor="test-number">テスト用電話番号</Label>
                   <Input
                     id="test-number"
                     value={testNumber}
@@ -181,7 +183,7 @@ const TwilioSetup: React.FC = () => {
                     placeholder="+818012345678"
                   />
                   <p className="text-sm text-muted-foreground">
-                    请使用国际格式（例如: +81 80 1234 5678）
+                    国際形式で入力してください（例：+81 80 1234 5678）
                   </p>
                 </div>
               </CardContent>
@@ -192,7 +194,7 @@ const TwilioSetup: React.FC = () => {
                   disabled={!testNumber || !accountSid || !authToken}
                 >
                   <Phone className="h-5 w-5" />
-                  <span>执行测试通话</span>
+                  <span>テスト通話を実行</span>
                 </Button>
               </CardFooter>
             </Card>
@@ -203,10 +205,10 @@ const TwilioSetup: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mic className="h-5 w-5" />
-                  <span>AssemblyAI配置</span>
+                  <span>AssemblyAI設定</span>
                 </CardTitle>
                 <CardDescription>
-                  配置实时语音识别服务
+                  リアルタイム音声認識サービスの設定
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -217,7 +219,7 @@ const TwilioSetup: React.FC = () => {
                     type="password"
                     value={assemblyApiKey}
                     onChange={(e) => setAssemblyApiKey(e.target.value)}
-                    placeholder="输入您的AssemblyAI API密钥"
+                    placeholder="AssemblyAI APIキーを入力"
                   />
                 </div>
                 
@@ -227,12 +229,12 @@ const TwilioSetup: React.FC = () => {
                   <div className="flex gap-2">
                     <Radio className="h-5 w-5 text-blue-500" />
                     <div>
-                      <p className="font-medium">AssemblyAI实时识别端点</p>
+                      <p className="font-medium">AssemblyAIリアルタイム認識エンドポイント</p>
                       <p className="mt-1">
                         <code className="bg-blue-100 px-1">wss://api.assemblyai.com/v2/realtime/ws?sample_rate=8000</code>
                       </p>
                       <p className="mt-2">
-                        AssemblyAI会实时处理Twilio的音频流并返回转录结果。系统将自动将这些结果发送给AI进行回答生成。
+                        AssemblyAIはTwilioの音声ストリームをリアルタイムで処理し、文字起こし結果を返します。システムは自動的にこれらの結果をAIに送信して回答を生成します。
                       </p>
                     </div>
                   </div>
@@ -242,24 +244,24 @@ const TwilioSetup: React.FC = () => {
                   <div className="flex gap-2">
                     <InfoIcon className="h-5 w-5 text-green-500" />
                     <div>
-                      <p className="font-medium">集成流程说明</p>
+                      <p className="font-medium">連携フロー説明</p>
                       <ol className="list-decimal list-inside mt-1 space-y-1">
-                        <li>Twilio通话音频 → WebSocket服务器</li>
-                        <li>WebSocket服务器 → AssemblyAI实时识别</li>
-                        <li>识别结果 → AI生成响应</li>
-                        <li>AI响应 → TTS语音合成</li>
-                        <li>语音回复 → 通过Twilio播放给用户</li>
+                        <li>Twilio通話音声 → WebSocketサーバー</li>
+                        <li>WebSocketサーバー → AssemblyAIリアルタイム認識</li>
+                        <li>認識結果 → AI回答生成</li>
+                        <li>AI回答 → TTS音声合成</li>
+                        <li>音声応答 → Twilioを通してユーザーに再生</li>
                       </ol>
                       <p className="mt-2 text-xs">
-                        注：此流程需要服务器端部署WebSocket服务和音频处理功能
+                        注：このフローではサーバーサイドでWebSocketサービスと音声処理機能のデプロイが必要です
                       </p>
                     </div>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="outline">取消</Button>
-                <Button onClick={handleSaveAssemblyConfig}>保存AssemblyAI设置</Button>
+                <Button variant="outline">キャンセル</Button>
+                <Button onClick={handleSaveAssemblyConfig}>AssemblyAI設定を保存</Button>
               </CardFooter>
             </Card>
             
@@ -267,10 +269,10 @@ const TwilioSetup: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Server className="h-5 w-5" />
-                  <span>服务器设置</span>
+                  <span>サーバー設定</span>
                 </CardTitle>
                 <CardDescription>
-                  WebSocket服务器示例代码
+                  WebSocketサーバーのサンプルコード
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -313,7 +315,7 @@ asyncio.get_event_loop().run_forever()`}</pre>
           </TabsContent>
         </Tabs>
 
-        {/* 添加模拟器卡片 */}
+        {/* シミュレーターカードを追加 */}
         <div className="mt-6">
           <TwilioSimulator />
         </div>
@@ -323,3 +325,4 @@ asyncio.get_event_loop().run_forever()`}</pre>
 };
 
 export default TwilioSetup;
+

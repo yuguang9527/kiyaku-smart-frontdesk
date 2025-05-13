@@ -9,17 +9,17 @@ import { generateIncomingCallResponse, generateVoiceResponse, TwilioWebhookData 
 
 const TwilioSimulator: React.FC = () => {
   const [incomingNumber, setIncomingNumber] = useState('+818012345678');
-  const [userQuery, setUserQuery] = useState('我想确认我的预订');
+  const [userQuery, setUserQuery] = useState('予約の確認をしたいです');
   const [responseXml, setResponseXml] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  // 着信通话的模拟
+  // 着信通話のシミュレーション
   const simulateIncomingCall = () => {
     const callData: TwilioWebhookData = {
       CallSid: `CALL${Math.random().toString(36).substring(2, 11)}`,
       From: incomingNumber,
-      To: '+14788001081', // 使用新的Twilio号码
+      To: '+14788001081', // 新しいTwilio番号を使用
       CallStatus: 'ringing',
     };
     
@@ -27,12 +27,12 @@ const TwilioSimulator: React.FC = () => {
     setResponseXml(response);
     
     toast({
-      title: "模拟来电",
-      description: `模拟来自${incomingNumber}的来电`,
+      title: "着信シミュレーション",
+      description: `${incomingNumber}からの着信をシミュレーション`,
     });
   };
 
-  // 语音回答的模拟
+  // 音声応答のシミュレーション
   const simulateVoiceResponse = async () => {
     setIsProcessing(true);
     
@@ -40,7 +40,7 @@ const TwilioSimulator: React.FC = () => {
       const callData: TwilioWebhookData = {
         CallSid: `CALL${Math.random().toString(36).substring(2, 11)}`,
         From: incomingNumber,
-        To: '+14788001081', // 使用新的Twilio号码
+        To: '+14788001081', // 新しいTwilio番号を使用
         CallStatus: 'in-progress',
         SpeechResult: userQuery,
       };
@@ -49,14 +49,14 @@ const TwilioSimulator: React.FC = () => {
       setResponseXml(response);
       
       toast({
-        title: "AI回答已生成",
-        description: "针对语音查询的AI回答已生成",
+        title: "AI応答が生成されました",
+        description: "音声クエリに対するAI応答が生成されました",
       });
     } catch (error) {
       console.error('Error generating voice response:', error);
       toast({
-        title: "发生错误",
-        description: "生成回答时发生错误",
+        title: "エラーが発生しました",
+        description: "応答の生成中にエラーが発生しました",
         variant: "destructive",
       });
     } finally {
@@ -69,13 +69,13 @@ const TwilioSimulator: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PhoneCall className="h-5 w-5" />
-          <span>Twilio模拟器</span>
+          <span>Twilioシミュレータ</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="incoming-number" className="text-sm font-medium">
-            来电号码
+            発信元番号
           </label>
           <input
             id="incoming-number"
@@ -89,19 +89,19 @@ const TwilioSimulator: React.FC = () => {
         <div className="grid grid-cols-2 gap-4">
           <Button onClick={simulateIncomingCall} className="flex items-center gap-2">
             <Phone className="h-5 w-5" />
-            <span>模拟来电</span>
+            <span>着信をシミュレート</span>
           </Button>
         </div>
 
         <div className="space-y-2 pt-4 border-t">
           <label htmlFor="user-query" className="text-sm font-medium">
-            用户语音查询
+            ユーザーの音声クエリ
           </label>
           <Textarea
             id="user-query"
             value={userQuery}
             onChange={(e) => setUserQuery(e.target.value)}
-            placeholder="我想确认我的预订"
+            placeholder="予約の確認をしたいです"
             rows={3}
           />
         </div>
@@ -111,12 +111,12 @@ const TwilioSimulator: React.FC = () => {
           disabled={isProcessing || !userQuery.trim()} 
           className="w-full"
         >
-          {isProcessing ? '处理中...' : '模拟AI回答'}
+          {isProcessing ? '処理中...' : 'AI応答をシミュレート'}
         </Button>
 
         {responseXml && (
           <div className="space-y-2 pt-4 border-t">
-            <label className="text-sm font-medium">TwiML回答</label>
+            <label className="text-sm font-medium">TwiML応答</label>
             <div className="bg-gray-50 p-3 rounded border font-mono text-xs overflow-auto max-h-60">
               {responseXml}
             </div>
@@ -128,3 +128,4 @@ const TwilioSimulator: React.FC = () => {
 };
 
 export default TwilioSimulator;
+
