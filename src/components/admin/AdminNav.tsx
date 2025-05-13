@@ -1,15 +1,15 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, MessageSquare, Calendar, Settings, User, LogOut, FileText } from 'lucide-react';
+import { Home, MessageSquare, Calendar, Settings, User, LogOut } from 'lucide-react';
 import HotelLogo from '../HotelLogo';
 import LanguageToggle from '../LanguageToggle';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const navItems = [
   { icon: <Home className="h-5 w-5" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
-  { icon: <FileText className="h-5 w-5" />, label: { en: 'Hotel Import', ja: 'ホテル情報' }, path: '/admin/import' },
   { icon: <MessageSquare className="h-5 w-5" />, label: { en: 'Chat Logs', ja: 'チャット履歴' }, path: '/admin/chats' },
   { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
   { icon: <User className="h-5 w-5" />, label: { en: 'Users', ja: 'ユーザー' }, path: '/admin/users' },
@@ -35,12 +35,27 @@ const AdminNav: React.FC = () => {
             <Link
               key={index}
               to={item.path}
-              className="flex flex-col items-center text-sm font-medium transition-colors hover:text-primary"
+              className="flex flex-row items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
             >
-              <div className="mb-1">{item.icon}</div>
-              <span className="hidden md:inline">{item.label[language]}</span>
+              <div>{item.icon}</div>
+              <span>{item.label[language]}</span>
             </Link>
           ))}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                <span>{language === 'ja' ? 'ホテル情報' : 'Hotel Info'}</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="space-y-2">
+                <Link to="/admin/import" className="block p-2 hover:bg-muted rounded-md">
+                  {language === 'ja' ? 'ホテル情報編集' : 'Edit Hotel Info'}
+                </Link>
+              </div>
+            </PopoverContent>
+          </Popover>
         </nav>
         
         <div className="flex items-center gap-4">

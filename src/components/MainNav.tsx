@@ -28,9 +28,9 @@ const MainNav: React.FC = () => {
             <Link
               key={index}
               to={item.path}
-              className="flex flex-col items-center text-sm font-medium transition-colors hover:text-primary"
+              className="flex flex-row items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
             >
-              <div className="mb-1">{item.icon}</div>
+              <div>{item.icon}</div>
               <span>{item.label[language]}</span>
             </Link>
           ))}
