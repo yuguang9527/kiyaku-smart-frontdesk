@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import AdminNav from '@/components/admin/AdminNav';
-import { MessageSquare, Phone, Calendar, Settings, User, ArrowUp, ArrowDown, BarChart3, Activity, Check, Clock } from 'lucide-react';
+import { MessageSquare, Phone, Calendar, Settings, User, ArrowUp, ArrowDown, BarChart3, Activity, Check, Clock, Plane } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -208,9 +207,17 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-blue-300 via-blue-100 to-white relative overflow-hidden">
+      {/* Decorative airplane */}
+      <div className="absolute right-[5%] top-[15%] transform -rotate-12 opacity-20">
+        <Plane className="h-16 w-16 text-blue-600" />
+      </div>
+      
+      {/* Sun rays */}
+      <div className="absolute left-10 top-0 w-96 h-96 bg-gradient-to-b from-amber-200 to-transparent opacity-20 rounded-full blur-xl"></div>
+      
       <AdminNav />
-      <main className="flex-1 py-6 px-6 md:px-8 lg:px-10">
+      <main className="flex-1 py-6 px-6 md:px-8 lg:px-10 relative z-10">
         <div className="mb-8 border-b border-blue-100 pb-4">
           <div className="flex items-center space-x-2">
             <BarChart3 className="h-8 w-8 text-blue-600" />
@@ -230,7 +237,7 @@ const AdminDashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
-            <Card key={index} className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300" 
+            <Card key={index} className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm" 
                   style={{ 
                     animationDelay: `${index * 0.1}s`,
                   }}>
@@ -244,7 +251,7 @@ const AdminDashboard: React.FC = () => {
                   </Badge>
                 </div>
               </div>
-              <CardContent className="p-4 bg-white">
+              <CardContent className="p-4 bg-white/90">
                 <h3 className="text-3xl font-bold text-blue-900">{stat.value}</h3>
                 <p className="text-sm font-medium text-blue-600 mt-1">{stat.label}</p>
               </CardContent>
@@ -253,14 +260,14 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border-0 shadow-md overflow-hidden">
+          <Card className="border-0 shadow-md overflow-hidden bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
               <CardTitle>{translations.inquiries.recent[language]}</CardTitle>
               <CardDescription className="text-blue-100">
                 {translations.inquiries.past24h[language]}
               </CardDescription>
             </CardHeader>
-            <div className="bg-white p-4 flex space-x-4 border-b border-blue-100">
+            <div className="bg-white/90 p-4 flex space-x-4 border-b border-blue-100">
               <button 
                 onClick={() => setActiveInquiryTab('all')}
                 className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${activeInquiryTab === 'all' ? 'bg-blue-100 text-blue-800' : 'hover:bg-blue-50'}`}
@@ -311,7 +318,7 @@ const AdminDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md overflow-hidden">
+          <Card className="border-0 shadow-md overflow-hidden bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
               <CardTitle>{translations.system[language]}</CardTitle>
               <CardDescription className="text-blue-100">
