@@ -1,13 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import AdminNav from '@/components/admin/AdminNav';
-import { MessageSquare, Phone, Calendar, Settings, User, ArrowUp, ArrowDown, BarChart3, Activity } from 'lucide-react';
+import { MessageSquare, Phone, Calendar, Settings, User, ArrowUp, ArrowDown, BarChart3, Activity, Check, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const AdminDashboard: React.FC = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
+  const [activeInquiryTab, setActiveInquiryTab] = useState<'all' | 'completed' | 'incomplete'>('all');
 
   const translations = {
     title: {
@@ -36,6 +40,66 @@ const AdminDashboard: React.FC = () => {
         en: 'Active Users'
       }
     },
+    inquiries: {
+      recent: {
+        ja: '最近のサポート問い合わせ',
+        en: 'Recent Support Inquiries'
+      },
+      past24h: {
+        ja: '過去24時間の問い合わせ',
+        en: 'Inquiries from the past 24 hours'
+      },
+      completed: {
+        ja: '完了',
+        en: 'Completed'
+      },
+      incomplete: {
+        ja: '未完了',
+        en: 'Incomplete'
+      },
+      all: {
+        ja: 'すべて',
+        en: 'All'
+      },
+      counts: {
+        completed: {
+          ja: '完了件数',
+          en: 'Completed'
+        },
+        incomplete: {
+          ja: '未完了件数',
+          en: 'Incomplete'
+        }
+      },
+      status: {
+        resolved: {
+          ja: '完了',
+          en: 'Resolved'
+        },
+        inProgress: {
+          ja: '対応中',
+          en: 'In Progress'
+        },
+        new: {
+          ja: '新規',
+          en: 'New'
+        }
+      },
+      time: {
+        hoursAgo: {
+          ja: '時間前',
+          en: 'hours ago'
+        }
+      }
+    },
+    system: {
+      ja: 'システム状態',
+      en: 'System Status'
+    },
+    operational: {
+      ja: 'すべてのシステムが正常に動作しています',
+      en: 'All systems operational'
+    }
   };
 
   // Sample statistics for the admin dashboard
@@ -69,6 +133,79 @@ const AdminDashboard: React.FC = () => {
       positive: true
     },
   ];
+
+  // Sample support inquiries data
+  const inquiries = [
+    { 
+      id: 1, 
+      title: language === 'ja' ? '予約確認の問い合わせ' : 'Reservation Confirmation',
+      time: 2,
+      status: 'resolved' 
+    },
+    { 
+      id: 2, 
+      title: language === 'ja' ? 'チェックアウト時間の変更' : 'Change in Check-out Time',
+      time: 4,
+      status: 'in-progress' 
+    },
+    { 
+      id: 3, 
+      title: language === 'ja' ? '部屋の設備について' : 'Room Facilities Inquiry',
+      time: 6,
+      status: 'new' 
+    },
+    { 
+      id: 4, 
+      title: language === 'ja' ? '朝食オプションの追加' : 'Adding Breakfast Option',
+      time: 8,
+      status: 'resolved' 
+    },
+    { 
+      id: 5, 
+      title: language === 'ja' ? '追加料金について' : 'Additional Charges',
+      time: 10,
+      status: 'in-progress' 
+    }
+  ];
+
+  const completedInquiries = inquiries.filter(inq => inq.status === 'resolved');
+  const incompleteInquiries = inquiries.filter(inq => inq.status !== 'resolved');
+
+  // Helper function to get the appropriate inquiries based on active tab
+  const getFilteredInquiries = () => {
+    switch (activeInquiryTab) {
+      case 'completed':
+        return completedInquiries;
+      case 'incomplete':
+        return incompleteInquiries;
+      default:
+        return inquiries;
+    }
+  };
+
+  // Helper function to get badge styling by status
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'resolved':
+        return 'bg-green-100 text-green-800';
+      case 'in-progress':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
+    }
+  };
+
+  // Helper function to get status text
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'resolved':
+        return translations.inquiries.status.resolved[language];
+      case 'in-progress':
+        return translations.inquiries.status.inProgress[language];
+      default:
+        return translations.inquiries.status.new[language];
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-white">
@@ -118,46 +255,67 @@ const AdminDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="border-0 shadow-md overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-              <CardTitle>{language === 'ja' ? '最近のサポート問い合わせ' : 'Recent Support Inquiries'}</CardTitle>
+              <CardTitle>{translations.inquiries.recent[language]}</CardTitle>
               <CardDescription className="text-blue-100">
-                {language === 'ja' ? '過去24時間の問い合わせ' : 'Inquiries from the past 24 hours'}
+                {translations.inquiries.past24h[language]}
               </CardDescription>
             </CardHeader>
+            <div className="bg-white p-4 flex space-x-4 border-b border-blue-100">
+              <button 
+                onClick={() => setActiveInquiryTab('all')}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${activeInquiryTab === 'all' ? 'bg-blue-100 text-blue-800' : 'hover:bg-blue-50'}`}
+              >
+                <Activity className="h-5 w-5" />
+                <span>{translations.inquiries.all[language]} ({inquiries.length})</span>
+              </button>
+              <button 
+                onClick={() => setActiveInquiryTab('completed')}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${activeInquiryTab === 'completed' ? 'bg-green-100 text-green-800' : 'hover:bg-blue-50'}`}
+              >
+                <Check className="h-5 w-5" />
+                <span>{translations.inquiries.counts.completed[language]} ({completedInquiries.length})</span>
+              </button>
+              <button 
+                onClick={() => setActiveInquiryTab('incomplete')}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${activeInquiryTab === 'incomplete' ? 'bg-yellow-100 text-yellow-800' : 'hover:bg-blue-50'}`}
+              >
+                <Clock className="h-5 w-5" />
+                <span>{translations.inquiries.counts.incomplete[language]} ({incompleteInquiries.length})</span>
+              </button>
+            </div>
             <CardContent className="p-0">
               <div className="divide-y divide-blue-100">
-                {/* Sample data - in a real app this would come from your backend */}
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="p-4 hover:bg-blue-50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-blue-900">
-                          {language === 'ja' ? `予約確認の問い合わせ #${i}` : `Reservation Confirmation #${i}`}
-                        </p>
-                        <p className="text-sm text-blue-600">
-                          {language === 'ja' ? '2時間前' : '2 hours ago'}
-                        </p>
-                      </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        i === 1 ? 'bg-green-100 text-green-800' : 
-                        i === 2 ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {i === 1 ? (language === 'ja' ? '完了' : 'Resolved') : 
-                        i === 2 ? (language === 'ja' ? '対応中' : 'In Progress') : 
-                        (language === 'ja' ? '新規' : 'New')}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{language === 'ja' ? '問い合わせ' : 'Inquiry'}</TableHead>
+                      <TableHead>{language === 'ja' ? '時間' : 'Time'}</TableHead>
+                      <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {getFilteredInquiries().map(inquiry => (
+                      <TableRow key={inquiry.id} className="hover:bg-blue-50 transition-colors">
+                        <TableCell className="font-medium text-blue-900">{inquiry.title} #{inquiry.id}</TableCell>
+                        <TableCell className="text-sm text-blue-600">{inquiry.time} {translations.inquiries.time.hoursAgo[language]}</TableCell>
+                        <TableCell>
+                          <div className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${getStatusBadgeClass(inquiry.status)}`}>
+                            {getStatusText(inquiry.status)}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-0 shadow-md overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-              <CardTitle>{language === 'ja' ? 'システム状態' : 'System Status'}</CardTitle>
+              <CardTitle>{translations.system[language]}</CardTitle>
               <CardDescription className="text-blue-100">
-                {language === 'ja' ? 'すべてのシステムが正常に動作しています' : 'All systems operational'}
+                {translations.operational[language]}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
