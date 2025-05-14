@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, MessageSquare, Calendar, Settings, User, LogOut } from 'lucide-react';
@@ -35,10 +36,10 @@ const AdminNav: React.FC = () => {
               <Link
                 key={index}
                 to={item.path}
-                className="px-3 py-2 flex items-center text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
+                className="p-2 flex items-center justify-center text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
+                title={item.label[language]}
               >
-                <div className="mr-2">{item.icon}</div>
-                <span className="whitespace-nowrap">{item.label[language]}</span>
+                {item.icon}
               </Link>
             ))}
           </nav>
