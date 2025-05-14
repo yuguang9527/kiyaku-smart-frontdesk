@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, MessageSquare, Calendar, Settings, User, LogOut } from 'lucide-react';
@@ -31,37 +30,21 @@ const AdminNav: React.FC = () => {
         </div>
         
         <div className="flex-1 flex justify-center">
-          <nav className="flex items-center space-x-1 md:space-x-4">
+          <nav className="flex items-center space-x-4 md:space-x-6">
             {navItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.path}
-                className="px-3 py-2 flex flex-col items-center gap-1 text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
+                className="px-3 py-2 flex items-center text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
               >
-                <div>{item.icon}</div>
-                <span className="text-xs whitespace-nowrap">{item.label[language]}</span>
+                <div className="mr-2">{item.icon}</div>
+                <span className="whitespace-nowrap">{item.label[language]}</span>
               </Link>
             ))}
           </nav>
         </div>
         
         <div className="flex items-center gap-2 md:gap-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="p-2 flex flex-col items-center">
-                <User className="h-5 w-5" />
-                <span className="text-xs">{language === 'ja' ? 'ホテル' : 'Hotel'}</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <div className="space-y-2">
-                <Link to="/admin/import" className="block p-2 hover:bg-muted rounded-md">
-                  {language === 'ja' ? 'ホテル情報編集' : 'Edit Hotel Info'}
-                </Link>
-              </div>
-            </PopoverContent>
-          </Popover>
-          
           <LanguageToggle
             currentLanguage={language}
             onChange={(lang) => setLanguage(lang)}
