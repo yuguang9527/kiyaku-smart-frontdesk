@@ -22,7 +22,7 @@ const AdminNav: React.FC = () => {
 
   return (
     <header className="border-b bg-primary/5">
-      <div className="flex h-16 items-center px-4 md:px-6 justify-between">
+      <div className="flex h-16 items-center px-4 md:px-6">
         <div className="flex items-center gap-4">
           <HotelLogo />
           <div className="hidden md:block font-semibold text-lg text-primary">
@@ -30,22 +30,27 @@ const AdminNav: React.FC = () => {
           </div>
         </div>
         
-        <nav className="flex items-center space-x-4 md:space-x-6">
-          {navItems.map((item, index) => (
-            <Link
-              key={index}
-              to={item.path}
-              className="flex flex-row items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
-            >
-              <div>{item.icon}</div>
-              <span>{item.label[language]}</span>
-            </Link>
-          ))}
+        <div className="flex-1 flex justify-center">
+          <nav className="flex items-center space-x-1 md:space-x-4">
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                to={item.path}
+                className="px-3 py-2 flex flex-col items-center gap-1 text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
+              >
+                <div>{item.icon}</div>
+                <span className="text-xs whitespace-nowrap">{item.label[language]}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+        
+        <div className="flex items-center gap-2 md:gap-4">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="p-2 flex flex-col items-center">
                 <User className="h-5 w-5" />
-                <span>{language === 'ja' ? 'ホテル情報' : 'Hotel Info'}</span>
+                <span className="text-xs">{language === 'ja' ? 'ホテル' : 'Hotel'}</span>
               </Button>
             </PopoverTrigger>
             <PopoverContent>
@@ -56,17 +61,16 @@ const AdminNav: React.FC = () => {
               </div>
             </PopoverContent>
           </Popover>
-        </nav>
-        
-        <div className="flex items-center gap-4">
+          
           <LanguageToggle
             currentLanguage={language}
             onChange={(lang) => setLanguage(lang)}
           />
+          
           <Link to="/login">
             <Button variant="outline" size="sm" className="flex items-center gap-1">
               <LogOut className="h-4 w-4" />
-              <span>{language === 'ja' ? 'ログアウト' : 'Logout'}</span>
+              <span className="hidden md:inline">{language === 'ja' ? 'ログアウト' : 'Logout'}</span>
             </Button>
           </Link>
         </div>
