@@ -59,25 +59,6 @@ const PhoneSupportContent: React.FC<PhoneSupportContentProps> = ({
             hotelAddress={getLocalizedAddress()} 
           />
           
-          <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
-            <h3 className="text-2xl font-semibold text-blue-900">
-              {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
-            </h3>
-            <p className="text-slate-600 mt-3 mb-5">
-              {language === 'ja' 
-                ? '専門スタッフがお電話でサポートいたします。' 
-                : 'Our specialist staff will assist you by phone.'}
-            </p>
-            <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
-              {hotelInfo.phoneNumber}
-            </div>
-            <p className="text-sm text-slate-500 mt-1">
-              {language === 'ja' 
-                ? '(24時間・年中無休)' 
-                : '(24 hours, 365 days)'}
-            </p>
-          </div>
-          
           {isTwilioEnabled && (
             <div className="mt-8 rounded-xl border border-emerald-100 overflow-hidden">
               <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 text-emerald-800">
