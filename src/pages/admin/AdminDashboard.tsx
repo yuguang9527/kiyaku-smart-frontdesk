@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -109,30 +108,38 @@ const AdminDashboard: React.FC = () => {
       value: 24, 
       label: translations.stats.chatRequests[language], 
       trend: "+12%",
-      positive: true
+      positive: true,
+      key: "chatRequests"
     },
     { 
       icon: <Phone className="h-8 w-8 text-white" />, 
       value: 18, 
       label: translations.stats.phoneCallsToday[language], 
       trend: "-3%",
-      positive: false
+      positive: false,
+      key: "calls"
     },
     { 
       icon: <Calendar className="h-8 w-8 text-white" />, 
       value: 7, 
       label: translations.stats.newReservations[language], 
       trend: "+5%",
-      positive: true
+      positive: true,
+      key: "reservations"
     },
     { 
       icon: <User className="h-8 w-8 text-white" />, 
       value: 156, 
       label: translations.stats.activeUsers[language], 
       trend: "+8%",
-      positive: true
+      positive: true,
+      key: "users"
     },
   ];
+
+  // Filter stats for main display and smaller boxes
+  const mainStats = stats.filter(stat => stat.key === "chatRequests" || stat.key === "reservations");
+  const secondaryStats = stats.filter(stat => stat.key === "calls" || stat.key === "users");
 
   // Sample support inquiries data
   const inquiries = [
@@ -220,11 +227,33 @@ const AdminDashboard: React.FC = () => {
       <AdminNav />
       <main className="flex-1 py-6 px-6 md:px-8 lg:px-10 relative z-10">
         <div className="mb-8 border-b border-blue-100 pb-4">
-          <div className="flex items-center space-x-2">
-            <BarChart3 className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold tracking-tight text-blue-800">
-              {translations.title[language]}
-            </h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <BarChart3 className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold tracking-tight text-blue-800">
+                {translations.title[language]}
+              </h1>
+            </div>
+            <div className="flex space-x-3">
+              {secondaryStats.map((stat, index) => (
+                <Card key={index} className="w-40 border-0 shadow-sm bg-white/80 backdrop-blur-sm">
+                  <div className="p-2 flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <div className="bg-blue-500/20 p-1 rounded">
+                        {React.cloneElement(stat.icon, { className: "h-4 w-4 text-blue-700" })}
+                      </div>
+                      <span className="text-xs font-medium text-blue-700">{stat.label}</span>
+                    </div>
+                    <Badge className={`${stat.positive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} text-xs px-1 py-0`}>
+                      {stat.trend}
+                    </Badge>
+                  </div>
+                  <div className="px-3 pb-2 pt-0">
+                    <p className="text-lg font-bold text-blue-900">{stat.value}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
           <p className="text-blue-600 font-medium mt-1">
             {translations.welcome[language]} | {new Date().toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US', { 
@@ -236,8 +265,8 @@ const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {mainStats.map((stat, index) => (
             <Card key={index} className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm" 
                   style={{ 
                     animationDelay: `${index * 0.1}s`,
