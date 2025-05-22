@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
@@ -209,8 +210,8 @@ const CustomerSupport: React.FC = () => {
                     </h3>
                     <p className="text-slate-600 mt-3 mb-5">
                       {language === 'ja' 
-                        ? '専門スタッフがお電話でサポートいたします。' 
-                        : 'Our specialist staff will assist you by phone.'}
+                        ? 'AIスタッフがお電話でサポートいたします。' 
+                        : 'Our AI staff will assist you by phone.'}
                     </p>
                     <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
                       {hotelInfo.phoneNumber}
@@ -222,34 +223,38 @@ const CustomerSupport: React.FC = () => {
                     </p>
                   </div>
                   
-                  {/* Twilio AIボイスアシスタント情報 */}
-                  {isTwilioEnabled && (
-                    <div className="mt-8 rounded-xl border border-emerald-100 overflow-hidden">
-                      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 text-emerald-800">
-                        <h4 className="font-semibold flex items-center gap-2 mb-3">
-                          <ServerIcon className="h-5 w-5 text-emerald-500" />
-                          {translations.twilioEnabled[language]}
-                        </h4>
-                        <p className="text-emerald-700">
-                          {translations.twilioDescription[language]}
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-center p-4 bg-white">
-                        <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" asChild>
-                          <Link to="/admin/twilio">
-                            <ServerIcon className="mr-2 h-4 w-4" />
-                            {translations.twilioSetup[language]}
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                  {/* Moved Twilio AIボイスアシスタント情報 to the bottom */}
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
+        
+        {/* Twilio AIボイスアシスタント情報 - Moved to bottom */}
+        {activeTab === 'phone' && isTwilioEnabled && (
+          <div className="mt-6">
+            <div className="rounded-xl border border-emerald-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 text-emerald-800">
+                <h4 className="font-semibold flex items-center gap-2 mb-3">
+                  <ServerIcon className="h-5 w-5 text-emerald-500" />
+                  {translations.twilioEnabled[language]}
+                </h4>
+                <p className="text-emerald-700">
+                  {translations.twilioDescription[language]}
+                </p>
+              </div>
+              
+              <div className="flex justify-center p-4 bg-white">
+                <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" asChild>
+                  <Link to="/admin/twilio">
+                    <ServerIcon className="mr-2 h-4 w-4" />
+                    {translations.twilioSetup[language]}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
