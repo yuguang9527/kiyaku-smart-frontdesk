@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, User, Settings, Ticket } from "lucide-react";
+import { Mail, Lock, Settings, Ticket } from "lucide-react";
 import HotelLogo from "@/components/HotelLogo";
 import { useLanguage } from "@/hooks/use-language";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,8 +15,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { toast } = useToast();
-  const [loginType, setLoginType] = useState<"customer" | "admin" | "guest">("customer");
+  const [loginType, setLoginType] = useState<"guest" | "admin">("guest");
   const [reservationNumber, setReservationNumber] = useState("");
+  const [hasReservation, setHasReservation] = useState(true);
 
   const translations = {
     login: {
@@ -43,10 +44,6 @@ const Login = () => {
       ja: '新規登録',
       en: 'Sign Up'
     },
-    customer: {
-      ja: 'お客様',
-      en: 'Customer'
-    },
     admin: {
       ja: '管理者',
       en: 'Admin'
@@ -67,9 +64,17 @@ const Login = () => {
       ja: 'ゲストとして続ける',
       en: 'Continue as Guest'
     },
-    guestAccess: {
-      ja: '予約番号で続行',
-      en: 'Continue with Reservation Number'
+    guestWithReservation: {
+      ja: 'ご予約済みのお客様はこちら',
+      en: 'I have a reservation'
+    },
+    guestWithoutReservation: {
+      ja: 'まだご予約されていない方はこちら',
+      en: 'I don\'t have a reservation yet'
+    },
+    continue: {
+      ja: '続ける',
+      en: 'Continue'
     }
   };
 
@@ -83,24 +88,26 @@ const Login = () => {
       });
       navigate('/admin');
     } else if (loginType === "guest") {
-      if (reservationNumber.trim()) {
-        toast({
-          title: language === 'ja' ? 'ゲストとしてログイン' : 'Logged in as guest',
-          description: language === 'ja' ? '予約番号で確認しました' : 'Verified with reservation number',
-        });
-        navigate('/customer');
-      } else {
+      if (hasReservation && !reservationNumber.trim()) {
         toast({
           title: language === 'ja' ? '予約番号が必要です' : 'Reservation number required',
           description: language === 'ja' ? '予約番号を入力してください' : 'Please enter your reservation number',
           variant: "destructive",
         });
+        return;
       }
-    } else {
-      toast({
-        title: language === 'ja' ? 'お客様としてログイン' : 'Logged in as customer',
-        description: language === 'ja' ? 'カスタマーページに移動します' : 'Redirecting to customer page',
-      });
+      
+      if (hasReservation) {
+        toast({
+          title: language === 'ja' ? 'ゲストとしてログイン' : 'Logged in as guest',
+          description: language === 'ja' ? '予約番号で確認しました' : 'Verified with reservation number',
+        });
+      } else {
+        toast({
+          title: language === 'ja' ? 'ゲストとしてアクセス' : 'Accessing as guest',
+          description: language === 'ja' ? '予約なしでアクセスします' : 'Accessing without reservation',
+        });
+      }
       navigate('/customer');
     }
   };
@@ -128,12 +135,8 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         
-        <Tabs defaultValue="customer" className="w-full" onValueChange={(value) => setLoginType(value as "customer" | "admin" | "guest")}>
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="customer" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span>{translations.customer[language]}</span>
-            </TabsTrigger>
+        <Tabs defaultValue="guest" className="w-full" onValueChange={(value) => setLoginType(value as "guest" | "admin")}>
+          <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="guest" className="flex items-center gap-2">
               <Ticket className="h-4 w-4" />
               <span>{translations.guest[language]}</span>
@@ -144,60 +147,51 @@ const Login = () => {
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="customer">
-            <form onSubmit={handleSubmit}>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="customer-email">{translations.email[language]}</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="customer-email"
-                      placeholder="your@email.com"
-                      type="email"
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="customer-password">{translations.password[language]}</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="customer-password"
-                      type="password"
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full">
-                  {translations.login[language]}
-                </Button>
-              </CardContent>
-            </form>
-          </TabsContent>
-          
           <TabsContent value="guest">
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="reservation-number">{translations.reservationNumber[language]}</Label>
-                  <div className="relative">
-                    <Ticket className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="reservation-number"
-                      placeholder={translations.enterReservationNumber[language]}
-                      value={reservationNumber}
-                      onChange={(e) => setReservationNumber(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                  <div className="flex flex-col space-y-2 border rounded-md p-4">
+                    <Button 
+                      type="button"
+                      variant={hasReservation ? "default" : "outline"}
+                      onClick={() => setHasReservation(true)}
+                      className="justify-start text-left h-auto py-3 px-4"
+                    >
+                      <span>{translations.guestWithReservation[language]}</span>
+                    </Button>
+                    
+                    {hasReservation && (
+                      <div className="pt-2 space-y-2 px-2">
+                        <Label htmlFor="reservation-number">{translations.reservationNumber[language]}</Label>
+                        <div className="relative">
+                          <Ticket className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                          <Input
+                            id="reservation-number"
+                            placeholder={translations.enterReservationNumber[language]}
+                            value={reservationNumber}
+                            onChange={(e) => setReservationNumber(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="border rounded-md p-4">
+                    <Button 
+                      type="button"
+                      variant={!hasReservation ? "default" : "outline"}
+                      onClick={() => setHasReservation(false)}
+                      className="justify-start text-left h-auto py-3 px-4 w-full"
+                    >
+                      <span>{translations.guestWithoutReservation[language]}</span>
+                    </Button>
                   </div>
                 </div>
+                
                 <Button type="submit" className="w-full">
-                  {translations.continueAsGuest[language]}
+                  {translations.continue[language]}
                 </Button>
               </CardContent>
             </form>
