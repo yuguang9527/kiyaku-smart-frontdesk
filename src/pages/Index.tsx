@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import MainNav from '@/components/MainNav';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ChatInterface from '@/components/ChatInterface';
+import ChatInterface from '@/components/chat';
 import QuickAction from '@/components/QuickAction';
 import ReservationCard from '@/components/ReservationCard';
 import { recentReservations } from '@/data/reservations';
