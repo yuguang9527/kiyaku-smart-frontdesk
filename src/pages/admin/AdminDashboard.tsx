@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -243,8 +244,11 @@ const AdminDashboard: React.FC = () => {
                   }}>
               <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4">
                 <div className="flex justify-between items-center">
-                  <div className="bg-blue-700/50 p-3 rounded-lg backdrop-blur-sm">
-                    {stat.icon}
+                  <div className="flex items-center gap-2">
+                    <div className="bg-blue-700/50 p-3 rounded-lg backdrop-blur-sm">
+                      {stat.icon}
+                    </div>
+                    <span className="text-white text-lg font-medium">{stat.label}</span>
                   </div>
                   <Badge className={`${stat.positive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-medium`}>
                     {stat.trend}
@@ -252,8 +256,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
               <CardContent className="p-4 bg-white/90">
-                <h3 className="text-3xl font-bold text-blue-900">{stat.value}</h3>
-                <p className="text-sm font-medium text-blue-600 mt-1">{stat.label}</p>
+                <h3 className="text-4xl font-bold text-blue-900">{stat.value}</h3>
               </CardContent>
             </Card>
           ))}
