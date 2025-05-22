@@ -42,8 +42,8 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
       en: 'Connected'
     },
     startCall: {
-      ja: 'エージェントに電話する',
-      en: 'Call Agent'
+      ja: '電話を掛ける',
+      en: 'Make a call'
     },
     endCall: {
       ja: '通話を終了',
@@ -92,6 +92,14 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
     hotelReservation: {
       ja: 'ホテル予約代理',
       en: 'Hotel Reservation Agent'
+    },
+    hotelName: {
+      ja: 'ホテル名',
+      en: 'Hotel'
+    },
+    phoneNumber: {
+      ja: '電話番号',
+      en: 'Phone number'
     }
   };
 
@@ -273,6 +281,18 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
             <Phone className="h-5 w-5" />
             <span>{translations.startCall[language]}</span>
           </Button>
+          
+          {/* Add hotel name and phone number below the button */}
+          <div className="mt-2 text-center space-y-1">
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
+              <span className="text-sm font-bold">{agentName}</span>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
+              <span className="text-sm font-bold">{phoneNumber}</span>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="w-full space-y-4">
