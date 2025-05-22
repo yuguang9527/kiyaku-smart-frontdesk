@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
-import ChatInterface from '@/components/ChatInterface';
+import ChatInterface from '@/components/chat';
 import { useLanguage } from '@/hooks/use-language';
 import HotelInfoDisplay, { HotelInfo } from './HotelInfoDisplay';
 
