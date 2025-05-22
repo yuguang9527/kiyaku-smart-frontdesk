@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -129,10 +128,6 @@ const Login = () => {
           <div className="flex justify-center mb-4">
             <HotelLogo />
           </div>
-          <CardTitle className="text-2xl font-display">{translations.login[language]}</CardTitle>
-          <CardDescription>
-            {translations.signInToContinue[language]}
-          </CardDescription>
         </CardHeader>
         
         <Tabs defaultValue="guest" className="w-full" onValueChange={(value) => setLoginType(value as "guest" | "admin")}>
