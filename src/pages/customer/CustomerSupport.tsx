@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
@@ -204,33 +203,14 @@ const CustomerSupport: React.FC = () => {
                     hotelAddress={hotelInfo.address} 
                   />
                   
-                  <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
-                    <h3 className="text-2xl font-semibold text-blue-900">
-                      {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
-                    </h3>
-                    <p className="text-slate-600 mt-3 mb-5">
-                      {language === 'ja' 
-                        ? 'AIスタッフがお電話でサポートいたします。' 
-                        : 'Our AI staff will assist you by phone.'}
-                    </p>
-                    <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
-                      {hotelInfo.phoneNumber}
-                    </div>
-                    <p className="text-sm text-slate-500 mt-1">
-                      {language === 'ja' 
-                        ? '(24時間・年中無休)' 
-                        : '(24 hours, 365 days)'}
-                    </p>
-                  </div>
-                  
-                  {/* Moved Twilio AIボイスアシスタント情報 to the bottom */}
+                  {/* Removed duplicate call center box here */}
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
         
-        {/* Twilio AIボイスアシスタント情報 - Moved to bottom */}
+        {/* Twilio AIボイスアシスタント情報 - Kept at bottom */}
         {activeTab === 'phone' && isTwilioEnabled && (
           <div className="mt-6">
             <div className="rounded-xl border border-emerald-100 overflow-hidden">

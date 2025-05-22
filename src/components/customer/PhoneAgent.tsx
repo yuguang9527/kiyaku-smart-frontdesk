@@ -323,30 +323,10 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
         )}
       </div>
 
-      {/* Swapped - Twilio Media Streams box moved to the top when idle */}
+      {/* Single combined section for Twilio and call center when idle */}
       {status === 'idle' && (
-        <div className="w-full space-y-4 mt-8">
-          {/* Twilio Media Streams box */}
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm">
-            <div className="flex items-start gap-2">
-              <Server className="h-4 w-4 mt-0.5 text-blue-500" />
-              <div>
-                <h4 className="font-medium text-blue-800">
-                  {language === 'ja' ? 'Twilio Media Streams & AssemblyAI 統合' : 'Twilio Media Streams & AssemblyAI Integration'}
-                </h4>
-                <p className="mt-1 text-blue-700">
-                  {language === 'ja' 
-                    ? 'このシステムはTwilio Media StreamsとAssemblyAIの実時間音声認識を統合して、AIアシスタントとの自然な会話を可能にします。' 
-                    : 'This system integrates Twilio Media Streams with AssemblyAI real-time speech recognition to enable natural conversations with AI assistants.'}
-                </p>
-                <p className="mt-2 text-xs opacity-75">
-                  WebSocket: wss://yourdomain.com:8765
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Call center box */}
+        <div className="w-full mt-8">
+          {/* Call center box with Twilio info integrated */}
           <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
             <h3 className="text-2xl font-semibold text-blue-900">
               {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
@@ -364,6 +344,26 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
                 ? '(24時間・年中無休)' 
                 : '(24 hours, 365 days)'}
             </p>
+
+            {/* Twilio integration info */}
+            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-4 text-sm mx-auto max-w-lg">
+              <div className="flex items-start gap-2">
+                <Server className="h-4 w-4 mt-0.5 text-blue-500" />
+                <div>
+                  <h4 className="font-medium text-blue-800 text-left">
+                    {language === 'ja' ? 'Twilio Media Streams & AssemblyAI 統合' : 'Twilio Media Streams & AssemblyAI Integration'}
+                  </h4>
+                  <p className="mt-1 text-blue-700 text-left">
+                    {language === 'ja' 
+                      ? 'このシステムはTwilio Media StreamsとAssemblyAIの実時間音声認識を統合して、AIアシスタントとの自然な会話を可能にします。' 
+                      : 'This system integrates Twilio Media Streams with AssemblyAI real-time speech recognition to enable natural conversations with AI assistants.'}
+                  </p>
+                  <p className="mt-2 text-xs opacity-75 text-left">
+                    WebSocket: wss://yourdomain.com:8765
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
