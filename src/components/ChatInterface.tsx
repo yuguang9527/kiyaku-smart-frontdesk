@@ -21,7 +21,7 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  title: string;
+  title?: string;
   hotelInfo?: {
     name: string;
     greeting: string;
@@ -159,9 +159,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex flex-col h-[600px] border rounded-lg overflow-hidden bg-white shadow-sm">
-      <div className="p-3 border-b bg-muted/30">
-        <h3 className="font-medium">{title}</h3>
-      </div>
+      {title && (
+        <div className="p-3 border-b bg-muted/30">
+          <h3 className="font-medium">{title}</h3>
+        </div>
+      )}
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (

@@ -22,27 +22,35 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
     }
   };
 
+  // Helper function to get localized address
+  const getLocalizedAddress = () => {
+    return language === 'ja' ? hotelInfo.addressJa : hotelInfo.addressEn;
+  };
+
   return (
-    <Card className="shadow-md border-slate-200 overflow-hidden">
+    <Card className="shadow-md border-slate-200">
       <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
         <CardTitle className="flex items-center gap-2 text-blue-900">
           <MessageSquare className="h-5 w-5 text-blue-500" />
           <span>{translations.chatAssistant[language]}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0 md:p-0">
-        <div className="mt-2 p-4 bg-slate-50 border-b border-slate-100">
-          <HotelInfoDisplay hotelInfo={hotelInfo} />
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          <HotelInfoDisplay 
+            hotelInfo={hotelInfo} 
+            className="p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200"
+          />
+          
+          <ChatInterface 
+            hotelInfo={{
+              name: hotelInfo.name,
+              greeting: language === 'ja' 
+                ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
+                : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
+            }}
+          />
         </div>
-        <ChatInterface 
-          title={language === 'ja' ? "AIサポート" : "AI Support"} 
-          hotelInfo={{
-            name: hotelInfo.name,
-            greeting: language === 'ja' 
-              ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-              : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
-          }}
-        />
       </CardContent>
     </Card>
   );
