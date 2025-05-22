@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Phone, MicOff, Mic, PhoneOff, Calendar, Search, Server } from 'lucide-react';
+import { Phone, MicOff, Mic, PhoneOff, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { initiateOutboundCall } from '@/services/twilio';
 
@@ -13,11 +12,13 @@ type PhoneAgentStatus = 'idle' | 'calling' | 'connected';
 interface PhoneAgentProps {
   agentName?: string;
   phoneNumber?: string;
+  hotelAddress?: string;
 }
 
 const PhoneAgent: React.FC<PhoneAgentProps> = ({ 
   agentName = 'Yotta!',
-  phoneNumber = '+14788001081'
+  phoneNumber = '+14788001081',
+  hotelAddress = '123 Main St, Tokyo, Japan'
 }) => {
   const [status, setStatus] = useState<PhoneAgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
@@ -72,6 +73,10 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
     phoneNumber: {
       ja: '電話番号',
       en: 'Phone number'
+    },
+    hotelAddress: {
+      ja: '住所',
+      en: 'Address'
     }
   };
 
@@ -226,11 +231,15 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
             <span>{translations.startCall[language]}</span>
           </Button>
           
-          {/* Add hotel name and phone number below the button */}
+          {/* Add hotel name, address, and phone number below the button */}
           <div className="mt-2 text-center space-y-1">
             <div className="flex items-center justify-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
               <span className="text-sm font-bold">{agentName}</span>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">{translations.hotelAddress[language]}:</span>
+              <span className="text-sm font-bold">{hotelAddress}</span>
             </div>
             <div className="flex items-center justify-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
@@ -341,4 +350,3 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
 };
 
 export default PhoneAgent;
-

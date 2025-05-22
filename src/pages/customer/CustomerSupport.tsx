@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
@@ -9,9 +8,40 @@ import PhoneAgent from '@/components/customer/PhoneAgent';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
+// Define a type for the hotel information
+interface HotelInfo {
+  name: string;
+  address: string;
+  phoneNumber: string;
+}
+
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
+  const [hotelInfo, setHotelInfo] = useState<HotelInfo>({
+    name: 'Yotta! Hotel',
+    address: '123 Sky Tower, Shinjuku, Tokyo, Japan',
+    phoneNumber: '+14788001081'
+  });
+
+  // Effect to load hotel information from localStorage (where HotelImport would save it)
+  useEffect(() => {
+    try {
+      const savedHotelInfo = localStorage.getItem('hotelInfo');
+      if (savedHotelInfo) {
+        const parsedInfo = JSON.parse(savedHotelInfo);
+        setHotelInfo(prevInfo => ({
+          ...prevInfo,
+          name: parsedInfo.name || prevInfo.name,
+          address: parsedInfo.address || prevInfo.address,
+          // Only update phone if available, otherwise keep the default
+          phoneNumber: parsedInfo.phoneNumber || prevInfo.phoneNumber
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load hotel info from localStorage:', error);
+    }
+  }, []);
 
   const translations = {
     title: {
@@ -68,7 +98,7 @@ const CustomerSupport: React.FC = () => {
           </p>
         </div>
 
-        {/* Hero Section - Modified to remove the box containing globe icon */}
+        {/* Hero Section */}
         <div className="mb-10">
           <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-8">
             <div className="space-y-4 text-center md:text-left">
@@ -148,10 +178,10 @@ const CustomerSupport: React.FC = () => {
                 <ChatInterface 
                   title={language === 'ja' ? "AIサポート" : "AI Support"} 
                   hotelInfo={{
-                    name: 'Yotta!',
+                    name: hotelInfo.name,
                     greeting: language === 'ja' 
                       ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-                      : 'Welcome to Yotta!. How may I assist you today?'
+                      : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
                   }}
                 />
               </CardContent>
@@ -166,8 +196,12 @@ const CustomerSupport: React.FC = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {/* 電話エージェントの追加 */}
-                  <PhoneAgent agentName="Yotta! Support" phoneNumber="+14788001081" />
+                  {/* 電話エージェントの追加 - Pass hotel information */}
+                  <PhoneAgent 
+                    agentName={hotelInfo.name} 
+                    phoneNumber={hotelInfo.phoneNumber}
+                    hotelAddress={hotelInfo.address} 
+                  />
                   
                   <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
                     <h3 className="text-2xl font-semibold text-blue-900">
@@ -179,7 +213,7 @@ const CustomerSupport: React.FC = () => {
                         : 'Our specialist staff will assist you by phone.'}
                     </p>
                     <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
-                      +1 (478) 800-1081
+                      {hotelInfo.phoneNumber}
                     </div>
                     <p className="text-sm text-slate-500 mt-1">
                       {language === 'ja' 

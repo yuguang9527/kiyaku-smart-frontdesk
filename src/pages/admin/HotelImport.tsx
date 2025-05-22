@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminNav from '@/components/admin/AdminNav';
 import { useLanguage } from '@/hooks/use-language';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +27,7 @@ const hotelInfoSchema = z.object({
     message: "Address must be at least 5 characters."
   }),
   amenities: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 // Define the schema for QA import form
@@ -66,6 +66,7 @@ const HotelImport: React.FC = () => {
       description: "",
       address: "",
       amenities: "",
+      phoneNumber: "",
     },
   });
 
@@ -86,9 +87,30 @@ const HotelImport: React.FC = () => {
     },
   });
 
+  // Load saved hotel info if available
+  useEffect(() => {
+    try {
+      const savedHotelInfo = localStorage.getItem('hotelInfo');
+      if (savedHotelInfo) {
+        const parsedInfo = JSON.parse(savedHotelInfo);
+        hotelInfoForm.reset(parsedInfo);
+      }
+    } catch (error) {
+      console.error('Failed to load hotel info:', error);
+    }
+  }, []);
+
   const onSubmitHotelInfo = (data: z.infer<typeof hotelInfoSchema>) => {
     console.log("Hotel info submitted:", data);
-    toast.success(language === 'ja' ? 'ホテル情報が保存されました' : 'Hotel information saved');
+    
+    // Save hotel info to localStorage for integration with CustomerSupport
+    try {
+      localStorage.setItem('hotelInfo', JSON.stringify(data));
+      toast.success(language === 'ja' ? 'ホテル情報が保存されました' : 'Hotel information saved');
+    } catch (error) {
+      toast.error(language === 'ja' ? '保存に失敗しました' : 'Failed to save hotel information');
+      console.error("Save error:", error);
+    }
   };
 
   const onSubmitQA = (data: z.infer<typeof qaSchema>) => {
@@ -174,6 +196,10 @@ const HotelImport: React.FC = () => {
       amenities: {
         ja: '設備・サービス',
         en: 'Amenities'
+      },
+      phoneNumber: {
+        ja: '電話番号',
+        en: 'Phone Number'
       },
       save: {
         ja: '保存',
@@ -315,6 +341,20 @@ const HotelImport: React.FC = () => {
                           <FormLabel>{translations.hotelForm.address[language]}</FormLabel>
                           <FormControl>
                             <Input placeholder={language === 'ja' ? '住所を入力' : 'Enter address'} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={hotelInfoForm.control}
+                      name="phoneNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{translations.hotelForm.phoneNumber[language]}</FormLabel>
+                          <FormControl>
+                            <Input placeholder={language === 'ja' ? '電話番号を入力' : 'Enter phone number'} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
