@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
@@ -7,7 +8,6 @@ import CustomerNav from '@/components/customer/CustomerNav';
 import PhoneAgent from '@/components/customer/PhoneAgent';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
@@ -81,11 +81,23 @@ const CustomerSupport: React.FC = () => {
                   : 'Our cutting-edge support system powered by AI is always ready to assist you.'}
               </p>
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 shadow-md hover:shadow-lg" onClick={() => setActiveTab('chat')}>
+                <Button 
+                  className={`${activeTab === 'chat' 
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600' 
+                    : 'bg-white text-blue-600 border border-blue-200 hover:bg-blue-50'} 
+                    transition-all duration-300 shadow-md hover:shadow-lg`}
+                  onClick={() => setActiveTab('chat')}
+                >
                   <MessageSquare className="mr-2 h-5 w-5" />
                   {language === 'ja' ? 'チャットを開始' : 'Start Chat'}
                 </Button>
-                <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => setActiveTab('phone')}>
+                <Button 
+                  className={`${activeTab === 'phone' 
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white' 
+                    : 'border-blue-200 text-blue-700 hover:bg-blue-50'} 
+                    transition-all duration-300 shadow-md hover:shadow-lg ${activeTab !== 'phone' ? 'bg-white border' : ''}`}
+                  onClick={() => setActiveTab('phone')}
+                >
                   <Phone className="mr-2 h-5 w-5" />
                   {language === 'ja' ? '電話サポート' : 'Phone Support'}
                 </Button>
