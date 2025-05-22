@@ -262,12 +262,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
 
   return (
     <div className="flex flex-col items-center p-4 space-y-4">
-      <div className="w-full text-center">
-        <h3 className="text-lg font-semibold mb-2">
-          {translations.hotelReservation[language]}
-        </h3>
-      </div>
-      
       {status === 'idle' ? (
         <div className="w-full space-y-4">
           <Button 
@@ -278,16 +272,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
           >
             <Phone className="h-5 w-5" />
             <span>{translations.startCall[language]}</span>
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full flex items-center gap-2"
-            onClick={handleRealCall}
-          >
-            <Phone className="h-5 w-5" />
-            <span>{translations.realCall[language]}</span>
           </Button>
         </div>
       ) : (

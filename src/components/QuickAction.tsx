@@ -7,18 +7,24 @@ interface QuickActionProps {
   label: string;
   onClick: () => void;
   variant?: 'default' | 'outline' | 'secondary';
+  isActive?: boolean;
 }
 
 const QuickAction: React.FC<QuickActionProps> = ({
   icon,
   label,
   onClick,
-  variant = 'default'
+  variant = 'default',
+  isActive = false
 }) => {
   const variantClasses = {
-    default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    default: isActive 
+      ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+      : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
     outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+    secondary: isActive
+      ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+      : 'bg-background text-foreground hover:bg-secondary/80'
   };
 
   return (
