@@ -1,12 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
-import { MessageSquare, Phone, ServerIcon } from 'lucide-react';
+import { MessageSquare, Phone, ServerIcon, MapPin } from 'lucide-react';
 import CustomerNav from '@/components/customer/CustomerNav';
 import PhoneAgent from '@/components/customer/PhoneAgent';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import HotelLogo from '@/components/HotelLogo';
 
 // Define a type for the hotel information
 interface HotelInfo {
@@ -76,6 +78,19 @@ const CustomerSupport: React.FC = () => {
     selectSupport: {
       ja: 'サポート方法を選択',
       en: 'Select Support Method'
+    },
+    // Add translations for hotel info
+    hotelName: {
+      ja: 'ホテル名',
+      en: 'Hotel Name'
+    },
+    address: {
+      ja: '住所',
+      en: 'Address'
+    },
+    phoneNumber: {
+      ja: '電話番号',
+      en: 'Phone Number'
     }
   };
 
@@ -118,8 +133,49 @@ const CustomerSupport: React.FC = () => {
 
         {/* Removed the Support Tabs section */}
 
-        {/* Content Area - Only showing phone support */}
+        {/* Content Area - Adding hotel information below heading */}
         <div className="grid grid-cols-1 gap-6 animate-fadeIn">
+          {/* Add hotel information display */}
+          <Card className="shadow-md border-slate-200 mb-6">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
+              <CardTitle className="flex items-center gap-2 text-blue-900">
+                <MessageSquare className="h-5 w-5 text-blue-500" />
+                <span>{translations.chatAssistant[language]}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {/* Display hotel information with icons */}
+              <div className="mb-6 space-y-4">
+                <div className="flex items-center justify-center mb-4">
+                  <HotelLogo size="lg" variant="gradient" />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                  <div className="flex flex-col items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <div className="text-blue-700 font-medium mb-1">{translations.hotelName[language]}</div>
+                    <div className="text-lg font-semibold text-blue-900">{hotelInfo.name}</div>
+                  </div>
+                  
+                  <div className="flex flex-col items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <div className="text-blue-700 font-medium mb-1 flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {translations.address[language]}
+                    </div>
+                    <div className="text-lg font-semibold text-blue-900">{hotelInfo.address}</div>
+                  </div>
+                  
+                  <div className="flex flex-col items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <div className="text-blue-700 font-medium mb-1 flex items-center gap-1">
+                      <Phone className="h-4 w-4" />
+                      {translations.phoneNumber[language]}
+                    </div>
+                    <div className="text-lg font-semibold text-blue-900">{hotelInfo.phoneNumber}</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
           <Card className="shadow-md border-slate-200">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
               <CardTitle className="flex items-center gap-2 text-blue-900">
