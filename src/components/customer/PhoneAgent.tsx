@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Phone, MicOff, Mic, PhoneOff, Calendar, Search, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { recentReservations } from '@/data/reservations';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { initiateOutboundCall } from '@/services/twilio';
@@ -13,19 +13,15 @@ type PhoneAgentStatus = 'idle' | 'calling' | 'connected';
 interface PhoneAgentProps {
   agentName?: string;
   phoneNumber?: string;
-  enableReservationLookup?: boolean;
 }
 
 const PhoneAgent: React.FC<PhoneAgentProps> = ({ 
   agentName = 'Yotta!',
-  phoneNumber = '+14788001081',
-  enableReservationLookup = true
+  phoneNumber = '+14788001081'
 }) => {
   const [status, setStatus] = useState<PhoneAgentStatus>('idle');
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
-  const [reservationId, setReservationId] = useState('');
-  const [reservationResult, setReservationResult] = useState<any>(null);
   const [transcript, setTranscript] = useState<string>('');
   const [aiResponse, setAiResponse] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -68,30 +64,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
     realCall: {
       ja: '実際に電話をかける',
       en: 'Make a real call'
-    },
-    reservationLookup: {
-      ja: '予約を検索',
-      en: 'Search Reservation'
-    },
-    enterReservationId: {
-      ja: '予約IDを入力',
-      en: 'Enter Reservation ID'
-    },
-    search: {
-      ja: '検索',
-      en: 'Search'
-    },
-    reservationFound: {
-      ja: '予約が見つかりました',
-      en: 'Reservation found'
-    },
-    reservationNotFound: {
-      ja: '予約が見つかりませんでした',
-      en: 'Reservation not found'
-    },
-    hotelReservation: {
-      ja: 'ホテル予約代理',
-      en: 'Hotel Reservation Agent'
     },
     hotelName: {
       ja: 'ホテル名',
@@ -201,7 +173,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
   const handleEndCall = () => {
     setStatus('idle');
     setCallDuration(0);
-    setReservationResult(null);
     setTranscript('');
     setAiResponse('');
     stopTimer();
@@ -213,33 +184,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
   // ミュート切り替え
   const toggleMute = () => {
     setIsMuted(!isMuted);
-  };
-
-  // 予約を検索する
-  const handleSearchReservation = () => {
-    if (!reservationId.trim()) {
-      toast({
-        title: translations.reservationNotFound[language],
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // 予約データから検索
-    const found = recentReservations.find(res => res.id === reservationId);
-    
-    if (found) {
-      setReservationResult(found);
-      toast({
-        title: translations.reservationFound[language],
-      });
-    } else {
-      setReservationResult(null);
-      toast({
-        title: translations.reservationNotFound[language],
-        variant: "destructive"
-      });
-    }
   };
 
   // タイマー関連の状態管理
@@ -369,50 +313,6 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
         </div>
       )}
       
-      {/* 予約検索機能 */}
-      {enableReservationLookup && status === 'idle' && (
-        <div className="w-full mt-4 pt-4 border-t">
-          <h4 className="text-md font-medium mb-2">
-            {translations.reservationLookup[language]}
-          </h4>
-          
-          <div className="flex gap-2 mb-4">
-            <Input 
-              placeholder={translations.enterReservationId[language]}
-              value={reservationId}
-              onChange={(e) => setReservationId(e.target.value)}
-            />
-            <Button 
-              variant="secondary"
-              onClick={handleSearchReservation}
-              disabled={!reservationId.trim()}
-            >
-              <Search className="h-4 w-4 mr-1" />
-              {translations.search[language]}
-            </Button>
-          </div>
-          
-          {/* 予約検索結果 */}
-          {reservationResult && (
-            <div className="border rounded-md p-3 bg-muted/50">
-              <div className="flex items-center justify-between mb-2">
-                <div className="font-medium">{reservationResult.guestName}</div>
-                <div className="text-sm bg-green-100 text-green-800 px-2 py-0.5 rounded">
-                  {language === 'ja' ? '確認済み' : 'Confirmed'}
-                </div>
-              </div>
-              <div className="text-sm flex items-center mb-1">
-                <Calendar className="h-3.5 w-3.5 mr-1 opacity-70" />
-                {reservationResult.checkIn} - {reservationResult.checkOut}
-              </div>
-              <div className="text-sm">
-                {reservationResult.roomType}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      
       {/* Twilio Media Streams と AssemblyAI の情報表示 */}
       {status === 'idle' && (
         <div className="w-full mt-4 pt-4 border-t">
@@ -441,3 +341,4 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
 };
 
 export default PhoneAgent;
+
