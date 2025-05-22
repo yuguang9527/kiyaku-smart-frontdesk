@@ -11,7 +11,8 @@ import { Link } from 'react-router-dom';
 // Define a type for the hotel information
 interface HotelInfo {
   name: string;
-  address: string;
+  addressJa: string;
+  addressEn: string;
   phoneNumber: string;
 }
 
@@ -20,7 +21,8 @@ const CustomerSupport: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
   const [hotelInfo, setHotelInfo] = useState<HotelInfo>({
     name: 'Yotta! Hotel',
-    address: '123 Sky Tower, Shinjuku, Tokyo, Japan',
+    addressJa: '東京都新宿区スカイタワー123',
+    addressEn: '123 Sky Tower, Shinjuku, Tokyo, Japan',
     phoneNumber: '+14788001081'
   });
 
@@ -33,7 +35,8 @@ const CustomerSupport: React.FC = () => {
         setHotelInfo(prevInfo => ({
           ...prevInfo,
           name: parsedInfo.name || prevInfo.name,
-          address: parsedInfo.address || prevInfo.address,
+          addressJa: parsedInfo.addressJa || prevInfo.addressJa,
+          addressEn: parsedInfo.addressEn || prevInfo.addressEn,
           // Only update phone if available, otherwise keep the default
           phoneNumber: parsedInfo.phoneNumber || prevInfo.phoneNumber
         }));
@@ -42,6 +45,11 @@ const CustomerSupport: React.FC = () => {
       console.error('Failed to load hotel info from localStorage:', error);
     }
   }, []);
+
+  // Get the address based on the current language
+  const getLocalizedAddress = () => {
+    return language === 'ja' ? hotelInfo.addressJa : hotelInfo.addressEn;
+  };
 
   const translations = {
     title: {
@@ -196,11 +204,11 @@ const CustomerSupport: React.FC = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {/* 電話エージェントの追加 - Pass hotel information */}
+                  {/* 電話エージェントの追加 - Pass hotel information with correct localized address */}
                   <PhoneAgent 
                     agentName={hotelInfo.name} 
                     phoneNumber={hotelInfo.phoneNumber}
-                    hotelAddress={hotelInfo.address} 
+                    hotelAddress={getLocalizedAddress()} 
                   />
                   
                   {/* Removed duplicate call center box here */}
