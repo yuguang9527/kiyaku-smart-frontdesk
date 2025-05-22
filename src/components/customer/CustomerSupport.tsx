@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
@@ -11,6 +12,19 @@ import { Link } from 'react-router-dom';
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
+
+  // Add hotel information
+  const hotelInfo = {
+    name: 'Yotta!',
+    addressJa: '東京都新宿区スカイタワー123',
+    addressEn: '123 Sky Tower, Shinjuku, Tokyo, Japan',
+    phoneNumber: '+14788001081'
+  };
+
+  // Get the localized address based on current language
+  const getLocalizedAddress = () => {
+    return language === 'ja' ? hotelInfo.addressJa : hotelInfo.addressEn;
+  };
 
   const translations = {
     title: {
@@ -144,6 +158,29 @@ const CustomerSupport: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0 md:p-0">
+                {/* Add hotel information box similar to phone support section */}
+                <div className="mt-2 p-4 bg-slate-50 border-b border-slate-100">
+                  <div className="text-left space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {language === 'ja' ? 'ホテル名' : 'Hotel'}:
+                      </span>
+                      <span className="text-sm font-bold">{hotelInfo.name}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {language === 'ja' ? '住所' : 'Address'}:
+                      </span>
+                      <span className="text-sm font-bold">{getLocalizedAddress()}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {language === 'ja' ? '電話番号' : 'Phone number'}:
+                      </span>
+                      <span className="text-sm font-bold">{hotelInfo.phoneNumber}</span>
+                    </div>
+                  </div>
+                </div>
                 <ChatInterface 
                   title={language === 'ja' ? "AIサポート" : "AI Support"} 
                   hotelInfo={{
@@ -166,7 +203,11 @@ const CustomerSupport: React.FC = () => {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* 電話エージェントの追加 */}
-                  <PhoneAgent agentName="Yotta! Support" phoneNumber="+14788001081" />
+                  <PhoneAgent 
+                    agentName={hotelInfo.name} 
+                    phoneNumber={hotelInfo.phoneNumber} 
+                    hotelAddress={getLocalizedAddress()}
+                  />
                   
                   <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
                     <h3 className="text-2xl font-semibold text-blue-900">
