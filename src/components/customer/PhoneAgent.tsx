@@ -231,17 +231,17 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
             <span>{translations.startCall[language]}</span>
           </Button>
           
-          {/* Add hotel name, address, and phone number below the button */}
-          <div className="mt-2 text-center space-y-1">
-            <div className="flex items-center justify-center gap-2">
+          {/* Updated hotel info section - Left-aligned */}
+          <div className="mt-2 text-left space-y-1">
+            <div className="flex items-start gap-2">
               <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
               <span className="text-sm font-bold">{agentName}</span>
             </div>
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-start gap-2">
               <span className="text-sm font-medium text-muted-foreground">{translations.hotelAddress[language]}:</span>
               <span className="text-sm font-bold">{hotelAddress}</span>
             </div>
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-start gap-2">
               <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
               <span className="text-sm font-bold">{phoneNumber}</span>
             </div>
