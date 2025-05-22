@@ -11,11 +11,11 @@ const HotelLogo: React.FC<HotelLogoProps> = ({
   size = 'md',
   variant = 'dark'
 }) => {
-  // Double the text size again by adjusting the size classes
+  // Double the text size by adjusting the size classes
   const sizeClasses = {
-    sm: 'text-2xl', // was text-xl
-    md: 'text-5xl', // was text-4xl
-    lg: 'text-7xl'  // was text-6xl
+    sm: 'text-xl', // was text-lg
+    md: 'text-4xl', // was text-2xl
+    lg: 'text-6xl'  // was text-4xl
   };
 
   const colorClasses = {
@@ -26,9 +26,9 @@ const HotelLogo: React.FC<HotelLogoProps> = ({
 
   // Scale the SVG icon to match the larger text
   const iconSizes = {
-    sm: "h-6 w-6",    // was h-5 w-5
-    md: "h-9 w-9",    // was h-7 w-7
-    lg: "h-11 w-11"   // was h-9 w-9
+    sm: "h-5 w-5",
+    md: "h-7 w-7", // was h-5 w-5
+    lg: "h-9 w-9"  // was h-6 w-6
   };
 
   return (
@@ -38,7 +38,7 @@ const HotelLogo: React.FC<HotelLogoProps> = ({
         sizeClasses[size], 
         colorClasses[variant]
       )}>
-        <span className="flex items-center gap-3"> {/* Increased gap for better spacing with larger text */}
+        <span className="flex items-center gap-2">
           <svg 
             className={iconSizes[size]}
             viewBox="0 0 24 24" 
