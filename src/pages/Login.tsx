@@ -36,14 +36,6 @@ const Login = () => {
       ja: 'パスワード',
       en: 'Password'
     },
-    noAccount: {
-      ja: 'まだアカウントをお持ちでない方は',
-      en: "Don't have an account?"
-    },
-    signUp: {
-      ja: '新規登録',
-      en: 'Sign Up'
-    },
     admin: {
       ja: '管理者',
       en: 'Admin'
@@ -232,18 +224,6 @@ const Login = () => {
             </form>
           </TabsContent>
         </Tabs>
-        
-        <CardFooter className="flex justify-center pt-0">
-          <p className="text-sm text-muted-foreground text-center">
-            {translations.noAccount[language]}{' '}
-            <Button variant="link" className="px-1" onClick={() => toast({
-              title: language === 'ja' ? '機能準備中' : 'Feature in development',
-              description: language === 'ja' ? '新規登録機能は現在開発中です' : 'Sign up functionality is under development',
-            })}>
-              {translations.signUp[language]}
-            </Button>
-          </p>
-        </CardFooter>
       </Card>
     </div>
   );
