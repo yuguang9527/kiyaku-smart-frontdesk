@@ -12,8 +12,8 @@ const HotelImport: React.FC = () => {
   
   const translations = {
     title: {
-      ja: 'ホテル情報インポート',
-      en: 'Hotel Information Import'
+      ja: 'ホテル情報',
+      en: 'Hotel Information'
     },
     description: {
       ja: 'ホテル情報と質問応答のインポート・管理',
