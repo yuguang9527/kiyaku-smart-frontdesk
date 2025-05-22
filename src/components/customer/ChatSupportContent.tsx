@@ -35,6 +35,7 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
           <HotelInfoDisplay hotelInfo={hotelInfo} />
         </div>
         <ChatInterface 
+          title={language === 'ja' ? "AIサポート" : "AI Support"} 
           hotelInfo={{
             name: hotelInfo.name,
             greeting: language === 'ja' 

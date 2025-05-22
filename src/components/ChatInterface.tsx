@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -20,7 +21,7 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  title?: string; // Made this optional
+  title: string;
   hotelInfo?: {
     name: string;
     greeting: string;
@@ -33,7 +34,7 @@ const formatTime = () => {
 };
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
-  title = '', // Added default value
+  title,
   hotelInfo = { name: 'Yotta!', greeting: '' }
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -158,11 +159,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div className="flex flex-col h-[600px] border rounded-lg overflow-hidden bg-white shadow-sm">
-      {title && (
-        <div className="p-3 border-b bg-muted/30">
-          <h3 className="font-medium">{title}</h3>
-        </div>
-      )}
+      <div className="p-3 border-b bg-muted/30">
+        <h3 className="font-medium">{title}</h3>
+      </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
