@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ChatInterface from '@/components/ChatInterface';
 import { useLanguage } from '@/hooks/use-language';
-import { MessageSquare, Phone, ServerIcon, Globe } from 'lucide-react';
+import { MessageSquare, Phone, ServerIcon } from 'lucide-react';
 import CustomerNav from '@/components/customer/CustomerNav';
 import PhoneAgent from '@/components/customer/PhoneAgent';
 import { Button } from '@/components/ui/button';
@@ -92,10 +91,11 @@ const CustomerSupport: React.FC = () => {
                 </Button>
               </div>
             </div>
+            {/* Globe icon removed from here */}
             <div className="w-full md:w-1/3 max-w-xs">
               <AspectRatio ratio={1/1} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-blue-100 animate-float">
                 <div className="flex items-center justify-center h-full">
-                  <Globe className="h-24 w-24 text-blue-500 opacity-80" />
+                  {/* Globe icon removed */}
                 </div>
               </AspectRatio>
             </div>
