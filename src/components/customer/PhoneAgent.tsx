@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Phone, MicOff, Mic, PhoneOff, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -218,113 +217,115 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center p-4 space-y-4">
-      {status === 'idle' ? (
-        <div className="w-full space-y-4">
-          <Button 
-            variant="default" 
-            size="lg" 
-            className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
-            onClick={handleStartCall}
-          >
-            <Phone className="h-5 w-5" />
-            <span>{translations.startCall[language]}</span>
-          </Button>
-          
-          {/* Updated hotel info section - Left-aligned */}
-          <div className="mt-2 text-left space-y-1">
-            <div className="flex items-start gap-2">
-              <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
-              <span className="text-sm font-bold">{agentName}</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-sm font-medium text-muted-foreground">{translations.hotelAddress[language]}:</span>
-              <span className="text-sm font-bold">{hotelAddress}</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
-              <span className="text-sm font-bold">{phoneNumber}</span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="w-full space-y-4">
-          <div className="flex flex-col items-center mb-4 text-center">
-            <div className={`text-xl font-medium ${status === 'calling' ? 'animate-pulse text-amber-500' : 'text-green-500'}`}>
-              {status === 'calling' ? translations.calling[language] : translations.connected[language]}
-            </div>
-            {status === 'connected' && (
-              <div className="text-lg mt-2">
-                {formatCallDuration(callDuration)}
-              </div>
-            )}
-          </div>
-          
-          {/* トランスクリプトと応答の表示 */}
-          {status === 'connected' && (
-            <div className="w-full space-y-3 mb-4">
-              {transcript && (
-                <Card className="p-3 bg-blue-50 text-blue-800">
-                  <div className="text-sm text-blue-600 mb-1 font-medium">
-                    {language === 'ja' ? 'あなた:' : 'You:'}
-                  </div>
-                  <div>{transcript}</div>
-                </Card>
-              )}
-              
-              {(isProcessing || aiResponse) && (
-                <Card className="p-3 bg-green-50 text-green-800">
-                  <div className="text-sm text-green-600 mb-1 font-medium">
-                    {agentName}:
-                  </div>
-                  <div>
-                    {isProcessing ? (
-                      <div className="flex items-center gap-2">
-                        <div className="animate-pulse">{language === 'ja' ? '応答を生成中...' : 'Generating response...'}</div>
-                        <div className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></div>
-                      </div>
-                    ) : aiResponse}
-                  </div>
-                </Card>
-              )}
-            </div>
-          )}
-          
-          <div className="flex justify-center gap-4 w-full">
+    <>
+      <div className="flex flex-col items-center p-4 space-y-4">
+        {status === 'idle' ? (
+          <div className="w-full space-y-4">
             <Button 
-              variant="outline" 
-              className={`flex-1 ${isMuted ? 'bg-red-50 border-red-200 text-red-500' : ''}`} 
-              onClick={toggleMute} 
-              disabled={status === 'calling'}
+              variant="default" 
+              size="lg" 
+              className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
+              onClick={handleStartCall}
             >
-              {isMuted ? (
-                <>
-                  <MicOff className="mr-2 h-4 w-4" />
-                  <span>{translations.unmute[language]}</span>
-                </>
-              ) : (
-                <>
-                  <Mic className="mr-2 h-4 w-4" />
-                  <span>{translations.mute[language]}</span>
-                </>
-              )}
+              <Phone className="h-5 w-5" />
+              <span>{translations.startCall[language]}</span>
             </Button>
             
-            <Button 
-              variant="destructive" 
-              className="flex-1"
-              onClick={handleEndCall}
-            >
-              <PhoneOff className="mr-2 h-4 w-4" />
-              <span>{translations.endCall[language]}</span>
-            </Button>
+            {/* Updated hotel info section - Left-aligned */}
+            <div className="mt-2 text-left space-y-1">
+              <div className="flex items-start gap-2">
+                <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
+                <span className="text-sm font-bold">{agentName}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-sm font-medium text-muted-foreground">{translations.hotelAddress[language]}:</span>
+                <span className="text-sm font-bold">{hotelAddress}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
+                <span className="text-sm font-bold">{phoneNumber}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-      
-      {/* Twilio Media Streams と AssemblyAI の情報表示 */}
+        ) : (
+          <div className="w-full space-y-4">
+            <div className="flex flex-col items-center mb-4 text-center">
+              <div className={`text-xl font-medium ${status === 'calling' ? 'animate-pulse text-amber-500' : 'text-green-500'}`}>
+                {status === 'calling' ? translations.calling[language] : translations.connected[language]}
+              </div>
+              {status === 'connected' && (
+                <div className="text-lg mt-2">
+                  {formatCallDuration(callDuration)}
+                </div>
+              )}
+            </div>
+            
+            {/* トランスクリプトと応答の表示 */}
+            {status === 'connected' && (
+              <div className="w-full space-y-3 mb-4">
+                {transcript && (
+                  <Card className="p-3 bg-blue-50 text-blue-800">
+                    <div className="text-sm text-blue-600 mb-1 font-medium">
+                      {language === 'ja' ? 'あなた:' : 'You:'}
+                    </div>
+                    <div>{transcript}</div>
+                  </Card>
+                )}
+                
+                {(isProcessing || aiResponse) && (
+                  <Card className="p-3 bg-green-50 text-green-800">
+                    <div className="text-sm text-green-600 mb-1 font-medium">
+                      {agentName}:
+                    </div>
+                    <div>
+                      {isProcessing ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-pulse">{language === 'ja' ? '応答を生成中...' : 'Generating response...'}</div>
+                          <div className="h-2 w-2 bg-green-600 rounded-full animate-pulse"></div>
+                        </div>
+                      ) : aiResponse}
+                    </div>
+                  </Card>
+                )}
+              </div>
+            )}
+            
+            <div className="flex justify-center gap-4 w-full">
+              <Button 
+                variant="outline" 
+                className={`flex-1 ${isMuted ? 'bg-red-50 border-red-200 text-red-500' : ''}`} 
+                onClick={toggleMute} 
+                disabled={status === 'calling'}
+              >
+                {isMuted ? (
+                  <>
+                    <MicOff className="mr-2 h-4 w-4" />
+                    <span>{translations.unmute[language]}</span>
+                  </>
+                ) : (
+                  <>
+                    <Mic className="mr-2 h-4 w-4" />
+                    <span>{translations.mute[language]}</span>
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                variant="destructive" 
+                className="flex-1"
+                onClick={handleEndCall}
+              >
+                <PhoneOff className="mr-2 h-4 w-4" />
+                <span>{translations.endCall[language]}</span>
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Twilio Media Streams と AssemblyAI の情報表示 - Moved to bottom outside main container */}
       {status === 'idle' && (
-        <div className="w-full mt-4 pt-4 border-t">
+        <div className="w-full mt-8">
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm">
             <div className="flex items-start gap-2">
               <Server className="h-4 w-4 mt-0.5 text-blue-500" />
@@ -345,7 +346,7 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
