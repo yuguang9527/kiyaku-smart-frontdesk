@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminNav from '@/components/admin/AdminNav';
 import { useLanguage } from '@/hooks/use-language';
@@ -13,7 +14,8 @@ import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, Check, Plus, Import, FileText, Search } from 'lucide-react';
+import { Upload, Check, Plus, Import, FileText, Search, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 // Define the schema for the hotel import form
 const hotelInfoSchema = z.object({
@@ -57,6 +59,7 @@ const HotelImport: React.FC = () => {
   const { language } = useLanguage();
   const [isAddQADialogOpen, setIsAddQADialogOpen] = useState(false);
   const [qaList, setQAList] = useState<QA[]>([]);
+  const [amenityList, setAmenityList] = useState<string[]>([]);
   
   // Hotel info form
   const hotelInfoForm = useForm<z.infer<typeof hotelInfoSchema>>({
@@ -94,6 +97,15 @@ const HotelImport: React.FC = () => {
       if (savedHotelInfo) {
         const parsedInfo = JSON.parse(savedHotelInfo);
         hotelInfoForm.reset(parsedInfo);
+        
+        // Extract amenities from saved data if available
+        if (parsedInfo.amenities) {
+          const savedAmenities = parsedInfo.amenities
+            .split(',')
+            .map((item: string) => item.trim())
+            .filter((item: string) => item.length > 0);
+          setAmenityList(savedAmenities);
+        }
       }
     } catch (error) {
       console.error('Failed to load hotel info:', error);
@@ -103,10 +115,28 @@ const HotelImport: React.FC = () => {
   const onSubmitHotelInfo = (data: z.infer<typeof hotelInfoSchema>) => {
     console.log("Hotel info submitted:", data);
     
+    // Combine amenities from the list and any new ones from the input
+    const newAmenities = data.amenities
+      ? [...amenityList, ...data.amenities.split(',').map(item => item.trim()).filter(item => item.length > 0)]
+      : amenityList;
+    
+    // Remove duplicates
+    const uniqueAmenities = [...new Set(newAmenities)];
+    setAmenityList(uniqueAmenities);
+    
+    // Update the data with the combined amenities
+    const updatedData = {
+      ...data,
+      amenities: uniqueAmenities.join(', ')
+    };
+    
     // Save hotel info to localStorage for integration with CustomerSupport
     try {
-      localStorage.setItem('hotelInfo', JSON.stringify(data));
+      localStorage.setItem('hotelInfo', JSON.stringify(updatedData));
       toast.success(language === 'ja' ? 'ホテル情報が保存されました' : 'Hotel information saved');
+      
+      // Clear the amenities input field
+      hotelInfoForm.setValue('amenities', '');
     } catch (error) {
       toast.error(language === 'ja' ? '保存に失敗しました' : 'Failed to save hotel information');
       console.error("Save error:", error);
@@ -161,6 +191,25 @@ const HotelImport: React.FC = () => {
     }
   };
 
+  const handleDeleteAmenity = (amenityToDelete: string) => {
+    const updatedAmenities = amenityList.filter(amenity => amenity !== amenityToDelete);
+    setAmenityList(updatedAmenities);
+    
+    // Update the form and localStorage
+    const updatedData = {
+      ...hotelInfoForm.getValues(),
+      amenities: updatedAmenities.join(', ')
+    };
+    
+    try {
+      localStorage.setItem('hotelInfo', JSON.stringify(updatedData));
+      toast.success(language === 'ja' ? '設備・サービスが削除されました' : 'Amenity removed');
+    } catch (error) {
+      toast.error(language === 'ja' ? '削除に失敗しました' : 'Failed to remove amenity');
+      console.error("Delete error:", error);
+    }
+  };
+
   const translations = {
     title: {
       ja: 'ホテル情報インポート',
@@ -204,6 +253,14 @@ const HotelImport: React.FC = () => {
       save: {
         ja: '保存',
         en: 'Save'
+      },
+      delete: {
+        ja: '削除',
+        en: 'Delete'
+      },
+      currentAmenities: {
+        ja: '現在の設備・サービス',
+        en: 'Current Amenities'
       }
     },
     qa: {
@@ -360,6 +417,29 @@ const HotelImport: React.FC = () => {
                         </FormItem>
                       )}
                     />
+                    
+                    {amenityList.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium">
+                          {translations.hotelForm.currentAmenities[language]}
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {amenityList.map((amenity, index) => (
+                            <Badge key={index} className="pl-2 pr-1 py-1 flex items-center gap-1 bg-blue-100 text-blue-800 hover:bg-blue-200">
+                              {amenity}
+                              <button 
+                                type="button"
+                                onClick={() => handleDeleteAmenity(amenity)}
+                                className="ml-1 rounded-full bg-blue-200 hover:bg-blue-300 p-0.5"
+                              >
+                                <X className="h-3 w-3 text-blue-800" />
+                                <span className="sr-only">{translations.hotelForm.delete[language]}</span>
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     
                     <FormField
                       control={hotelInfoForm.control}
