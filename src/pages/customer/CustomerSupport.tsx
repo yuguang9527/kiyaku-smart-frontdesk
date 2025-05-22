@@ -68,9 +68,9 @@ const CustomerSupport: React.FC = () => {
           </p>
         </div>
 
-        {/* Hero Section */}
+        {/* Hero Section - Modified to remove the box containing globe icon */}
         <div className="mb-10">
-          <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-8">
             <div className="space-y-4 text-center md:text-left">
               <h2 className="text-2xl md:text-3xl font-medium text-blue-900">
                 {language === 'ja' ? '24時間365日サポート' : '24/7 Support Available'}
@@ -90,14 +90,6 @@ const CustomerSupport: React.FC = () => {
                   {language === 'ja' ? '電話サポート' : 'Phone Support'}
                 </Button>
               </div>
-            </div>
-            {/* Globe icon removed from here */}
-            <div className="w-full md:w-1/3 max-w-xs">
-              <AspectRatio ratio={1/1} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-blue-100 animate-float">
-                <div className="flex items-center justify-center h-full">
-                  {/* Globe icon removed */}
-                </div>
-              </AspectRatio>
             </div>
           </div>
         </div>
