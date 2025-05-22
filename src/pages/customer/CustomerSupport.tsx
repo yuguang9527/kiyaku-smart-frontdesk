@@ -108,7 +108,7 @@ const CustomerSupport: React.FC = () => {
               </h2>
               <p className="text-blue-700 md:text-lg max-w-md">
                 {language === 'ja' 
-                  ? 'AI技術を活用した最先端のサポートシステムで、いつでもサポートいたします。' 
+                  ? 'AIスタッフがいつでもサポートいたします。' 
                   : 'Our cutting-edge support system powered by AI is always ready to assist you.'}
               </p>
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
