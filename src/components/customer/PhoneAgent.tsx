@@ -221,18 +221,8 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
       <div className="flex flex-col items-center p-4 space-y-4">
         {status === 'idle' ? (
           <div className="w-full space-y-4">
-            <Button 
-              variant="default" 
-              size="lg" 
-              className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
-              onClick={handleStartCall}
-            >
-              <Phone className="h-5 w-5" />
-              <span>{translations.startCall[language]}</span>
-            </Button>
-            
-            {/* Updated hotel info section - Left-aligned */}
-            <div className="mt-2 text-left space-y-1">
+            {/* Updated hotel info section - Left-aligned with more prominent display */}
+            <div className="mt-2 text-left space-y-2">
               <div className="flex items-start gap-2">
                 <span className="text-sm font-medium text-muted-foreground">{translations.hotelName[language]}:</span>
                 <span className="text-sm font-bold">{agentName}</span>
@@ -244,6 +234,19 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
               <div className="flex items-start gap-2">
                 <span className="text-sm font-medium text-muted-foreground">{translations.phoneNumber[language]}:</span>
                 <span className="text-sm font-bold">{phoneNumber}</span>
+              </div>
+              
+              {/* Call button moved below phone number */}
+              <div className="pt-3">
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90" 
+                  onClick={handleStartCall}
+                >
+                  <Phone className="h-5 w-5" />
+                  <span>{translations.startCall[language]}</span>
+                </Button>
               </div>
             </div>
           </div>
