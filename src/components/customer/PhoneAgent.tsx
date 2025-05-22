@@ -323,9 +323,10 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
         )}
       </div>
 
-      {/* Twilio Media Streams と AssemblyAI の情報表示 - Moved to bottom outside main container */}
+      {/* Swapped - Twilio Media Streams box moved to the top when idle */}
       {status === 'idle' && (
-        <div className="w-full mt-8">
+        <div className="w-full space-y-4 mt-8">
+          {/* Twilio Media Streams box */}
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm">
             <div className="flex items-start gap-2">
               <Server className="h-4 w-4 mt-0.5 text-blue-500" />
@@ -343,6 +344,26 @@ const PhoneAgent: React.FC<PhoneAgentProps> = ({
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Call center box */}
+          <div className="text-center p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
+            <h3 className="text-2xl font-semibold text-blue-900">
+              {language === 'ja' ? '24時間対応コールセンター' : '24-Hour Call Center'}
+            </h3>
+            <p className="text-slate-600 mt-3 mb-5">
+              {language === 'ja' 
+                ? 'AIスタッフがお電話でサポートいたします。' 
+                : 'Our AI staff will assist you by phone.'}
+            </p>
+            <div className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pt-2">
+              {phoneNumber}
+            </div>
+            <p className="text-sm text-slate-500 mt-1">
+              {language === 'ja' 
+                ? '(24時間・年中無休)' 
+                : '(24 hours, 365 days)'}
+            </p>
           </div>
         </div>
       )}
