@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -14,9 +13,6 @@ import { toast } from 'sonner';
 const hotelInfoSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
-  }),
-  description: z.string().min(10, {
-    message: "Description must be at least 10 characters.",
   }),
   address: z.string().min(5, {
     message: "Address must be at least 5 characters."
@@ -36,7 +32,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
     resolver: zodResolver(hotelInfoSchema),
     defaultValues: {
       name: "",
-      description: "",
       address: "",
       phoneNumber: "",
     },
@@ -50,7 +45,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
         const parsedInfo = JSON.parse(savedHotelInfo);
         form.reset({
           name: parsedInfo.name || "",
-          description: parsedInfo.description || "",
           address: parsedInfo.address || "",
           phoneNumber: parsedInfo.phoneNumber || "",
         });
@@ -75,10 +69,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
     name: {
       ja: 'ホテル名',
       en: 'Hotel Name'
-    },
-    description: {
-      ja: '説明',
-      en: 'Description'
     },
     address: {
       ja: '住所',
@@ -105,24 +95,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
               <FormLabel>{translations.name[language]}</FormLabel>
               <FormControl>
                 <Input placeholder={language === 'ja' ? 'ホテル名を入力' : 'Enter hotel name'} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{translations.description[language]}</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder={language === 'ja' ? 'ホテルの説明を入力' : 'Enter hotel description'} 
-                  className="min-h-32" 
-                  {...field} 
-                />
               </FormControl>
               <FormMessage />
             </FormItem>
