@@ -3,13 +3,12 @@ import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { AmenityBadges } from './AmenityBadges';
 
 // Define the schema for the hotel import form
 const hotelInfoSchema = z.object({
@@ -22,7 +21,6 @@ const hotelInfoSchema = z.object({
   address: z.string().min(5, {
     message: "Address must be at least 5 characters."
   }),
-  amenities: z.string().optional(),
   phoneNumber: z.string().optional(),
 });
 
@@ -33,8 +31,6 @@ interface HotelInfoFormProps {
 }
 
 export function HotelInfoForm({ language }: HotelInfoFormProps) {
-  const [amenityList, setAmenityList] = React.useState<string[]>([]);
-  
   // Hotel info form
   const form = useForm<HotelInfoFormValues>({
     resolver: zodResolver(hotelInfoSchema),
@@ -42,7 +38,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       name: "",
       description: "",
       address: "",
-      amenities: "",
       phoneNumber: "",
     },
   });
@@ -53,16 +48,12 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       const savedHotelInfo = localStorage.getItem('hotelInfo');
       if (savedHotelInfo) {
         const parsedInfo = JSON.parse(savedHotelInfo);
-        form.reset(parsedInfo);
-        
-        // Extract amenities from saved data if available
-        if (parsedInfo.amenities) {
-          const savedAmenities = parsedInfo.amenities
-            .split(',')
-            .map((item: string) => item.trim())
-            .filter((item: string) => item.length > 0);
-          setAmenityList(savedAmenities);
-        }
+        form.reset({
+          name: parsedInfo.name || "",
+          description: parsedInfo.description || "",
+          address: parsedInfo.address || "",
+          phoneNumber: parsedInfo.phoneNumber || "",
+        });
       }
     } catch (error) {
       console.error('Failed to load hotel info:', error);
@@ -70,50 +61,13 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
   }, []);
 
   const onSubmit = (data: HotelInfoFormValues) => {
-    // Combine amenities from the list and any new ones from the input
-    const newAmenities = data.amenities
-      ? [...amenityList, ...data.amenities.split(',').map(item => item.trim()).filter(item => item.length > 0)]
-      : amenityList;
-    
-    // Remove duplicates
-    const uniqueAmenities = [...new Set(newAmenities)];
-    setAmenityList(uniqueAmenities);
-    
-    // Update the data with the combined amenities
-    const updatedData = {
-      ...data,
-      amenities: uniqueAmenities.join(', ')
-    };
-    
     // Save hotel info to localStorage for integration with CustomerSupport
     try {
-      localStorage.setItem('hotelInfo', JSON.stringify(updatedData));
+      localStorage.setItem('hotelInfo', JSON.stringify(data));
       toast.success(language === 'ja' ? 'ホテル情報が保存されました' : 'Hotel information saved');
-      
-      // Clear the amenities input field
-      form.setValue('amenities', '');
     } catch (error) {
       toast.error(language === 'ja' ? '保存に失敗しました' : 'Failed to save hotel information');
       console.error("Save error:", error);
-    }
-  };
-
-  const handleDeleteAmenity = (amenityToDelete: string) => {
-    const updatedAmenities = amenityList.filter(amenity => amenity !== amenityToDelete);
-    setAmenityList(updatedAmenities);
-    
-    // Update the form and localStorage
-    const updatedData = {
-      ...form.getValues(),
-      amenities: updatedAmenities.join(', ')
-    };
-    
-    try {
-      localStorage.setItem('hotelInfo', JSON.stringify(updatedData));
-      toast.success(language === 'ja' ? '設備・サービスが削除されました' : 'Amenity removed');
-    } catch (error) {
-      toast.error(language === 'ja' ? '削除に失敗しました' : 'Failed to remove amenity');
-      console.error("Delete error:", error);
     }
   };
 
@@ -129,10 +83,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
     address: {
       ja: '住所',
       en: 'Address'
-    },
-    amenities: {
-      ja: '設備・サービス',
-      en: 'Amenities'
     },
     phoneNumber: {
       ja: '電話番号',
@@ -202,34 +152,6 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
               <FormControl>
                 <Input placeholder={language === 'ja' ? '電話番号を入力' : 'Enter phone number'} {...field} />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <AmenityBadges 
-          amenityList={amenityList} 
-          onDelete={handleDeleteAmenity} 
-          language={language} 
-        />
-        
-        <FormField
-          control={form.control}
-          name="amenities"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{translations.amenities[language]}</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder={language === 'ja' ? '設備・サービスを入力（コンマ区切り）' : 'Enter amenities (comma separated)'} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormDescription>
-                {language === 'ja' 
-                  ? '例: Wi-Fi, 朝食付き, スパ, プール, レストラン' 
-                  : 'Example: Wi-Fi, Breakfast included, Spa, Pool, Restaurant'}
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
