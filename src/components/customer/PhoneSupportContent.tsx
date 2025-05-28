@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, ServerIcon } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import PhoneAgent from './PhoneAgent';
 import { HotelInfo } from './HotelInfoDisplay';
@@ -26,14 +26,6 @@ const PhoneSupportContent: React.FC<PhoneSupportContentProps> = ({
     phoneSupport: {
       ja: '電話サポート',
       en: 'Phone Support'
-    },
-    twilioEnabled: {
-      ja: 'Twilio AIボイスアシスタントが有効です',
-      en: 'Twilio AI Voice Assistant is enabled'
-    },
-    twilioDescription: {
-      ja: 'この電話番号に掛けると、AIアシスタントが自動で応答します',
-      en: 'When you call this number, our AI assistant will automatically respond'
     }
   };
 
@@ -52,20 +44,6 @@ const PhoneSupportContent: React.FC<PhoneSupportContentProps> = ({
             phoneNumber={hotelInfo.phoneNumber}
             hotelAddress={getLocalizedAddress()} 
           />
-          
-          {isTwilioEnabled && (
-            <div className="mt-8 rounded-xl border border-emerald-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 text-emerald-800">
-                <h4 className="font-semibold flex items-center gap-2 mb-3">
-                  <ServerIcon className="h-5 w-5 text-emerald-500" />
-                  {translations.twilioEnabled[language]}
-                </h4>
-                <p className="text-emerald-700">
-                  {translations.twilioDescription[language]}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
