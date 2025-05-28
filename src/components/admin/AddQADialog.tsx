@@ -12,6 +12,7 @@ import { QA } from './types';
 
 // Define the schema for QA import form
 const qaSchema = z.object({
+  category: z.string().optional(),
   question: z.string().min(5, {
     message: "Question must be at least 5 characters.",
   }),
@@ -33,6 +34,7 @@ interface AddQADialogProps {
       add: { ja: string; en: string };
       cancel: { ja: string; en: string };
     };
+    category: { ja: string; en: string };
     question: { ja: string; en: string };
     answer: { ja: string; en: string };
   };
@@ -43,6 +45,7 @@ export function AddQADialog({ isOpen, onOpenChange, onAddQA, translations, langu
   const form = useForm<QAFormValues>({
     resolver: zodResolver(qaSchema),
     defaultValues: {
+      category: "",
       question: "",
       answer: "",
     },
@@ -65,6 +68,20 @@ export function AddQADialog({ isOpen, onOpenChange, onAddQA, translations, langu
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{translations.category[language]}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={language === 'ja' ? 'カテゴリを入力（任意）' : 'Enter category (optional)'} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
             <FormField
               control={form.control}
               name="question"

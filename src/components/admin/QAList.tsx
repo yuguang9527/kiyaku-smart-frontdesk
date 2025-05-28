@@ -9,6 +9,7 @@ interface QAListProps {
   qaList: QA[];
   onEdit: (index: number, qa: QA) => void;
   translations: {
+    category: { ja: string; en: string };
     question: { ja: string; en: string };
     answer: { ja: string; en: string };
     actions: { ja: string; en: string };
@@ -24,6 +25,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{translations.category[language]}</TableHead>
             <TableHead>{translations.question[language]}</TableHead>
             <TableHead>{translations.answer[language]}</TableHead>
             <TableHead className="w-24">{translations.actions[language]}</TableHead>
@@ -33,6 +35,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
           {qaList.length > 0 ? (
             qaList.map((qa, index) => (
               <TableRow key={index}>
+                <TableCell className="font-medium">{qa.category || 'カテゴリなし'}</TableCell>
                 <TableCell className="font-medium">{qa.question}</TableCell>
                 <TableCell>{qa.answer.length > 50 ? `${qa.answer.slice(0, 50)}...` : qa.answer}</TableCell>
                 <TableCell>
@@ -50,7 +53,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
+              <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
                 {translations.noData[language]}
               </TableCell>
             </TableRow>

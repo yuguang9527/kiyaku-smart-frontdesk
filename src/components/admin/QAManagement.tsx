@@ -37,6 +37,10 @@ export function QAManagement({ language }: QAManagementProps) {
         ja: '一括インポート',
         en: 'Bulk Import'
       },
+      category: {
+        ja: 'カテゴリー',
+        en: 'Category'
+      },
       question: {
         ja: '質問',
         en: 'Question'
@@ -111,6 +115,7 @@ export function QAManagement({ language }: QAManagementProps) {
   const handleAddQA = (data: QAFormValues) => {
     // Ensure data matches QA interface
     const newQA: QA = {
+      category: data.category,
       question: data.question,
       answer: data.answer
     };
@@ -128,6 +133,7 @@ export function QAManagement({ language }: QAManagementProps) {
     if (editingIndex !== null) {
       const updatedQAList = [...qaList];
       updatedQAList[editingIndex] = {
+        category: data.category,
         question: data.question,
         answer: data.answer
       };

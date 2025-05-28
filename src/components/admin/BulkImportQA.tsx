@@ -92,7 +92,7 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
           const answer = columns[2]?.trim();
           
           if (question && answer && category !== 'カテゴリ') { // ヘッダー行をスキップ
-            newQAs.push({ question, answer });
+            newQAs.push({ category, question, answer });
           }
         }
       }
