@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, FileExport } from 'lucide-react';
 import { toast } from 'sonner';
 import { AddQADialog, QAFormValues } from './AddQADialog';
 import { EditQADialog, EditQAFormValues } from './EditQADialog';
@@ -32,6 +32,10 @@ export function QAManagement({ language }: QAManagementProps) {
       addNew: {
         ja: '質問を追加',
         en: 'Add Question'
+      },
+      export: {
+        ja: 'エクスポート',
+        en: 'Export'
       },
       import: {
         ja: '一括インポート',
@@ -148,6 +152,38 @@ export function QAManagement({ language }: QAManagementProps) {
     toast.success(`${newQAs.length} ${language === 'ja' ? '件のQ&Aをインポートしました' : 'Q&As imported successfully'}`);
   };
 
+  const handleExportToExcel = () => {
+    if (qaList.length === 0) {
+      toast.error(language === 'ja' ? 'エクスポートするデータがありません' : 'No data to export');
+      return;
+    }
+
+    // Create CSV content
+    const headers = ['No', 'Category', 'Question', 'Answer'];
+    const csvContent = [
+      headers.join(','),
+      ...qaList.map((qa, index) => [
+        index + 1,
+        `"${(qa.category || (language === 'ja' ? 'カテゴリなし' : 'No Category')).replace(/"/g, '""')}"`,
+        `"${qa.question.replace(/"/g, '""')}"`,
+        `"${qa.answer.replace(/"/g, '""')}"`
+      ].join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `qa-list-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast.success(language === 'ja' ? 'Q&Aリストをエクスポートしました' : 'Q&A list exported successfully');
+  };
+
   const editingQA = editingIndex !== null ? qaList[editingIndex] : undefined;
 
   return (
@@ -163,10 +199,16 @@ export function QAManagement({ language }: QAManagementProps) {
                 : 'Manage frequently asked questions and answers'}
             </CardDescription>
           </div>
-          <Button variant="outline" onClick={() => setIsAddQADialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            {translations.qa.addNew[language]}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleExportToExcel}>
+              <FileExport className="h-4 w-4 mr-2" />
+              {translations.qa.export[language]}
+            </Button>
+            <Button variant="outline" onClick={() => setIsAddQADialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              {translations.qa.addNew[language]}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
