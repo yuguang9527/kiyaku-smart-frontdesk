@@ -25,7 +25,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-16">#</TableHead>
+            <TableHead className="w-16">No</TableHead>
             <TableHead>{translations.category[language]}</TableHead>
             <TableHead>{translations.question[language]}</TableHead>
             <TableHead>{translations.answer[language]}</TableHead>
