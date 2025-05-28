@@ -25,6 +25,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-16">#</TableHead>
             <TableHead>{translations.category[language]}</TableHead>
             <TableHead>{translations.question[language]}</TableHead>
             <TableHead>{translations.answer[language]}</TableHead>
@@ -35,6 +36,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
           {qaList.length > 0 ? (
             qaList.map((qa, index) => (
               <TableRow key={index}>
+                <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
                 <TableCell className="font-medium">{qa.category || 'カテゴリなし'}</TableCell>
                 <TableCell className="font-medium">{qa.question}</TableCell>
                 <TableCell>{qa.answer.length > 50 ? `${qa.answer.slice(0, 50)}...` : qa.answer}</TableCell>
@@ -53,7 +55,7 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+              <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
                 {translations.noData[language]}
               </TableCell>
             </TableRow>
