@@ -2,21 +2,23 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { FileText } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { QA } from './types';
 
 interface QAListProps {
   qaList: QA[];
+  onEdit: (index: number, qa: QA) => void;
   translations: {
     question: { ja: string; en: string };
     answer: { ja: string; en: string };
     actions: { ja: string; en: string };
     noData: { ja: string; en: string };
+    edit: { ja: string; en: string };
   };
   language: 'en' | 'ja';
 }
 
-export function QAList({ qaList, translations, language }: QAListProps) {
+export function QAList({ qaList, onEdit, translations, language }: QAListProps) {
   return (
     <div className="border rounded-md">
       <Table>
@@ -34,9 +36,14 @@ export function QAList({ qaList, translations, language }: QAListProps) {
                 <TableCell className="font-medium">{qa.question}</TableCell>
                 <TableCell>{qa.answer.length > 50 ? `${qa.answer.slice(0, 50)}...` : qa.answer}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <span className="sr-only">Edit</span>
-                    <FileText className="h-4 w-4" />
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0"
+                    onClick={() => onEdit(index, qa)}
+                  >
+                    <span className="sr-only">{translations.edit[language]}</span>
+                    <Edit className="h-4 w-4" />
                   </Button>
                 </TableCell>
               </TableRow>

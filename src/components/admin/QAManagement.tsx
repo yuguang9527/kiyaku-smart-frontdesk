@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { AddQADialog, QAFormValues } from './AddQADialog';
+import { EditQADialog, EditQAFormValues } from './EditQADialog';
 import { QAList } from './QAList';
 import { BulkImportQA } from './BulkImportQA';
 import { QA } from './types';
@@ -16,6 +17,8 @@ interface QAManagementProps {
 
 export function QAManagement({ language }: QAManagementProps) {
   const [isAddQADialogOpen, setIsAddQADialogOpen] = useState(false);
+  const [isEditQADialogOpen, setIsEditQADialogOpen] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [qaList, setQAList] = useState<QA[]>([]);
   
   const translations = {
@@ -45,6 +48,10 @@ export function QAManagement({ language }: QAManagementProps) {
       actions: {
         ja: '操作',
         en: 'Actions'
+      },
+      edit: {
+        ja: '変更',
+        en: 'Edit'
       },
       bulkImportLabel: {
         ja: 'Q&Aを一括インポート（質問と回答を改行で区切ってください）',
@@ -76,6 +83,24 @@ export function QAManagement({ language }: QAManagementProps) {
           en: 'Cancel'
         }
       },
+      editDialog: {
+        title: {
+          ja: '質問と回答を変更',
+          en: 'Edit Question and Answer'
+        },
+        description: {
+          ja: '質問と回答を編集します',
+          en: 'Edit the question and answer'
+        },
+        save: {
+          ja: '保存',
+          en: 'Save'
+        },
+        cancel: {
+          ja: 'キャンセル',
+          en: 'Cancel'
+        }
+      },
       noData: {
         ja: '質問と回答がありません',
         en: 'No questions and answers available'
@@ -94,10 +119,30 @@ export function QAManagement({ language }: QAManagementProps) {
     toast.success(language === 'ja' ? '質問と回答が追加されました' : 'Question and answer added');
   };
 
+  const handleEditQA = (index: number, qa: QA) => {
+    setEditingIndex(index);
+    setIsEditQADialogOpen(true);
+  };
+
+  const handleSaveEdit = (data: EditQAFormValues) => {
+    if (editingIndex !== null) {
+      const updatedQAList = [...qaList];
+      updatedQAList[editingIndex] = {
+        question: data.question,
+        answer: data.answer
+      };
+      setQAList(updatedQAList);
+      setEditingIndex(null);
+      toast.success(language === 'ja' ? '質問と回答が更新されました' : 'Question and answer updated');
+    }
+  };
+
   const handleBulkImport = (newQAs: QA[]) => {
     setQAList([...qaList, ...newQAs]);
     toast.success(`${newQAs.length} ${language === 'ja' ? '件のQ&Aをインポートしました' : 'Q&As imported successfully'}`);
   };
+
+  const editingQA = editingIndex !== null ? qaList[editingIndex] : undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -131,6 +176,7 @@ export function QAManagement({ language }: QAManagementProps) {
           
           <QAList 
             qaList={qaList} 
+            onEdit={handleEditQA}
             translations={translations.qa} 
             language={language} 
           />
@@ -149,6 +195,16 @@ export function QAManagement({ language }: QAManagementProps) {
         isOpen={isAddQADialogOpen}
         onOpenChange={setIsAddQADialogOpen}
         onAddQA={handleAddQA}
+        translations={translations.qa}
+        language={language}
+      />
+
+      {/* Edit QA Dialog */}
+      <EditQADialog
+        isOpen={isEditQADialogOpen}
+        onOpenChange={setIsEditQADialogOpen}
+        onSave={handleSaveEdit}
+        initialData={editingQA}
         translations={translations.qa}
         language={language}
       />
