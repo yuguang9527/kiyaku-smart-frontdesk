@@ -4,8 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, ServerIcon } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import PhoneAgent from './PhoneAgent';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import { HotelInfo } from './HotelInfoDisplay';
 
 interface PhoneSupportContentProps {
@@ -36,10 +34,6 @@ const PhoneSupportContent: React.FC<PhoneSupportContentProps> = ({
     twilioDescription: {
       ja: 'この電話番号に掛けると、AIアシスタントが自動で応答します',
       en: 'When you call this number, our AI assistant will automatically respond'
-    },
-    twilioSetup: {
-      ja: 'Twilio設定を管理',
-      en: 'Manage Twilio Settings'
     }
   };
 
@@ -69,15 +63,6 @@ const PhoneSupportContent: React.FC<PhoneSupportContentProps> = ({
                 <p className="text-emerald-700">
                   {translations.twilioDescription[language]}
                 </p>
-              </div>
-              
-              <div className="flex justify-center p-4 bg-white">
-                <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" asChild>
-                  <Link to="/admin/twilio">
-                    <ServerIcon className="mr-2 h-4 w-4" />
-                    {translations.twilioSetup[language]}
-                  </Link>
-                </Button>
               </div>
             </div>
           )}
