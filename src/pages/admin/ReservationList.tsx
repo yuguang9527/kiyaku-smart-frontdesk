@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Filter, Calendar, Users, Eye, Edit } from 'lucide-react';
+import { Search, Filter, Calendar, Users, Eye, Edit, Download } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { recentReservations } from '@/data/reservations';
+import { exportReservationsToCSV } from '@/utils/exportReservations';
 import ReservationCard from '@/components/ReservationCard';
 
 const ReservationList: React.FC = () => {
@@ -26,6 +27,14 @@ const ReservationList: React.FC = () => {
   const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
   const currentReservations = filteredReservations.slice(indexOfFirstReservation, indexOfLastReservation);
   const totalPages = Math.ceil(filteredReservations.length / reservationsPerPage);
+
+  const handleExport = () => {
+    try {
+      exportReservationsToCSV(filteredReservations, language);
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
+  };
 
   const statusConfig = {
     confirmed: { label: language === 'ja' ? '確認済み' : 'Confirmed', color: 'bg-green-100 text-green-800' },
@@ -65,6 +74,10 @@ const ReservationList: React.FC = () => {
                 <Button variant="outline" size="sm">
                   <Calendar className="h-4 w-4 mr-2" />
                   {language === 'ja' ? '日付範囲' : 'Date Range'}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleExport}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {language === 'ja' ? 'エクスポート' : 'Export'}
                 </Button>
               </div>
             </div>
