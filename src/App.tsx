@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import HotelImport from "./pages/admin/HotelImport";
 import CustomerSupport from "./pages/customer/CustomerSupport";
 import TwilioSetup from "./pages/admin/TwilioSetup";
+import ReservationList from "./pages/admin/ReservationList";
 
 // QueryClientを定数ではなく関数内で生成するように修正
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/import" element={<HotelImport />} />
                 <Route path="/admin/twilio" element={<TwilioSetup />} />
+                <Route path="/admin/reservations" element={<ReservationList />} />
                 
                 {/* Redirect root to customer by default */}
                 <Route path="/" element={<Navigate to="/customer" replace />} />
