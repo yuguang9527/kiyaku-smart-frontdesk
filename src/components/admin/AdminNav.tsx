@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, MessageSquare, Calendar, Settings, User, LogOut } from 'lucide-react';
+import { Home, Calendar, Settings, User, LogOut } from 'lucide-react';
 import HotelLogo from '../HotelLogo';
 import LanguageToggle from '../LanguageToggle';
 import { useLanguage } from '@/hooks/use-language';
@@ -10,7 +9,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 const navItems = [
   { icon: <Home className="h-5 w-5" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
-  { icon: <MessageSquare className="h-5 w-5" />, label: { en: 'Chat Logs', ja: 'チャット履歴' }, path: '/admin/chats' },
   { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
   { icon: <User className="h-5 w-5" />, label: { en: 'Users', ja: 'ユーザー' }, path: '/admin/users' },
   { icon: <Settings className="h-5 w-5" />, label: { en: 'Settings', ja: '設定' }, path: '/admin/settings' },
