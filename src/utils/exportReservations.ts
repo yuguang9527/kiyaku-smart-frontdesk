@@ -6,8 +6,8 @@ export const exportReservationsToCSV = (reservations: any[], language: 'en' | 'j
 
   // Create CSV headers based on language
   const headers = language === 'ja' 
-    ? ['No', 'ゲスト名', 'チェックイン', 'チェックアウト', '人数', '部屋タイプ', 'ステータス', '予約元']
-    : ['No', 'Guest Name', 'Check In', 'Check Out', 'Guests', 'Room Type', 'Status', 'Source'];
+    ? ['No', 'ゲスト名', 'チェックイン', 'チェックアウト', '人数', '部屋タイプ', 'ステータス']
+    : ['No', 'Guest Name', 'Check In', 'Check Out', 'Guests', 'Room Type', 'Status'];
 
   // Create CSV content
   const csvContent = [
@@ -19,8 +19,7 @@ export const exportReservationsToCSV = (reservations: any[], language: 'en' | 'j
       `"${reservation.checkOut}"`,
       reservation.guests,
       `"${reservation.roomType.replace(/"/g, '""')}"`,
-      `"${reservation.status}"`,
-      `"${reservation.source.replace(/"/g, '""')}"`
+      `"${reservation.status}"`
     ].join(','))
   ].join('\n');
 
