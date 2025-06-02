@@ -3,18 +3,20 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Users, MessageSquare } from 'lucide-react';
+import { Users, MessageSquare, Edit } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationProps } from '@/components/ReservationCard';
 
 interface ReservationTableProps {
   reservations: ReservationProps[];
   onViewHistory: (reservationId: string) => void;
+  onEditReservation?: (reservationId: string) => void;
 }
 
 const ReservationTable: React.FC<ReservationTableProps> = ({
   reservations,
-  onViewHistory
+  onViewHistory,
+  onEditReservation
 }) => {
   const { language } = useLanguage();
 
@@ -37,6 +39,7 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
             <TableHead>{language === 'ja' ? '部屋タイプ' : 'Room Type'}</TableHead>
             <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
             <TableHead>{language === 'ja' ? '対応履歴' : 'Support History'}</TableHead>
+            <TableHead>{language === 'ja' ? '編集' : 'Edit'}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,6 +68,15 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
                 >
                   <MessageSquare className="h-4 w-4 mr-1" />
                   {language === 'ja' ? '履歴' : 'History'}
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => onEditReservation?.(reservation.id)}
+                >
+                  <Edit className="h-4 w-4" />
                 </Button>
               </TableCell>
             </TableRow>

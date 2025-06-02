@@ -40,6 +40,11 @@ const ReservationList: React.FC = () => {
     setSelectedReservationId(reservationId);
   };
 
+  const handleEditReservation = (reservationId: string) => {
+    console.log('Edit reservation:', reservationId);
+    // TODO: 予約編集ダイアログを開く実装
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
@@ -70,6 +75,7 @@ const ReservationList: React.FC = () => {
             <ReservationTable
               reservations={currentReservations}
               onViewHistory={handleViewHistory}
+              onEditReservation={handleEditReservation}
             />
 
             {/* Mobile Card View */}
