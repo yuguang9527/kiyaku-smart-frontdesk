@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Users, Eye, Edit, MessageSquare } from 'lucide-react';
+import { Users, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationProps } from '@/components/ReservationCard';
 
@@ -37,7 +37,6 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
             <TableHead>{language === 'ja' ? '部屋タイプ' : 'Room Type'}</TableHead>
             <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
             <TableHead>{language === 'ja' ? '対応履歴' : 'Support History'}</TableHead>
-            <TableHead>{language === 'ja' ? '操作' : 'Actions'}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,16 +66,6 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
                   <MessageSquare className="h-4 w-4 mr-1" />
                   {language === 'ja' ? '履歴' : 'History'}
                 </Button>
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
               </TableCell>
             </TableRow>
           ))}
