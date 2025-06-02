@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Users, Clock, AlertCircle } from "lucide-react";
+import { Calendar, Users, MessageSquare, AlertCircle } from "lucide-react";
+import { useLanguage } from '@/hooks/use-language';
 
 export interface ReservationProps {
   id: string;
@@ -12,16 +14,9 @@ export interface ReservationProps {
   guests: number;
   status: 'confirmed' | 'pending' | 'cancelled' | 'checkedIn';
   roomType: string;
-  source?: string;
   notes?: string;
+  onViewHistory?: () => void;
 }
-
-const statusConfig = {
-  confirmed: { label: '確認済み', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
-  pending: { label: '保留中', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
-  cancelled: { label: 'キャンセル', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' },
-  checkedIn: { label: 'チェックイン済', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' },
-};
 
 const ReservationCard: React.FC<ReservationProps> = ({
   guestName,
@@ -30,9 +25,30 @@ const ReservationCard: React.FC<ReservationProps> = ({
   guests,
   status,
   roomType,
-  source,
-  notes
+  notes,
+  onViewHistory
 }) => {
+  const { language } = useLanguage();
+
+  const statusConfig = {
+    confirmed: { 
+      label: language === 'ja' ? '確認済み' : 'Confirmed', 
+      color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+    },
+    pending: { 
+      label: language === 'ja' ? '保留中' : 'Pending', 
+      color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' 
+    },
+    cancelled: { 
+      label: language === 'ja' ? 'キャンセル' : 'Cancelled', 
+      color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' 
+    },
+    checkedIn: { 
+      label: language === 'ja' ? 'チェックイン済' : 'Checked In', 
+      color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' 
+    },
+  };
+
   const { label, color } = statusConfig[status];
 
   return (
@@ -45,7 +61,7 @@ const ReservationCard: React.FC<ReservationProps> = ({
         <Badge className={color}>{label}</Badge>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-2 mb-2">
+        <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 opacity-70" />
             <span className="text-sm">
@@ -56,20 +72,25 @@ const ReservationCard: React.FC<ReservationProps> = ({
             <Users className="h-4 w-4 opacity-70" />
             <span className="text-sm">{guests}名</span>
           </div>
-          {source && (
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 opacity-70" />
-              <span className="text-sm">{source}</span>
-            </div>
-          )}
         </div>
         
         {notes && (
-          <div className="flex gap-2 mt-2 p-2 bg-muted rounded text-sm">
+          <div className="flex gap-2 mb-3 p-2 bg-muted rounded text-sm">
             <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
             <span>{notes}</span>
           </div>
         )}
+
+        <div className="flex justify-end">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={onViewHistory}
+          >
+            <MessageSquare className="h-4 w-4 mr-1" />
+            {language === 'ja' ? '対応履歴' : 'Support History'}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

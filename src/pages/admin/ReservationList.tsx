@@ -6,16 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Filter, Calendar, Users, Eye, Edit, Download } from 'lucide-react';
+import { Search, Filter, Calendar, Users, Eye, Edit, Download, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { recentReservations } from '@/data/reservations';
 import { exportReservationsToCSV } from '@/utils/exportReservations';
 import ReservationCard from '@/components/ReservationCard';
+import SupportHistoryDialog from '@/components/SupportHistoryDialog';
 
 const ReservationList: React.FC = () => {
   const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
   const reservationsPerPage = 10;
 
   const filteredReservations = recentReservations.filter(reservation =>
@@ -36,6 +38,10 @@ const ReservationList: React.FC = () => {
     }
   };
 
+  const handleViewHistory = (reservationId: string) => {
+    setSelectedReservationId(reservationId);
+  };
+
   const statusConfig = {
     confirmed: { label: language === 'ja' ? '確認済み' : 'Confirmed', color: 'bg-green-100 text-green-800' },
     pending: { label: language === 'ja' ? '保留中' : 'Pending', color: 'bg-yellow-100 text-yellow-800' },
@@ -51,7 +57,7 @@ const ReservationList: React.FC = () => {
             {language === 'ja' ? '予約管理' : 'Reservation Management'}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            {language === 'ja' ? 'すべての予約を管理・確認できます' : 'Manage and view all reservations'}
+            {language === 'ja' ? 'サイトからの予約を管理・確認できます' : 'Manage and view website reservations'}
           </p>
         </div>
 
@@ -107,7 +113,7 @@ const ReservationList: React.FC = () => {
                     <TableHead>{language === 'ja' ? '人数' : 'Guests'}</TableHead>
                     <TableHead>{language === 'ja' ? '部屋タイプ' : 'Room Type'}</TableHead>
                     <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
-                    <TableHead>{language === 'ja' ? '予約元' : 'Source'}</TableHead>
+                    <TableHead>{language === 'ja' ? '対応履歴' : 'Support History'}</TableHead>
                     <TableHead>{language === 'ja' ? '操作' : 'Actions'}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -129,7 +135,16 @@ const ReservationList: React.FC = () => {
                           {statusConfig[reservation.status].label}
                         </Badge>
                       </TableCell>
-                      <TableCell>{reservation.source}</TableCell>
+                      <TableCell>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewHistory(reservation.id)}
+                        >
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          {language === 'ja' ? '履歴' : 'History'}
+                        </Button>
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="sm">
@@ -149,7 +164,11 @@ const ReservationList: React.FC = () => {
             {/* Mobile Card View */}
             <div className="md:hidden space-y-4">
               {currentReservations.map((reservation) => (
-                <ReservationCard key={reservation.id} {...reservation} />
+                <ReservationCard 
+                  key={reservation.id} 
+                  {...reservation}
+                  onViewHistory={() => handleViewHistory(reservation.id)}
+                />
               ))}
             </div>
 
@@ -196,6 +215,12 @@ const ReservationList: React.FC = () => {
             )}
           </CardContent>
         </Card>
+
+        <SupportHistoryDialog 
+          reservationId={selectedReservationId}
+          isOpen={!!selectedReservationId}
+          onClose={() => setSelectedReservationId(null)}
+        />
       </div>
     </div>
   );
