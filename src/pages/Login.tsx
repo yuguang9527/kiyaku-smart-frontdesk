@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,6 +76,23 @@ const Login = () => {
       ja: '続ける',
       en: 'Continue'
     }
+  };
+
+  const handleReservationLogin = () => {
+    if (!reservationNumber.trim()) {
+      toast({
+        title: language === 'ja' ? '予約番号が必要です' : 'Reservation number required',
+        description: language === 'ja' ? '予約番号を入力してください' : 'Please enter your reservation number',
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: language === 'ja' ? 'ゲストとしてログイン' : 'Logged in as guest',
+      description: language === 'ja' ? '予約番号で確認しました' : 'Verified with reservation number',
+    });
+    navigate('/customer');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -157,7 +175,7 @@ const Login = () => {
                     </Button>
                     
                     {hasReservation && (
-                      <div className="pt-2 space-y-2 px-2">
+                      <div className="pt-2 space-y-3 px-2">
                         <Label htmlFor="reservation-number">{translations.reservationNumber[language]}</Label>
                         <div className="relative">
                           <Ticket className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -169,6 +187,13 @@ const Login = () => {
                             className="pl-10"
                           />
                         </div>
+                        <Button 
+                          type="button"
+                          onClick={handleReservationLogin}
+                          className="w-full"
+                        >
+                          {translations.login[language]}
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -185,9 +210,11 @@ const Login = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" className="w-full">
-                  {translations.continue[language]}
-                </Button>
+                {!hasReservation && (
+                  <Button type="submit" className="w-full">
+                    {translations.continue[language]}
+                  </Button>
+                )}
               </CardContent>
             </form>
           </TabsContent>
