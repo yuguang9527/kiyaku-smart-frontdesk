@@ -34,7 +34,8 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
           <TableRow>
             <TableHead>{language === 'ja' ? '予約番号' : 'Reservation No.'}</TableHead>
             <TableHead>{language === 'ja' ? 'ゲスト名' : 'Guest Name'}</TableHead>
-            <TableHead>{language === 'ja' ? 'チェックイン / チェックアウト' : 'Check In / Check Out'}</TableHead>
+            <TableHead>{language === 'ja' ? 'チェックイン' : 'Check In'}</TableHead>
+            <TableHead>{language === 'ja' ? 'チェックアウト' : 'Check Out'}</TableHead>
             <TableHead>{language === 'ja' ? '人数' : 'Guests'}</TableHead>
             <TableHead>{language === 'ja' ? '部屋タイプ' : 'Room Type'}</TableHead>
             <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
@@ -47,22 +48,8 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
             <TableRow key={reservation.id}>
               <TableCell className="font-mono text-sm">{reservation.reservationNumber}</TableCell>
               <TableCell className="font-medium">{reservation.guestName}</TableCell>
-              <TableCell>
-                <div className="flex flex-col space-y-1">
-                  <div className="text-sm">
-                    <span className="text-muted-foreground text-xs">
-                      {language === 'ja' ? 'チェックイン' : 'Check In'}
-                    </span>
-                    <div>{reservation.checkIn}</div>
-                  </div>
-                  <div className="text-sm">
-                    <span className="text-muted-foreground text-xs">
-                      {language === 'ja' ? 'チェックアウト' : 'Check Out'}
-                    </span>
-                    <div>{reservation.checkOut}</div>
-                  </div>
-                </div>
-              </TableCell>
+              <TableCell>{reservation.checkIn}</TableCell>
+              <TableCell>{reservation.checkOut}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
