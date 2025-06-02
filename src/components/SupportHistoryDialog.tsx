@@ -53,7 +53,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       timestamp: '2024-06-02 14:30',
       status: 'resolved',
       duration: '5分',
-      agent: language === 'ja' ? '田中スタッフ' : 'Staff Tanaka',
+      agent: 'AIスタッフ',
       content: language === 'ja' 
         ? 'お客様よりチェックイン時間について問い合わせがありました。通常は15:00からですが、お部屋の準備ができ次第、早めのチェックインも可能とお伝えしました。'
         : 'Guest inquired about check-in time. Standard time is 3:00 PM, but early check-in is possible if room is ready.',
@@ -68,7 +68,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       timestamp: '2024-06-01 16:45',
       status: 'resolved',
       duration: '8分',
-      agent: language === 'ja' ? '佐藤スタッフ' : 'Staff Sato',
+      agent: 'AIスタッフ',
       content: language === 'ja'
         ? 'お客様より和室の設備について詳しい質問がありました。畳の部屋、布団、座卓、お茶セット、浴衣のご用意があることをご説明しました。'
         : 'Guest asked detailed questions about Japanese room facilities. Explained about tatami room, futon, low table, tea set, and yukata availability.',
@@ -83,7 +83,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       timestamp: '2024-05-31 10:20',
       status: 'resolved',
       duration: '3分',
-      agent: language === 'ja' ? '山田スタッフ' : 'Staff Yamada',
+      agent: 'AIスタッフ',
       content: language === 'ja'
         ? 'チェックイン後に朝食オプションの追加をご希望されました。和食または洋食をお選びいただけることをご案内し、和食をご選択いただきました。'
         : 'Guest requested to add breakfast option after check-in. Offered choice between Japanese or Western breakfast, guest chose Japanese.',
