@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,10 +11,10 @@ interface ImageSelectorProps {
 }
 
 const presetImages = [
-  "/lovable-uploads/c86b6632-35eb-4b69-8e2b-bf22765dc500.png",
-  "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png", // デフォルト
-  "/lovable-uploads/54447b79-fdbc-4cda-ad2a-97268a9e606f.png",
-  "/lovable-uploads/a77ecfbc-627d-4419-a8ec-25d005f4f0cb.png"
+  "/lovable-uploads/2b5977b5-4fab-40ec-8887-acfbb79b837f.png",
+  "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png", // デフォルト
+  "/lovable-uploads/43c1a428-2e88-4cca-baad-688ad0736fc0.png",
+  "/lovable-uploads/dd9e6cd5-6322-400c-8bf9-d134bd641f13.png"
 ];
 
 export const ImageSelector: React.FC<ImageSelectorProps> = ({

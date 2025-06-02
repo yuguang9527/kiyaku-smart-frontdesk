@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -36,7 +35,7 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       name: "",
       address: "",
       phoneNumber: "",
-      agentImage: "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png", // デフォルトは2枚目の画像
+      agentImage: "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png", // デフォルトは2枚目の画像
     },
   });
 
@@ -50,7 +49,7 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
           name: parsedInfo.name || "",
           address: parsedInfo.address || "",
           phoneNumber: parsedInfo.phoneNumber || "",
-          agentImage: parsedInfo.agentImage || "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png",
+          agentImage: parsedInfo.agentImage || "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png",
         });
       }
     } catch (error) {
@@ -145,7 +144,7 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
               <FormLabel>{translations.agentImage[language]}</FormLabel>
               <FormControl>
                 <ImageSelector
-                  selectedImage={field.value || "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png"}
+                  selectedImage={field.value || "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png"}
                   onImageSelect={field.onChange}
                   language={language}
                 />
