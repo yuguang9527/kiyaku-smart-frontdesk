@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -20,16 +19,21 @@ const ReservationList: React.FC = () => {
   const { toast } = useToast();
   const [reservations, setReservations] = useState(recentReservations);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
   const [editingReservation, setEditingReservation] = useState<ReservationProps | null>(null);
   const [updateHistory, setUpdateHistory] = useState<ReservationUpdateHistory[]>([]);
   const reservationsPerPage = 10;
 
-  const filteredReservations = reservations.filter(reservation =>
-    reservation.guestName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    reservation.roomType.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredReservations = reservations.filter(reservation => {
+    const matchesSearch = reservation.guestName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reservation.roomType.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = selectedStatus === 'all' || reservation.status === selectedStatus;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const indexOfLastReservation = currentPage * reservationsPerPage;
   const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
@@ -42,6 +46,11 @@ const ReservationList: React.FC = () => {
     } catch (error) {
       console.error('Export failed:', error);
     }
+  };
+
+  const handleStatusFilter = (status: string) => {
+    setSelectedStatus(status);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleViewHistory = (reservationId: string) => {
@@ -107,14 +116,12 @@ const ReservationList: React.FC = () => {
     const changeDescription = generateChangeDescription(originalData, data, language);
     
     if (changeDescription) {
-      // 予約データを更新
       setReservations(prev => prev.map(reservation => 
         reservation.id === originalData.id 
           ? { ...reservation, ...data }
           : reservation
       ));
 
-      // 更新履歴を追加
       const newHistoryEntry: ReservationUpdateHistory = {
         id: `update-${Date.now()}`,
         reservationId: originalData.id,
@@ -157,6 +164,8 @@ const ReservationList: React.FC = () => {
             <ReservationListHeader
               totalCount={filteredReservations.length}
               onExport={handleExport}
+              selectedStatus={selectedStatus}
+              onStatusFilter={handleStatusFilter}
             />
           </div>
           <CardContent>
