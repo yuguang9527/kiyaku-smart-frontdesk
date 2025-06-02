@@ -32,6 +32,7 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{language === 'ja' ? '予約番号' : 'Reservation No.'}</TableHead>
             <TableHead>{language === 'ja' ? 'ゲスト名' : 'Guest Name'}</TableHead>
             <TableHead>{language === 'ja' ? 'チェックイン' : 'Check In'}</TableHead>
             <TableHead>{language === 'ja' ? 'チェックアウト' : 'Check Out'}</TableHead>
@@ -45,6 +46,7 @@ const ReservationTable: React.FC<ReservationTableProps> = ({
         <TableBody>
           {reservations.map((reservation) => (
             <TableRow key={reservation.id}>
+              <TableCell className="font-mono text-sm">{reservation.reservationNumber}</TableCell>
               <TableCell className="font-medium">{reservation.guestName}</TableCell>
               <TableCell>{reservation.checkIn}</TableCell>
               <TableCell>{reservation.checkOut}</TableCell>

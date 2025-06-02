@@ -3,11 +3,12 @@ import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Users, MessageSquare, AlertCircle } from "lucide-react";
+import { Calendar, Users, MessageSquare, AlertCircle, Hash } from "lucide-react";
 import { useLanguage } from '@/hooks/use-language';
 
 export interface ReservationProps {
   id: string;
+  reservationNumber: string;
   guestName: string;
   checkIn: string;
   checkOut: string;
@@ -19,6 +20,7 @@ export interface ReservationProps {
 }
 
 const ReservationCard: React.FC<ReservationProps> = ({
+  reservationNumber,
   guestName,
   checkIn,
   checkOut,
@@ -55,6 +57,10 @@ const ReservationCard: React.FC<ReservationProps> = ({
     <Card className="mb-4 hover:shadow-md transition-shadow duration-200 overflow-hidden">
       <CardHeader className="pb-2 flex flex-row items-start justify-between">
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Hash className="h-4 w-4 opacity-70" />
+            <span className="text-sm text-muted-foreground">{reservationNumber}</span>
+          </div>
           <CardTitle className="text-lg">{guestName}</CardTitle>
           <p className="text-sm text-muted-foreground">{roomType}</p>
         </div>
