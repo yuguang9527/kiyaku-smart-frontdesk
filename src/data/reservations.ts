@@ -4,6 +4,7 @@ import { ReservationProps } from "@/components/ReservationCard";
 export const recentReservations: ReservationProps[] = [
   {
     id: "res-001",
+    reservationNumber: "RSV-2025-001",
     guestName: "田中 雅子",
     checkIn: "2025/04/25",
     checkOut: "2025/04/27",
@@ -13,6 +14,7 @@ export const recentReservations: ReservationProps[] = [
   },
   {
     id: "res-002",
+    reservationNumber: "RSV-2025-002",
     guestName: "John Smith",
     checkIn: "2025/04/24",
     checkOut: "2025/04/26",
@@ -22,6 +24,7 @@ export const recentReservations: ReservationProps[] = [
   },
   {
     id: "res-003",
+    reservationNumber: "RSV-2025-003",
     guestName: "佐藤 明",
     checkIn: "2025/04/26",
     checkOut: "2025/04/28",
@@ -32,6 +35,7 @@ export const recentReservations: ReservationProps[] = [
   },
   {
     id: "res-004",
+    reservationNumber: "RSV-2025-004",
     guestName: "Zhang Wei",
     checkIn: "2025/04/28",
     checkOut: "2025/05/01",
