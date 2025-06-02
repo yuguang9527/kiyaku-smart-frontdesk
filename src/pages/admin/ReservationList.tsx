@@ -14,12 +14,18 @@ import { ReservationProps } from '@/components/ReservationCard';
 import { ReservationUpdateHistory } from '@/types/reservation';
 import { useToast } from '@/hooks/use-toast';
 
+interface DateRange {
+  from: Date | undefined;
+  to: Date | undefined;
+}
+
 const ReservationList: React.FC = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const [reservations, setReservations] = useState(recentReservations);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
   const [editingReservation, setEditingReservation] = useState<ReservationProps | null>(null);
@@ -32,7 +38,17 @@ const ReservationList: React.FC = () => {
     
     const matchesStatus = selectedStatus === 'all' || reservation.status === selectedStatus;
     
-    return matchesSearch && matchesStatus;
+    // Date range filter
+    let matchesDateRange = true;
+    if (dateRange.from && dateRange.to) {
+      const checkInDate = new Date(reservation.checkIn);
+      matchesDateRange = checkInDate >= dateRange.from && checkInDate <= dateRange.to;
+    } else if (dateRange.from) {
+      const checkInDate = new Date(reservation.checkIn);
+      matchesDateRange = checkInDate >= dateRange.from;
+    }
+    
+    return matchesSearch && matchesStatus && matchesDateRange;
   });
 
   const indexOfLastReservation = currentPage * reservationsPerPage;
@@ -50,7 +66,12 @@ const ReservationList: React.FC = () => {
 
   const handleStatusFilter = (status: string) => {
     setSelectedStatus(status);
-    setCurrentPage(1); // Reset to first page when filtering
+    setCurrentPage(1);
+  };
+
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range);
+    setCurrentPage(1);
   };
 
   const handleViewHistory = (reservationId: string) => {
@@ -166,6 +187,8 @@ const ReservationList: React.FC = () => {
               onExport={handleExport}
               selectedStatus={selectedStatus}
               onStatusFilter={handleStatusFilter}
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
             />
           </div>
           <CardContent>
