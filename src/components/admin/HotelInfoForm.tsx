@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { ImageSelector } from './ImageSelector';
 
 // Define the schema for the hotel import form
 const hotelInfoSchema = z.object({
@@ -18,6 +19,7 @@ const hotelInfoSchema = z.object({
     message: "Address must be at least 5 characters."
   }),
   phoneNumber: z.string().optional(),
+  agentImage: z.string().optional(),
 });
 
 export type HotelInfoFormValues = z.infer<typeof hotelInfoSchema>;
@@ -34,6 +36,7 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       name: "",
       address: "",
       phoneNumber: "",
+      agentImage: "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png", // デフォルトは2枚目の画像
     },
   });
 
@@ -47,6 +50,7 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
           name: parsedInfo.name || "",
           address: parsedInfo.address || "",
           phoneNumber: parsedInfo.phoneNumber || "",
+          agentImage: parsedInfo.agentImage || "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png",
         });
       }
     } catch (error) {
@@ -77,6 +81,10 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
     phoneNumber: {
       ja: '電話番号',
       en: 'Phone Number'
+    },
+    agentImage: {
+      ja: 'エージェント画像',
+      en: 'Agent Image'
     },
     save: {
       ja: '保存',
@@ -123,6 +131,24 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
               <FormLabel>{translations.phoneNumber[language]}</FormLabel>
               <FormControl>
                 <Input placeholder={language === 'ja' ? '電話番号を入力' : 'Enter phone number'} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="agentImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{translations.agentImage[language]}</FormLabel>
+              <FormControl>
+                <ImageSelector
+                  selectedImage={field.value || "/lovable-uploads/ef3d880f-d076-4c0e-b44f-c8ed98e23b0b.png"}
+                  onImageSelect={field.onChange}
+                  language={language}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
