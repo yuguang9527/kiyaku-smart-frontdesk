@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Calendar, Phone, User, Menu } from 'lucide-react';
+import { MessageSquare, Phone, User, Menu } from 'lucide-react';
 import HotelLogo from '../HotelLogo';
 import LanguageToggle from '../LanguageToggle';
 import { useLanguage } from '@/hooks/use-language';
@@ -10,7 +9,6 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { icon: <MessageSquare className="h-5 w-5" />, label: { en: 'Chat', ja: 'チャット' }, path: '/customer' },
-  { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約' }, path: '/customer/reservations' },
   { icon: <Phone className="h-5 w-5" />, label: { en: 'Call', ja: '電話' }, path: '/customer/call' },
 ];
 
