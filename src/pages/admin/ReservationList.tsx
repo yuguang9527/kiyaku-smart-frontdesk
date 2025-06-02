@@ -10,15 +10,23 @@ import ReservationListHeader from '@/components/admin/ReservationListHeader';
 import ReservationSearchBar from '@/components/admin/ReservationSearchBar';
 import ReservationTable from '@/components/admin/ReservationTable';
 import ReservationPagination from '@/components/admin/ReservationPagination';
+import { EditReservationDialog, EditReservationFormValues } from '@/components/admin/EditReservationDialog';
+import { ReservationProps } from '@/components/ReservationCard';
+import { ReservationUpdateHistory } from '@/types/reservation';
+import { useToast } from '@/hooks/use-toast';
 
 const ReservationList: React.FC = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
+  const [reservations, setReservations] = useState(recentReservations);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
+  const [editingReservation, setEditingReservation] = useState<ReservationProps | null>(null);
+  const [updateHistory, setUpdateHistory] = useState<ReservationUpdateHistory[]>([]);
   const reservationsPerPage = 10;
 
-  const filteredReservations = recentReservations.filter(reservation =>
+  const filteredReservations = reservations.filter(reservation =>
     reservation.guestName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     reservation.roomType.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -41,8 +49,95 @@ const ReservationList: React.FC = () => {
   };
 
   const handleEditReservation = (reservationId: string) => {
-    console.log('Edit reservation:', reservationId);
-    // TODO: 予約編集ダイアログを開く実装
+    const reservation = reservations.find(r => r.id === reservationId);
+    if (reservation) {
+      setEditingReservation(reservation);
+    }
+  };
+
+  const generateChangeDescription = (original: ReservationProps, updated: EditReservationFormValues, language: 'ja' | 'en'): string => {
+    const changes: string[] = [];
+    
+    if (original.guestName !== updated.guestName) {
+      changes.push(language === 'ja' 
+        ? `ゲスト名: ${original.guestName} → ${updated.guestName}`
+        : `Guest Name: ${original.guestName} → ${updated.guestName}`);
+    }
+    if (original.checkIn !== updated.checkIn) {
+      changes.push(language === 'ja' 
+        ? `チェックイン: ${original.checkIn} → ${updated.checkIn}`
+        : `Check In: ${original.checkIn} → ${updated.checkIn}`);
+    }
+    if (original.checkOut !== updated.checkOut) {
+      changes.push(language === 'ja' 
+        ? `チェックアウト: ${original.checkOut} → ${updated.checkOut}`
+        : `Check Out: ${original.checkOut} → ${updated.checkOut}`);
+    }
+    if (original.guests !== updated.guests) {
+      changes.push(language === 'ja' 
+        ? `人数: ${original.guests} → ${updated.guests}`
+        : `Guests: ${original.guests} → ${updated.guests}`);
+    }
+    if (original.roomType !== updated.roomType) {
+      changes.push(language === 'ja' 
+        ? `部屋タイプ: ${original.roomType} → ${updated.roomType}`
+        : `Room Type: ${original.roomType} → ${updated.roomType}`);
+    }
+    if (original.status !== updated.status) {
+      const statusLabels = {
+        confirmed: language === 'ja' ? '確認済み' : 'Confirmed',
+        pending: language === 'ja' ? '保留中' : 'Pending',
+        cancelled: language === 'ja' ? 'キャンセル' : 'Cancelled',
+        checkedIn: language === 'ja' ? 'チェックイン済' : 'Checked In',
+      };
+      changes.push(language === 'ja' 
+        ? `ステータス: ${statusLabels[original.status]} → ${statusLabels[updated.status]}`
+        : `Status: ${statusLabels[original.status]} → ${statusLabels[updated.status]}`);
+    }
+    if ((original.notes || '') !== (updated.notes || '')) {
+      changes.push(language === 'ja' 
+        ? `備考: ${original.notes || '(なし)'} → ${updated.notes || '(なし)'}`
+        : `Notes: ${original.notes || '(none)'} → ${updated.notes || '(none)'}`);
+    }
+
+    return changes.join(', ');
+  };
+
+  const handleSaveReservation = (data: EditReservationFormValues, originalData: ReservationProps) => {
+    const changeDescription = generateChangeDescription(originalData, data, language);
+    
+    if (changeDescription) {
+      // 予約データを更新
+      setReservations(prev => prev.map(reservation => 
+        reservation.id === originalData.id 
+          ? { ...reservation, ...data }
+          : reservation
+      ));
+
+      // 更新履歴を追加
+      const newHistoryEntry: ReservationUpdateHistory = {
+        id: `update-${Date.now()}`,
+        reservationId: originalData.id,
+        timestamp: new Date().toLocaleString('ja-JP'),
+        agent: 'AIスタッフ',
+        action: language === 'ja' ? '予約情報更新' : 'Reservation Updated',
+        changes: changeDescription
+      };
+      
+      setUpdateHistory(prev => [...prev, newHistoryEntry]);
+
+      toast({
+        title: language === 'ja' ? '予約が更新されました' : 'Reservation Updated',
+        description: language === 'ja' ? '予約情報が正常に更新されました。' : 'Reservation details have been successfully updated.',
+      });
+    } else {
+      toast({
+        title: language === 'ja' ? '変更なし' : 'No Changes',
+        description: language === 'ja' ? '変更された項目がありません。' : 'No changes were made to the reservation.',
+      });
+    }
+
+    setEditingReservation(null);
   };
 
   return (
@@ -101,6 +196,14 @@ const ReservationList: React.FC = () => {
           reservationId={selectedReservationId}
           isOpen={!!selectedReservationId}
           onClose={() => setSelectedReservationId(null)}
+          updateHistory={updateHistory}
+        />
+
+        <EditReservationDialog
+          isOpen={!!editingReservation}
+          onOpenChange={(open) => !open && setEditingReservation(null)}
+          onSave={handleSaveReservation}
+          reservation={editingReservation}
         />
       </div>
     </div>
