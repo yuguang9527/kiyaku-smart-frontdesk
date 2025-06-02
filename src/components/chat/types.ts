@@ -19,4 +19,5 @@ export interface HotelInfoProps {
 export interface ChatInterfaceProps {
   title?: string;
   hotelInfo?: HotelInfoProps;
+  reservationNumber?: string;
 }

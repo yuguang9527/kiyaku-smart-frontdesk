@@ -8,15 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Settings, Ticket } from "lucide-react";
 import HotelLogo from "@/components/HotelLogo";
 import { useLanguage } from "@/hooks/use-language";
+import { useReservation } from "@/hooks/use-reservation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { setReservationNumber } = useReservation();
   const { toast } = useToast();
   const [loginType, setLoginType] = useState<"guest" | "admin">("guest");
-  const [reservationNumber, setReservationNumber] = useState("");
+  const [reservationNumber, setLocalReservationNumber] = useState("");
   const [hasReservation, setHasReservation] = useState(true);
 
   const translations = {
@@ -88,6 +90,9 @@ const Login = () => {
       return;
     }
     
+    // Save reservation number to context
+    setReservationNumber(reservationNumber.trim());
+    
     toast({
       title: language === 'ja' ? 'ゲストとしてログイン' : 'Logged in as guest',
       description: language === 'ja' ? '予約番号で確認しました' : 'Verified with reservation number',
@@ -115,11 +120,17 @@ const Login = () => {
       }
       
       if (hasReservation) {
+        // Save reservation number to context
+        setReservationNumber(reservationNumber.trim());
+        
         toast({
           title: language === 'ja' ? 'ゲストとしてログイン' : 'Logged in as guest',
           description: language === 'ja' ? '予約番号で確認しました' : 'Verified with reservation number',
         });
       } else {
+        // Clear reservation number for guests without reservation
+        setReservationNumber(null);
+        
         toast({
           title: language === 'ja' ? 'ゲストとしてアクセス' : 'Accessing as guest',
           description: language === 'ja' ? '予約なしでアクセスします' : 'Accessing without reservation',

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
 import ChatInterface from '@/components/chat';
 import { useLanguage } from '@/hooks/use-language';
+import { useReservation } from '@/hooks/use-reservation';
 import HotelInfoDisplay, { HotelInfo } from './HotelInfoDisplay';
 
 interface ChatSupportContentProps {
@@ -14,6 +15,7 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
   hotelInfo
 }) => {
   const { language } = useLanguage();
+  const { reservationNumber } = useReservation();
 
   const translations = {
     chatAssistant: {
@@ -45,10 +47,15 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
           <ChatInterface 
             hotelInfo={{
               name: hotelInfo.name,
-              greeting: language === 'ja' 
-                ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-                : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
+              greeting: reservationNumber 
+                ? language === 'ja' 
+                  ? `お帰りなさいませ。予約番号 ${reservationNumber} でのご利用、ありがとうございます。前回の続きからお手伝いさせていただきます。` 
+                  : `Welcome back! Thank you for using reservation number ${reservationNumber}. I'll continue assisting you from where we left off.`
+                : language === 'ja' 
+                  ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
+                  : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
             }}
+            reservationNumber={reservationNumber || undefined}
           />
         </div>
       </CardContent>
