@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +49,7 @@ const TwilioSimulator: React.FC = () => {
       
       toast({
         title: "AI応答が生成されました",
-        description: "音声クエリに対するAI応答が生成されました",
+        description: "音声リクエストに対するAI応答が生成されました",
       });
     } catch (error) {
       console.error('Error generating voice response:', error);
@@ -95,7 +94,7 @@ const TwilioSimulator: React.FC = () => {
 
         <div className="space-y-2 pt-4 border-t">
           <label htmlFor="user-query" className="text-sm font-medium">
-            ユーザーの音声クエリ
+            ユーザーの音声リクエスト
           </label>
           <Textarea
             id="user-query"
@@ -128,4 +127,3 @@ const TwilioSimulator: React.FC = () => {
 };
 
 export default TwilioSimulator;
-
