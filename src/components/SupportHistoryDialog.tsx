@@ -208,7 +208,17 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
   const handleMarkComplete = () => {
     if (selectedEntry) {
-      setCompletedEntries(prev => new Set([...prev, selectedEntry]));
+      setCompletedEntries(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(selectedEntry)) {
+          // 既に完了している場合は対応中に戻す
+          newSet.delete(selectedEntry);
+        } else {
+          // 対応中の場合は完了にする
+          newSet.add(selectedEntry);
+        }
+        return newSet;
+      });
     }
   };
 
@@ -300,10 +310,12 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                 size="sm" 
                 className="flex items-center gap-2"
                 onClick={handleMarkComplete}
-                disabled={isCompleted}
               >
                 <Check className="h-4 w-4" />
-                {language === 'ja' ? '完了' : 'Complete'}
+                {isCompleted 
+                  ? (language === 'ja' ? '対応中に戻す' : 'Mark In Progress')
+                  : (language === 'ja' ? '完了' : 'Complete')
+                }
               </Button>
               <Button type="submit" size="sm" className="flex items-center gap-2">
                 <Send className="h-4 w-4" />
