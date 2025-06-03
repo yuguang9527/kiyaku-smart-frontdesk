@@ -15,6 +15,12 @@ const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
   const [agentImage, setAgentImage] = useState<string>("/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png");
+  const [hotelInfo, setHotelInfo] = useState<HotelInfo>({
+    name: 'Yotta!',
+    addressJa: '東京都新宿区スカイタワー123',
+    addressEn: '123 Sky Tower, Shinjuku, Tokyo, Japan',
+    phoneNumber: '+14788001081'
+  });
 
   // Load hotel info including agent image
   useEffect(() => {
@@ -22,27 +28,29 @@ const CustomerSupport: React.FC = () => {
       const savedHotelInfo = localStorage.getItem('hotelInfo');
       if (savedHotelInfo) {
         const parsedInfo = JSON.parse(savedHotelInfo);
+        
+        // Update agent image if available
         if (parsedInfo.agentImage) {
           setAgentImage(parsedInfo.agentImage);
         }
+
+        // Update hotel info with saved data
+        setHotelInfo({
+          name: parsedInfo.name || 'Yotta!',
+          addressJa: parsedInfo.address || '東京都新宿区スカイタワー123',
+          addressEn: parsedInfo.address || '123 Sky Tower, Shinjuku, Tokyo, Japan',
+          phoneNumber: parsedInfo.phoneNumber || '+14788001081'
+        });
       }
     } catch (error) {
       console.error('Failed to load hotel info:', error);
     }
   }, []);
 
-  // Hotel information
-  const hotelInfo: HotelInfo = {
-    name: 'Yotta!',
-    addressJa: '東京都新宿区スカイタワー123',
-    addressEn: '123 Sky Tower, Shinjuku, Tokyo, Japan',
-    phoneNumber: '+14788001081'
-  };
-
   const translations = {
     title: {
-      ja: 'Yotta!カスタマーサポート',
-      en: 'Yotta! Customer Support'
+      ja: `${hotelInfo.name}カスタマーサポート`,
+      en: `${hotelInfo.name} Customer Support`
     },
     welcome: {
       ja: 'ようこそ',
