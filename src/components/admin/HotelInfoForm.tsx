@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -11,8 +12,11 @@ import { ImageSelector } from './ImageSelector';
 
 // Define the schema for the hotel import form
 const hotelInfoSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+  nameJa: z.string().min(2, {
+    message: "Japanese name must be at least 2 characters.",
+  }),
+  nameEn: z.string().min(2, {
+    message: "English name must be at least 2 characters.",
   }),
   address: z.string().min(5, {
     message: "Address must be at least 5 characters."
@@ -32,7 +36,8 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
   const form = useForm<HotelInfoFormValues>({
     resolver: zodResolver(hotelInfoSchema),
     defaultValues: {
-      name: "",
+      nameJa: "",
+      nameEn: "",
       address: "",
       phoneNumber: "",
       agentImage: "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png", // デフォルトは2枚目の画像
@@ -46,7 +51,8 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       if (savedHotelInfo) {
         const parsedInfo = JSON.parse(savedHotelInfo);
         form.reset({
-          name: parsedInfo.name || "",
+          nameJa: parsedInfo.nameJa || parsedInfo.name || "",
+          nameEn: parsedInfo.nameEn || parsedInfo.name || "",
           address: parsedInfo.address || "",
           phoneNumber: parsedInfo.phoneNumber || "",
           agentImage: parsedInfo.agentImage || "/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png",
@@ -60,7 +66,12 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
   const onSubmit = (data: HotelInfoFormValues) => {
     // Save hotel info to localStorage for integration with CustomerSupport
     try {
-      localStorage.setItem('hotelInfo', JSON.stringify(data));
+      // 後方互換性のためにnameフィールドも保存
+      const saveData = {
+        ...data,
+        name: language === 'ja' ? data.nameJa : data.nameEn
+      };
+      localStorage.setItem('hotelInfo', JSON.stringify(saveData));
       toast.success(language === 'ja' ? 'ホテル情報が保存されました' : 'Hotel information saved');
     } catch (error) {
       toast.error(language === 'ja' ? '保存に失敗しました' : 'Failed to save hotel information');
@@ -69,9 +80,13 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
   };
 
   const translations = {
-    name: {
-      ja: 'ホテル名',
-      en: 'Hotel Name'
+    nameJa: {
+      ja: 'ホテル名（日本語）',
+      en: 'Hotel Name (Japanese)'
+    },
+    nameEn: {
+      ja: 'ホテル名（英語）',
+      en: 'Hotel Name (English)'
     },
     address: {
       ja: '住所',
@@ -96,12 +111,26 @@ export function HotelInfoForm({ language }: HotelInfoFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="name"
+          name="nameJa"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{translations.name[language]}</FormLabel>
+              <FormLabel>{translations.nameJa[language]}</FormLabel>
               <FormControl>
-                <Input placeholder={language === 'ja' ? 'ホテル名を入力' : 'Enter hotel name'} {...field} />
+                <Input placeholder={language === 'ja' ? 'ホテル名を日本語で入力' : 'Enter hotel name in Japanese'} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="nameEn"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{translations.nameEn[language]}</FormLabel>
+              <FormControl>
+                <Input placeholder={language === 'ja' ? 'ホテル名を英語で入力' : 'Enter hotel name in English'} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
