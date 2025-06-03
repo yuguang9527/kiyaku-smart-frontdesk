@@ -24,9 +24,13 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
     }
   };
 
-  // Helper function to get localized address
-  const getLocalizedAddress = () => {
-    return language === 'ja' ? hotelInfo.addressJa : hotelInfo.addressEn;
+  // Get localized hotel name based on current language
+  const getLocalizedHotelName = () => {
+    if (language === 'ja') {
+      return hotelInfo.nameJa || hotelInfo.name || '';
+    } else {
+      return hotelInfo.nameEn || hotelInfo.name || '';
+    }
   };
 
   return (
@@ -46,14 +50,14 @@ const ChatSupportContent: React.FC<ChatSupportContentProps> = ({
           
           <ChatInterface 
             hotelInfo={{
-              name: hotelInfo.name,
+              name: getLocalizedHotelName(),
               greeting: reservationNumber 
                 ? language === 'ja' 
                   ? `お帰りなさいませ。予約番号 ${reservationNumber} でのご利用、ありがとうございます。前回の続きからお手伝いさせていただきます。` 
                   : `Welcome back! Thank you for using reservation number ${reservationNumber}. I'll continue assisting you from where we left off.`
                 : language === 'ja' 
                   ? 'いらっしゃいませ。ご質問があればお気軽にどうぞ。' 
-                  : 'Welcome to ' + hotelInfo.name + '. How may I assist you today?'
+                  : 'Welcome to ' + getLocalizedHotelName() + '. How may I assist you today?'
             }}
             reservationNumber={reservationNumber || undefined}
           />

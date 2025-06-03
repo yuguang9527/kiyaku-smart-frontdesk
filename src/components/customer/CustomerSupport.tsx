@@ -16,7 +16,8 @@ const CustomerSupport: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
   const [agentImage, setAgentImage] = useState<string>("/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png");
   const [hotelInfo, setHotelInfo] = useState<HotelInfo>({
-    name: 'Yotta!',
+    nameJa: 'Yotta!',
+    nameEn: 'Yotta!',
     addressJa: '東京都新宿区スカイタワー123',
     addressEn: '123 Sky Tower, Shinjuku, Tokyo, Japan',
     phoneNumber: '+14788001081'
@@ -34,9 +35,10 @@ const CustomerSupport: React.FC = () => {
           setAgentImage(parsedInfo.agentImage);
         }
 
-        // Update hotel info with saved data
+        // Update hotel info with saved data, handling both old and new format
         setHotelInfo({
-          name: parsedInfo.name || 'Yotta!',
+          nameJa: parsedInfo.nameJa || parsedInfo.name || 'Yotta!',
+          nameEn: parsedInfo.nameEn || parsedInfo.name || 'Yotta!',
           addressJa: parsedInfo.address || '東京都新宿区スカイタワー123',
           addressEn: parsedInfo.address || '123 Sky Tower, Shinjuku, Tokyo, Japan',
           phoneNumber: parsedInfo.phoneNumber || '+14788001081'
@@ -47,10 +49,15 @@ const CustomerSupport: React.FC = () => {
     }
   }, []);
 
+  // Get localized hotel name based on current language
+  const getLocalizedHotelName = () => {
+    return language === 'ja' ? hotelInfo.nameJa : hotelInfo.nameEn;
+  };
+
   const translations = {
     title: {
-      ja: `${hotelInfo.name}カスタマーサポート`,
-      en: `${hotelInfo.name} Customer Support`
+      ja: `${getLocalizedHotelName()}カスタマーサポート`,
+      en: `${getLocalizedHotelName()} Customer Support`
     },
     welcome: {
       ja: 'ようこそ',
