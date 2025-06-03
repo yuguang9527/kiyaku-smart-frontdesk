@@ -2,17 +2,13 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { MessageSquare, Clock, User, ChevronRight, ArrowLeft, Send, Check } from 'lucide-react';
+import { MessageSquare, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationUpdateHistory } from '@/types/reservation';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import ChatBubble from '@/components/ChatBubble';
 import { chatHistoryService } from '@/services/chatHistory';
+import SupportHistoryList from '@/components/SupportHistoryList';
+import ChatView from '@/components/ChatView';
 
 interface SupportHistoryDialogProps {
   reservationId: string | null;
@@ -35,12 +31,6 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [completedEntries, setCompletedEntries] = useState<Set<string>>(new Set());
-
-  const form = useForm<CommentForm>({
-    defaultValues: {
-      comment: ''
-    }
-  });
 
   const supportHistory = [
     {
@@ -183,13 +173,11 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     setSelectedEntry(entryId);
     const messages = getChatHistory(entryId);
     setChatMessages(messages || []);
-    form.reset();
   };
 
   const handleBackToList = () => {
     setSelectedEntry(null);
     setChatMessages([]);
-    form.reset();
   };
 
   const onSubmitComment = (data: CommentForm) => {
@@ -204,7 +192,6 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     };
 
     setChatMessages(prev => [...prev, newComment]);
-    form.reset();
   };
 
   const handleMarkComplete = () => {
@@ -212,10 +199,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       setCompletedEntries(prev => {
         const newSet = new Set(prev);
         if (newSet.has(selectedEntry)) {
-          // 既に完了している場合は対応中に戻す
           newSet.delete(selectedEntry);
         } else {
-          // 対応中の場合は完了にする
           newSet.add(selectedEntry);
         }
         return newSet;
@@ -224,7 +209,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   };
 
   const handleToggleEntryStatus = (entryId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // クリックイベントがエントリクリックに伝播しないように
+    event.stopPropagation();
     setCompletedEntries(prev => {
       const newSet = new Set(prev);
       if (newSet.has(entryId)) {
@@ -240,177 +225,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     return completedEntries.has(entryId);
   };
 
-  const renderChatView = () => {
-    if (!selectedEntry) return null;
-
-    const entry = combinedHistory.find(e => e.id === selectedEntry);
-    const isCompleted = isEntryCompleted(selectedEntry);
-
-    if (!chatMessages || chatMessages.length === 0) {
-      return (
-        <div className="text-center text-muted-foreground py-8">
-          {language === 'ja' ? 'チャット履歴がありません' : 'No chat history available'}
-        </div>
-      );
-    }
-
-    return (
-      <div className="h-full flex flex-col">
-        <div className="mb-4 pb-4 border-b">
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium">{entry?.action}</h4>
-                <p className="text-sm text-muted-foreground">{entry?.timestamp}</p>
-              </div>
-              <Badge 
-                variant={isCompleted ? "default" : "secondary"}
-                className={isCompleted ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
-              >
-                {isCompleted 
-                  ? (language === 'ja' ? '完了' : 'Completed')
-                  : (language === 'ja' ? '対応中' : 'In Progress')
-                }
-              </Badge>
-            </div>
-          </div>
-        </div>
-        
-        <ScrollArea className="flex-1 h-[200px]">
-          <div className="space-y-4 pr-4">
-            {chatMessages.map((message: any) => (
-              <div key={message.id}>
-                <ChatBubble
-                  message={message.content}
-                  isUser={message.isUser}
-                  timestamp={message.timestamp}
-                />
-                {message.isHotelComment && (
-                  <div className="text-xs text-blue-600 ml-4 mt-1">
-                    {language === 'ja' ? 'ホテルスタッフコメント' : 'Hotel Staff Comment'}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-
-        <Separator className="my-4" />
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitComment)} className="space-y-3">
-            <FormField
-              control={form.control}
-              name="comment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    {language === 'ja' ? 'ホテルスタッフコメント' : 'Hotel Staff Comment'}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={language === 'ja' ? 'コメントを入力してください...' : 'Enter your comment...'}
-                      className="min-h-[60px] resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-2">
-              <Button 
-                type="button" 
-                variant="outline"
-                size="sm" 
-                className="flex items-center gap-2"
-                onClick={handleMarkComplete}
-              >
-                <Check className="h-4 w-4" />
-                {isCompleted 
-                  ? (language === 'ja' ? '対応中に戻す' : 'Mark In Progress')
-                  : (language === 'ja' ? '完了' : 'Complete')
-                }
-              </Button>
-              <Button type="submit" size="sm" className="flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                {language === 'ja' ? 'コメント追加' : 'Add Comment'}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    );
-  };
-
-  const renderHistoryList = () => (
-    <ScrollArea className="h-[400px] pr-4">
-      <div className="space-y-4">
-        {combinedHistory.length > 0 ? (
-          combinedHistory.map((entry, index) => (
-            <div key={entry.id} className="space-y-2">
-              <div 
-                className={`cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors ${
-                  'hasChat' in entry && entry.hasChat ? '' : 'cursor-default'
-                }`}
-                onClick={() => 'hasChat' in entry && entry.hasChat ? handleEntryClick(entry.id) : undefined}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      {entry.timestamp}
-                    </span>
-                    {'hasChat' in entry && entry.hasChat && (
-                      <Badge variant="secondary" className="text-xs">
-                        {language === 'ja' ? 'チャット詳細あり' : 'Chat Available'}
-                      </Badge>
-                    )}
-                    <Button
-                      variant={isEntryCompleted(entry.id) ? "default" : "outline"}
-                      size="sm"
-                      className={`text-xs h-6 px-2 ${
-                        isEntryCompleted(entry.id) 
-                          ? "bg-green-100 text-green-800 hover:bg-green-200" 
-                          : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                      }`}
-                      onClick={(e) => handleToggleEntryStatus(entry.id, e)}
-                    >
-                      {isEntryCompleted(entry.id) 
-                        ? (language === 'ja' ? '完了' : 'Completed')
-                        : (language === 'ja' ? '対応中' : 'In Progress')
-                      }
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{entry.agent}</span>
-                    {'hasChat' in entry && entry.hasChat && (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </div>
-                </div>
-                
-                <div className="ml-6">
-                  <h4 className="font-medium text-sm">{entry.action}</h4>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {entry.details}
-                  </p>
-                </div>
-              </div>
-              
-              {index < combinedHistory.length - 1 && (
-                <Separator className="mt-4" />
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="text-center text-muted-foreground py-8">
-            {language === 'ja' ? '対応履歴がありません' : 'No support history available'}
-          </div>
-        )}
-      </div>
-    </ScrollArea>
-  );
+  const selectedEntryData = combinedHistory.find(e => e.id === selectedEntry);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -445,7 +260,22 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
-          {selectedEntry ? renderChatView() : renderHistoryList()}
+          {selectedEntry ? (
+            <ChatView
+              entry={selectedEntryData}
+              messages={chatMessages}
+              isCompleted={isEntryCompleted(selectedEntry)}
+              onSubmitComment={onSubmitComment}
+              onMarkComplete={handleMarkComplete}
+            />
+          ) : (
+            <SupportHistoryList
+              history={combinedHistory}
+              completedEntries={completedEntries}
+              onEntryClick={handleEntryClick}
+              onToggleEntryStatus={handleToggleEntryStatus}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
