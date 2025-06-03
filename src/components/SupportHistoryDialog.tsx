@@ -231,7 +231,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="flex-1 h-[400px]">
+        <ScrollArea className="flex-1 h-[200px]">
           <div className="space-y-4 pr-4">
             {chatMessages.map((message: any) => (
               <div key={message.id}>
@@ -341,7 +341,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl h-[600px] flex flex-col">
+      <DialogContent className="max-w-2xl h-[500px] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
