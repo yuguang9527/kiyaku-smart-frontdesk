@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Calendar, Settings, User, LogOut } from 'lucide-react';
@@ -10,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 const navItems = [
   { icon: <Home className="h-5 w-5" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
   { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
-  { icon: <User className="h-5 w-5" />, label: { en: 'Users', ja: 'ユーザー' }, path: '/admin/users' },
+  { icon: <User className="h-5 w-5" />, label: { en: 'Hotel Info', ja: 'ホテル情報' }, path: '/admin/hotel-info' },
   { icon: <Settings className="h-5 w-5" />, label: { en: 'Settings', ja: '設定' }, path: '/admin/settings' },
 ];
 
