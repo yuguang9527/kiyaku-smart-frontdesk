@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -7,7 +6,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload, Import, FileSpreadsheet } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QA } from './types';
 
@@ -127,7 +126,7 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
   };
 
   return (
-    <Card>
+    <>
       <CardHeader>
         <CardTitle>
           <Import className="h-5 w-5 inline-block mr-2" />
@@ -226,6 +225,6 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
           </TabsContent>
         </Tabs>
       </CardContent>
-    </Card>
+    </>
   );
 }
