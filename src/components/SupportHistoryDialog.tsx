@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -289,10 +290,10 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
             </DialogTitle>
             {selectedEntry && (
               <Button
-                variant="ghost"
-                size="sm"
+                variant="default"
+                size="default"
                 onClick={handleBackToList}
-                className="flex items-center gap-1"
+                className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 {language === 'ja' ? '戻る' : 'Back'}
@@ -310,3 +311,4 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 };
 
 export default SupportHistoryDialog;
+
