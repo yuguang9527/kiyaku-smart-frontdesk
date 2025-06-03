@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -217,7 +216,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
         <ScrollArea className="h-[500px] pr-4">
           {selectedEntry ? (
-            // Chat conversation view
+            // Chat conversation view with scrollable chat messages
             <div className="space-y-4">
               <div className="bg-blue-50 p-3 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
@@ -229,16 +228,18 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                 <p className="text-sm font-medium">{selectedEntry.action}</p>
               </div>
               
-              <div className="space-y-3">
-                {selectedEntry.chatMessages?.map((message) => (
-                  <ChatBubble
-                    key={message.id}
-                    message={message.content}
-                    isUser={message.isUser}
-                    timestamp={message.timestamp}
-                  />
-                ))}
-              </div>
+              <ScrollArea className="h-[350px] pr-4">
+                <div className="space-y-3">
+                  {selectedEntry.chatMessages?.map((message) => (
+                    <ChatBubble
+                      key={message.id}
+                      message={message.content}
+                      isUser={message.isUser}
+                      timestamp={message.timestamp}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
           ) : (
             // History list view
