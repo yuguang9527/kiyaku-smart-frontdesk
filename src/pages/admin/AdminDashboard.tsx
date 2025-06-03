@@ -46,6 +46,10 @@ const AdminDashboard: React.FC = () => {
       activeUsers: {
         ja: 'アクティブユーザー',
         en: 'Active Users'
+      },
+      incompleteChatsMessage: {
+        ja: '未完了のチャットがあります。ご確認ください',
+        en: 'There are incomplete chats. Please check them.'
       }
     },
     inquiries: {
@@ -347,6 +351,11 @@ const AdminDashboard: React.FC = () => {
               </div>
               <CardContent className="p-4 bg-white/90">
                 <h3 className="text-4xl font-bold text-blue-900">{stat.value}</h3>
+                {stat.key === 'chatRequests' && incompleteInquiries.length > 0 && (
+                  <p className="text-sm text-red-600 mt-2 font-medium">
+                    {translations.stats.incompleteChatsMessage[language]}
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))}
