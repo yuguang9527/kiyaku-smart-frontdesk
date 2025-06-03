@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/hooks/use-language';
 import CustomerNav from '@/components/customer/CustomerNav';
 import CustomerSupportHero from './CustomerSupportHero';
@@ -14,6 +14,22 @@ import { HotelInfo } from './HotelInfoDisplay';
 const CustomerSupport: React.FC = () => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'chat' | 'phone'>('chat');
+  const [agentImage, setAgentImage] = useState<string>("/lovable-uploads/d1156dc0-bb74-4c72-934a-68e68b022dc4.png");
+
+  // Load hotel info including agent image
+  useEffect(() => {
+    try {
+      const savedHotelInfo = localStorage.getItem('hotelInfo');
+      if (savedHotelInfo) {
+        const parsedInfo = JSON.parse(savedHotelInfo);
+        if (parsedInfo.agentImage) {
+          setAgentImage(parsedInfo.agentImage);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load hotel info:', error);
+    }
+  }, []);
 
   // Hotel information
   const hotelInfo: HotelInfo = {
@@ -67,7 +83,11 @@ const CustomerSupport: React.FC = () => {
         </div>
 
         {/* Hero Section */}
-        <CustomerSupportHero activeTab={activeTab} setActiveTab={setActiveTab} />
+        <CustomerSupportHero 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          agentImage={agentImage}
+        />
 
         {/* Support Tabs */}
         <CustomerSupportTabs activeTab={activeTab} setActiveTab={setActiveTab} />
