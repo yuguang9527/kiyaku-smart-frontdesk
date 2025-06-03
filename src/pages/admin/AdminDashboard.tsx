@@ -50,6 +50,10 @@ const AdminDashboard: React.FC = () => {
       incompleteChatsMessage: {
         ja: '未完了のチャットがあります。ご確認ください',
         en: 'There are incomplete chats. Please check them.'
+      },
+      incompleteChatsCount: {
+        ja: '未完了のチャット件数',
+        en: 'Incomplete chat count'
       }
     },
     inquiries: {
@@ -341,6 +345,9 @@ const AdminDashboard: React.FC = () => {
                       <span className="text-white text-lg font-medium">{stat.label}</span>
                       {stat.subtext && (
                         <span className="text-blue-100 text-xs">{stat.subtext}</span>
+                      )}
+                      {stat.key === 'chatRequests' && (
+                        <span className="text-blue-100 text-xs">{translations.stats.incompleteChatsCount[language]}</span>
                       )}
                     </div>
                   </div>
