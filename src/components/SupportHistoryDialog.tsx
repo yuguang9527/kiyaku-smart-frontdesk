@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -222,6 +223,19 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     }
   };
 
+  const handleToggleEntryStatus = (entryId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // クリックイベントがエントリクリックに伝播しないように
+    setCompletedEntries(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(entryId)) {
+        newSet.delete(entryId);
+      } else {
+        newSet.add(entryId);
+      }
+      return newSet;
+    });
+  };
+
   const isEntryCompleted = (entryId: string) => {
     return completedEntries.has(entryId);
   };
@@ -351,11 +365,21 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                         {language === 'ja' ? 'チャット詳細あり' : 'Chat Available'}
                       </Badge>
                     )}
-                    {isEntryCompleted(entry.id) && (
-                      <Badge variant="default" className="text-xs bg-green-100 text-green-800">
-                        {language === 'ja' ? '完了' : 'Completed'}
-                      </Badge>
-                    )}
+                    <Button
+                      variant={isEntryCompleted(entry.id) ? "default" : "outline"}
+                      size="sm"
+                      className={`text-xs h-6 px-2 ${
+                        isEntryCompleted(entry.id) 
+                          ? "bg-green-100 text-green-800 hover:bg-green-200" 
+                          : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                      }`}
+                      onClick={(e) => handleToggleEntryStatus(entry.id, e)}
+                    >
+                      {isEntryCompleted(entry.id) 
+                        ? (language === 'ja' ? '完了' : 'Completed')
+                        : (language === 'ja' ? '対応中' : 'In Progress')
+                      }
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-muted-foreground" />
