@@ -242,6 +242,14 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Helper function to get row styling based on status
+  const getRowStyling = (status: string) => {
+    if (status !== 'resolved') {
+      return 'hover:bg-red-100 transition-colors cursor-pointer bg-red-50';
+    }
+    return 'hover:bg-blue-50 transition-colors cursor-pointer';
+  };
+
   // Handle card click - updated to handle chat requests
   const handleCardClick = (statKey: string) => {
     if (statKey === 'reservations') {
@@ -391,7 +399,7 @@ const AdminDashboard: React.FC = () => {
                     {getFilteredInquiries().map(inquiry => (
                       <TableRow 
                         key={inquiry.id} 
-                        className="hover:bg-blue-50 transition-colors cursor-pointer"
+                        className={getRowStyling(inquiry.status)}
                         onClick={() => handleInquiryClick(inquiry.id)}
                       >
                         <TableCell className="font-medium text-blue-900">{inquiry.title} #{inquiry.id}</TableCell>
