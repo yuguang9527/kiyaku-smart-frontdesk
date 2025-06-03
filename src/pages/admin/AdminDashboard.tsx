@@ -119,6 +119,10 @@ const AdminDashboard: React.FC = () => {
       customerName: {
         ja: 'お客様名',
         en: 'Customer Name'
+      },
+      number: {
+        ja: '番号',
+        en: 'No.'
       }
     },
     system: {
@@ -394,6 +398,7 @@ const AdminDashboard: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-16">{translations.inquiries.number[language]}</TableHead>
                       <TableHead>{language === 'ja' ? '問い合わせ' : 'Inquiry'}</TableHead>
                       <TableHead>{translations.inquiries.reservationNumber[language]}</TableHead>
                       <TableHead>{translations.inquiries.customerName[language]}</TableHead>
@@ -402,12 +407,13 @@ const AdminDashboard: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {getFilteredInquiries().map(inquiry => (
+                    {getFilteredInquiries().map((inquiry, index) => (
                       <TableRow 
                         key={inquiry.id} 
                         className={getRowStyling(inquiry.status)}
                         onClick={() => handleInquiryClick(inquiry.id)}
                       >
+                        <TableCell className="font-medium text-blue-700">#{index + 1}</TableCell>
                         <TableCell className="font-medium text-blue-900">{inquiry.title}</TableCell>
                         <TableCell className="text-sm text-blue-600">{inquiry.reservationNumber}</TableCell>
                         <TableCell className="text-sm text-blue-800">{inquiry.customerName}</TableCell>
