@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -10,6 +9,7 @@ import { Upload, Import, File } from 'lucide-react';
 import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QA } from './types';
+import * as XLSX from 'xlsx';
 
 // Define the schema for bulk import
 const bulkImportSchema = z.object({
@@ -44,14 +44,68 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      if (content) {
-        processFileContent(content);
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    
+    if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+      // Excelファイルの処理
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: true });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+          
+          processExcelData(jsonData as string[][]);
+        } catch (error) {
+          console.error("Excel file processing error:", error);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // CSVやテキストファイルの処理
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        if (content) {
+          processFileContent(content);
+        }
+      };
+      // UTF-8で読み込む
+      reader.readAsText(file, 'UTF-8');
+    }
+  };
+
+  const processExcelData = (data: string[][]) => {
+    try {
+      const newQAs: QA[] = [];
+      
+      // ヘッダー行をスキップして処理
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (row && row.length >= 3) {
+          const category = String(row[0] || '').trim();
+          const question = String(row[1] || '').trim();
+          const answer = String(row[2] || '').trim();
+          
+          if (question && answer) {
+            newQAs.push({ category, question, answer });
+          }
+        }
       }
-    };
-    reader.readAsText(file);
+      
+      if (newQAs.length > 0) {
+        onImport(newQAs);
+        console.log(`${newQAs.length}件のQ&Aをインポートしました`);
+        // ファイル入力をリセット
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
+    } catch (error) {
+      console.error("Excel data processing error:", error);
+    }
   };
 
   const processFileContent = (content: string) => {
@@ -122,8 +176,8 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
       en: 'File Upload'
     },
     fileUploadInstructions: {
-      ja: 'CSVまたはExcelファイルをアップロードしてください',
-      en: 'Upload CSV or Excel file'
+      ja: 'Excel、CSVまたはテキストファイルをアップロードしてください',
+      en: 'Upload Excel, CSV or text file'
     },
     fileUploadDescription: {
       ja: 'ファイルは A列:カテゴリ、B列:質問、C列:回答 の形式で保存してください',
