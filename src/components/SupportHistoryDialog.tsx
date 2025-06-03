@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -208,7 +207,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 h-[400px]">
           <div className="space-y-4 pr-4">
             {chatMessages.map((message: any) => (
               <ChatBubble
