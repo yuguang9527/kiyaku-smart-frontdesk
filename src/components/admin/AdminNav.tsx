@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, Calendar, Settings, User, LogOut } from 'lucide-react';
+import { Home, Calendar, User, LogOut } from 'lucide-react';
 import HotelLogo from '../HotelLogo';
 import LanguageToggle from '../LanguageToggle';
 import { useLanguage } from '@/hooks/use-language';
@@ -11,7 +12,6 @@ const navItems = [
   { icon: <Home className="h-5 w-5" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
   { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
   { icon: <User className="h-5 w-5" />, label: { en: 'Hotel Info', ja: 'ホテル情報' }, path: '/admin/import' },
-  { icon: <Settings className="h-5 w-5" />, label: { en: 'Settings', ja: '設定' }, path: '/admin/settings' },
 ];
 
 const AdminNav: React.FC = () => {

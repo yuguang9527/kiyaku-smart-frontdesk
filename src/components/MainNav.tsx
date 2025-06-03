@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, MessageSquare, Calendar, Settings, Phone } from 'lucide-react';
+import { Home, MessageSquare, Calendar, Phone } from 'lucide-react';
 import HotelLogo from './HotelLogo';
 import LanguageToggle from './LanguageToggle';
 import { useLanguage } from '@/hooks/use-language';
@@ -11,7 +10,6 @@ const navItems = [
   { icon: <MessageSquare className="h-5 w-5" />, label: { en: 'Messages', ja: 'メッセージ' }, path: '/messages' },
   { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約' }, path: '/reservations' },
   { icon: <Phone className="h-5 w-5" />, label: { en: 'Calls', ja: '通話' }, path: '/calls' },
-  { icon: <Settings className="h-5 w-5" />, label: { en: 'Settings', ja: '設定' }, path: '/settings' },
 ];
 
 const MainNav: React.FC = () => {
