@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { MessageSquare, Clock, User, ChevronRight, ArrowLeft, Send } from 'lucide-react';
+import { MessageSquare, Clock, User, ChevronRight, ArrowLeft, Send, Check } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationUpdateHistory } from '@/types/reservation';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   const { language } = useLanguage();
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [completedEntries, setCompletedEntries] = useState<Set<string>>(new Set());
 
   const form = useForm<CommentForm>({
     defaultValues: {
@@ -71,7 +71,6 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     }
   ];
 
-  // 更新履歴を含む統合履歴を作成
   const combinedHistory = [
     ...supportHistory,
     ...updateHistory
@@ -86,18 +85,15 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       }))
   ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-  // サンプルチャットデータの取得
   const getChatHistory = (entryId: string) => {
     const entry = supportHistory.find(e => e.id === entryId);
     if (!entry || !entry.reservationNumber) return null;
 
-    // 実際のチャット履歴を取得を試みる
     const realChatHistory = chatHistoryService.getChatHistory(entry.reservationNumber);
     if (realChatHistory) {
       return realChatHistory.messages;
     }
 
-    // サンプルデータ
     const sampleChats: { [key: string]: any[] } = {
       'support-001': [
         {
@@ -210,10 +206,21 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     form.reset();
   };
 
+  const handleMarkComplete = () => {
+    if (selectedEntry) {
+      setCompletedEntries(prev => new Set([...prev, selectedEntry]));
+    }
+  };
+
+  const isEntryCompleted = (entryId: string) => {
+    return completedEntries.has(entryId);
+  };
+
   const renderChatView = () => {
     if (!selectedEntry) return null;
 
     const entry = combinedHistory.find(e => e.id === selectedEntry);
+    const isCompleted = isEntryCompleted(selectedEntry);
 
     if (!chatMessages || chatMessages.length === 0) {
       return (
@@ -227,8 +234,21 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       <div className="h-full flex flex-col">
         <div className="mb-4 pb-4 border-b">
           <div className="flex-1">
-            <h4 className="font-medium">{entry?.action}</h4>
-            <p className="text-sm text-muted-foreground">{entry?.timestamp}</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">{entry?.action}</h4>
+                <p className="text-sm text-muted-foreground">{entry?.timestamp}</p>
+              </div>
+              <Badge 
+                variant={isCompleted ? "default" : "secondary"}
+                className={isCompleted ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
+              >
+                {isCompleted 
+                  ? (language === 'ja' ? '完了' : 'Completed')
+                  : (language === 'ja' ? '対応中' : 'In Progress')
+                }
+              </Badge>
+            </div>
           </div>
         </div>
         
@@ -273,7 +293,18 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                 </FormItem>
               )}
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <Button 
+                type="button" 
+                variant="outline"
+                size="sm" 
+                className="flex items-center gap-2"
+                onClick={handleMarkComplete}
+                disabled={isCompleted}
+              >
+                <Check className="h-4 w-4" />
+                {language === 'ja' ? '完了' : 'Complete'}
+              </Button>
               <Button type="submit" size="sm" className="flex items-center gap-2">
                 <Send className="h-4 w-4" />
                 {language === 'ja' ? 'コメント追加' : 'Add Comment'}
@@ -306,6 +337,11 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                     {'hasChat' in entry && entry.hasChat && (
                       <Badge variant="secondary" className="text-xs">
                         {language === 'ja' ? 'チャット詳細あり' : 'Chat Available'}
+                      </Badge>
+                    )}
+                    {isEntryCompleted(entry.id) && (
+                      <Badge variant="default" className="text-xs bg-green-100 text-green-800">
+                        {language === 'ja' ? '完了' : 'Completed'}
                       </Badge>
                     )}
                   </div>
