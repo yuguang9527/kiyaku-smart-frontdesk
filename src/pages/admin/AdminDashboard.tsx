@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -98,6 +99,14 @@ const AdminDashboard: React.FC = () => {
           ja: '時間前',
           en: 'hours ago'
         }
+      },
+      reservationNumber: {
+        ja: '予約番号',
+        en: 'Reservation #'
+      },
+      customerName: {
+        ja: 'お客様名',
+        en: 'Customer Name'
       }
     },
     system: {
@@ -151,37 +160,47 @@ const AdminDashboard: React.FC = () => {
   const mainStats = stats.filter(stat => stat.key === "chatRequests" || stat.key === "reservations");
   const secondaryStats = stats.filter(stat => stat.key === "calls" || stat.key === "users");
 
-  // Sample support inquiries data
+  // Sample support inquiries data with reservation numbers and customer names
   const inquiries = [
     { 
       id: 1, 
       title: language === 'ja' ? '予約確認の問い合わせ' : 'Reservation Confirmation',
       time: 2,
-      status: 'resolved' 
+      status: 'resolved',
+      reservationNumber: 'RES001',
+      customerName: '田中太郎'
     },
     { 
       id: 2, 
       title: language === 'ja' ? 'チェックアウト時間の変更' : 'Change in Check-out Time',
       time: 4,
-      status: 'in-progress' 
+      status: 'in-progress',
+      reservationNumber: 'RES002',
+      customerName: '佐藤花子'
     },
     { 
       id: 3, 
       title: language === 'ja' ? '部屋の設備について' : 'Room Facilities Inquiry',
       time: 6,
-      status: 'new' 
+      status: 'new',
+      reservationNumber: 'RES003',
+      customerName: 'John Smith'
     },
     { 
       id: 4, 
       title: language === 'ja' ? '朝食オプションの追加' : 'Adding Breakfast Option',
       time: 8,
-      status: 'resolved' 
+      status: 'resolved',
+      reservationNumber: 'RES004',
+      customerName: '山田一郎'
     },
     { 
       id: 5, 
       title: language === 'ja' ? '追加料金について' : 'Additional Charges',
       time: 10,
-      status: 'in-progress' 
+      status: 'in-progress',
+      reservationNumber: 'RES005',
+      customerName: 'Emily Johnson'
     }
   ];
 
@@ -362,6 +381,8 @@ const AdminDashboard: React.FC = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>{language === 'ja' ? '問い合わせ' : 'Inquiry'}</TableHead>
+                      <TableHead>{translations.inquiries.reservationNumber[language]}</TableHead>
+                      <TableHead>{translations.inquiries.customerName[language]}</TableHead>
                       <TableHead>{language === 'ja' ? '時間' : 'Time'}</TableHead>
                       <TableHead>{language === 'ja' ? 'ステータス' : 'Status'}</TableHead>
                     </TableRow>
@@ -374,6 +395,8 @@ const AdminDashboard: React.FC = () => {
                         onClick={() => handleInquiryClick(inquiry.id)}
                       >
                         <TableCell className="font-medium text-blue-900">{inquiry.title} #{inquiry.id}</TableCell>
+                        <TableCell className="text-sm text-blue-600">{inquiry.reservationNumber}</TableCell>
+                        <TableCell className="text-sm text-blue-800">{inquiry.customerName}</TableCell>
                         <TableCell className="text-sm text-blue-600">{inquiry.time} {translations.inquiries.time.hoursAgo[language]}</TableCell>
                         <TableCell>
                           <div className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${getStatusBadgeClass(inquiry.status)}`}>
