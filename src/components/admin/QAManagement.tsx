@@ -32,16 +32,7 @@ export function QAManagement({ language }: QAManagementProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Top: Bulk Import */}
-      <Card className="lg:col-span-3">
-        <BulkImportQA
-          onImport={handleBulkImport}
-          translations={qaTranslations.qa}
-          language={language}
-        />
-      </Card>
-
-      {/* Bottom: QA Management */}
+      {/* Top: QA Management */}
       <Card className="lg:col-span-3">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -82,6 +73,15 @@ export function QAManagement({ language }: QAManagementProps) {
             language={language} 
           />
         </CardContent>
+      </Card>
+
+      {/* Bottom: Bulk Import */}
+      <Card className="lg:col-span-3">
+        <BulkImportQA
+          onImport={handleBulkImport}
+          translations={qaTranslations.qa}
+          language={language}
+        />
       </Card>
 
       {/* Add QA Dialog */}
