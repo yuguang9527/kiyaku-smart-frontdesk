@@ -1,14 +1,15 @@
-
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { MessageSquare, Clock, User, ChevronRight, ArrowLeft } from 'lucide-react';
+import { MessageSquare, Clock, User, ChevronRight, ArrowLeft, Send } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationUpdateHistory } from '@/types/reservation';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
 import ChatBubble from '@/components/ChatBubble';
 import { chatHistoryService } from '@/services/chatHistory';
 
@@ -19,6 +20,10 @@ interface SupportHistoryDialogProps {
   updateHistory?: ReservationUpdateHistory[];
 }
 
+interface CommentForm {
+  comment: string;
+}
+
 const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   reservationId,
   isOpen,
@@ -27,6 +32,13 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 }) => {
   const { language } = useLanguage();
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+
+  const form = useForm<CommentForm>({
+    defaultValues: {
+      comment: ''
+    }
+  });
 
   const supportHistory = [
     {
@@ -171,16 +183,35 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
   const handleEntryClick = (entryId: string) => {
     setSelectedEntry(entryId);
+    const messages = getChatHistory(entryId);
+    setChatMessages(messages || []);
+    form.reset();
   };
 
   const handleBackToList = () => {
     setSelectedEntry(null);
+    setChatMessages([]);
+    form.reset();
+  };
+
+  const onSubmitComment = (data: CommentForm) => {
+    if (!data.comment.trim()) return;
+
+    const newComment = {
+      id: `hotel-comment-${Date.now()}`,
+      content: data.comment,
+      isUser: false,
+      timestamp: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+      isHotelComment: true
+    };
+
+    setChatMessages(prev => [...prev, newComment]);
+    form.reset();
   };
 
   const renderChatView = () => {
     if (!selectedEntry) return null;
 
-    const chatMessages = getChatHistory(selectedEntry);
     const entry = combinedHistory.find(e => e.id === selectedEntry);
 
     if (!chatMessages || chatMessages.length === 0) {
@@ -200,18 +231,55 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="flex-1 h-[260px]">
+        <ScrollArea className="flex-1 h-[200px]">
           <div className="space-y-4 pr-4">
             {chatMessages.map((message: any) => (
-              <ChatBubble
-                key={message.id}
-                message={message.content}
-                isUser={message.isUser}
-                timestamp={message.timestamp}
-              />
+              <div key={message.id}>
+                <ChatBubble
+                  message={message.content}
+                  isUser={message.isUser}
+                  timestamp={message.timestamp}
+                />
+                {message.isHotelComment && (
+                  <div className="text-xs text-blue-600 ml-4 mt-1">
+                    {language === 'ja' ? 'ホテルスタッフコメント' : 'Hotel Staff Comment'}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </ScrollArea>
+
+        <Separator className="my-4" />
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmitComment)} className="space-y-3">
+            <FormField
+              control={form.control}
+              name="comment"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    {language === 'ja' ? 'ホテルスタッフコメント' : 'Hotel Staff Comment'}
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={language === 'ja' ? 'コメントを入力してください...' : 'Enter your comment...'}
+                      className="min-h-[80px] resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end">
+              <Button type="submit" size="sm" className="flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                {language === 'ja' ? 'コメント追加' : 'Add Comment'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     );
   };
@@ -290,7 +358,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
         </DialogHeader>
 
         {selectedEntry && (
-          <div className="flex justify-end mb-2 -mt-2">
+          <div className="flex justify-end mb-4">
             <Button
               variant="default"
               size="default"
