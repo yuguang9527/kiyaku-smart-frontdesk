@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -6,10 +7,12 @@ import { MessageSquare, Phone, Calendar, Settings, User, ArrowUp, ArrowDown, Bar
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [activeInquiryTab, setActiveInquiryTab] = useState<'all' | 'completed' | 'incomplete'>('all');
 
   const translations = {
@@ -214,6 +217,13 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Handle card click
+  const handleCardClick = (statKey: string) => {
+    if (statKey === 'reservations') {
+      navigate('/admin/reservations');
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-blue-300 via-blue-100 to-white relative overflow-hidden">
       {/* Decorative airplane */}
@@ -267,10 +277,16 @@ const AdminDashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {mainStats.map((stat, index) => (
-            <Card key={index} className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm" 
-                  style={{ 
-                    animationDelay: `${index * 0.1}s`,
-                  }}>
+            <Card 
+              key={index} 
+              className={`overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm ${
+                stat.key === 'reservations' ? 'cursor-pointer hover:scale-105' : ''
+              }`}
+              style={{ 
+                animationDelay: `${index * 0.1}s`,
+              }}
+              onClick={() => handleCardClick(stat.key)}
+            >
               <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
