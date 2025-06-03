@@ -1,12 +1,11 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, ArrowLeft } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { ReservationUpdateHistory } from '@/types/reservation';
-import { Button } from '@/components/ui/button';
 import { chatHistoryService } from '@/services/chatHistory';
-import SupportHistoryList from '@/components/SupportHistoryList';
 import ChatView from '@/components/ChatView';
 
 interface SupportHistoryDialogProps {
@@ -29,11 +28,10 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   onStatusChange
 }) => {
   const { language } = useLanguage();
-  const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
-  const [completedEntries, setCompletedEntries] = useState<Set<string>>(new Set());
+  const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
-  // Filter to show only the selected inquiry's history
+  // Support history data - same as before
   const supportHistory = [
     {
       id: 'support-001',
@@ -64,24 +62,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     }
   ];
 
-  // Show only the history for the selected reservation ID
-  const filteredSupportHistory = reservationId 
-    ? supportHistory.filter(entry => entry.id === reservationId)
-    : supportHistory;
-
-  const combinedHistory = [
-    ...filteredSupportHistory,
-    ...updateHistory
-      .filter(update => update.reservationId === reservationId)
-      .map(update => ({
-        id: update.id,
-        timestamp: update.timestamp,
-        agent: update.agent,
-        action: update.action,
-        details: update.changes,
-        hasChat: false
-      }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  // Find the selected entry based on reservationId
+  const selectedEntry = supportHistory.find(entry => entry.id === reservationId);
 
   const getChatHistory = (entryId: string) => {
     const entry = supportHistory.find(e => e.id === entryId);
@@ -92,6 +74,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       return realChatHistory.messages;
     }
 
+    // Sample chat data - same as before
     const sampleChats: { [key: string]: any[] } = {
       'support-001': [
         {
@@ -176,16 +159,15 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     return sampleChats[entryId] || [];
   };
 
-  const handleEntryClick = (entryId: string) => {
-    setSelectedEntry(entryId);
-    const messages = getChatHistory(entryId);
-    setChatMessages(messages || []);
-  };
-
-  const handleBackToList = () => {
-    setSelectedEntry(null);
-    setChatMessages([]);
-  };
+  // Load chat messages when dialog opens or reservationId changes
+  React.useEffect(() => {
+    if (reservationId && isOpen) {
+      const messages = getChatHistory(reservationId);
+      setChatMessages(messages || []);
+      // Initialize completion status based on inquiry status from parent
+      setIsCompleted(false);
+    }
+  }, [reservationId, isOpen, language]);
 
   const onSubmitComment = (data: CommentForm) => {
     if (!data.comment.trim()) return;
@@ -202,47 +184,32 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   };
 
   const handleMarkComplete = () => {
-    if (selectedEntry) {
-      setCompletedEntries(prev => {
-        const newSet = new Set(prev);
-        const isCompleted = newSet.has(selectedEntry);
-        if (isCompleted) {
-          newSet.delete(selectedEntry);
-        } else {
-          newSet.add(selectedEntry);
-        }
-        
-        // 親コンポーネントに変更を通知 - 正しいIDを使用
-        onStatusChange?.(selectedEntry, !isCompleted);
-        
-        return newSet;
-      });
+    if (reservationId) {
+      const newStatus = !isCompleted;
+      setIsCompleted(newStatus);
+      onStatusChange?.(reservationId, newStatus);
     }
   };
 
-  const handleToggleEntryStatus = (entryId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    setCompletedEntries(prev => {
-      const newSet = new Set(prev);
-      const isCompleted = newSet.has(entryId);
-      if (isCompleted) {
-        newSet.delete(entryId);
-      } else {
-        newSet.add(entryId);
-      }
-      
-      // 親コンポーネントに変更を通知 - 正しいIDを使用
-      onStatusChange?.(entryId, !isCompleted);
-      
-      return newSet;
-    });
-  };
-
-  const isEntryCompleted = (entryId: string) => {
-    return completedEntries.has(entryId);
-  };
-
-  const selectedEntryData = combinedHistory.find(e => e.id === selectedEntry);
+  if (!selectedEntry) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl h-[600px] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              {language === 'ja' ? 'チャット詳細' : 'Chat Details'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-muted-foreground">
+              {language === 'ja' ? 'チャット履歴が見つかりません' : 'Chat history not found'}
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -251,48 +218,22 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           <div className="flex items-center justify-between pr-8">
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              {selectedEntry 
-                ? (language === 'ja' ? 'チャット詳細' : 'Chat Details')
-                : (language === 'ja' ? '対応履歴' : 'Support History')
-              }
-              {reservationId && !selectedEntry && (
-                <Badge variant="outline" className="ml-2">
-                  {reservationId}
-                </Badge>
-              )}
+              {language === 'ja' ? 'チャット詳細' : 'Chat Details'}
+              <Badge variant="outline" className="ml-2">
+                {reservationId}
+              </Badge>
             </DialogTitle>
-            
-            {selectedEntry && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleBackToList}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {language === 'ja' ? '戻る' : 'Back'}
-              </Button>
-            )}
           </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
-          {selectedEntry ? (
-            <ChatView
-              entry={selectedEntryData}
-              messages={chatMessages}
-              isCompleted={isEntryCompleted(selectedEntry)}
-              onSubmitComment={onSubmitComment}
-              onMarkComplete={handleMarkComplete}
-            />
-          ) : (
-            <SupportHistoryList
-              history={combinedHistory}
-              completedEntries={completedEntries}
-              onEntryClick={handleEntryClick}
-              onToggleEntryStatus={handleToggleEntryStatus}
-            />
-          )}
+          <ChatView
+            entry={selectedEntry}
+            messages={chatMessages}
+            isCompleted={isCompleted}
+            onSubmitComment={onSubmitComment}
+            onMarkComplete={handleMarkComplete}
+          />
         </div>
       </DialogContent>
     </Dialog>
