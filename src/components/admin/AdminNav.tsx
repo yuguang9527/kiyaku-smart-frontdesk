@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const navItems = [
-  { icon: <Home className="h-5 w-5" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
-  { icon: <Calendar className="h-5 w-5" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
-  { icon: <User className="h-5 w-5" />, label: { en: 'Hotel Info', ja: 'ホテル情報' }, path: '/admin/import' },
+  { icon: <Home className="h-6 w-6" />, label: { en: 'Dashboard', ja: 'ダッシュボード' }, path: '/admin' },
+  { icon: <Calendar className="h-6 w-6" />, label: { en: 'Reservations', ja: '予約管理' }, path: '/admin/reservations' },
+  { icon: <User className="h-6 w-6" />, label: { en: 'Hotel Info', ja: 'ホテル情報' }, path: '/admin/import' },
 ];
 
 const AdminNav: React.FC = () => {
@@ -34,7 +34,7 @@ const AdminNav: React.FC = () => {
               <Link
                 key={index}
                 to={item.path}
-                className="p-2 flex items-center justify-center text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md"
+                className="p-3 flex items-center justify-center text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 rounded-md min-w-[48px] min-h-[48px]"
                 title={item.label[language]}
               >
                 {item.icon}
