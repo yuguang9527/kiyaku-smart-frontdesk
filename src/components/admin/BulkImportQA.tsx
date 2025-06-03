@@ -1,11 +1,12 @@
-import React from 'react';
+
+import React, { useRef } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Import, FileSpreadsheet } from 'lucide-react';
+import { Upload, Import, FileSpreadsheet, File } from 'lucide-react';
 import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QA } from './types';
@@ -37,6 +38,8 @@ interface BulkImportQAProps {
 }
 
 export function BulkImportQA({ onImport, translations, language }: BulkImportQAProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<BulkImportFormValues>({
     resolver: zodResolver(bulkImportSchema),
     defaultValues: {
@@ -50,6 +53,54 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
       excelContent: "",
     },
   });
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      if (content) {
+        processFileContent(content);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const processFileContent = (content: string) => {
+    try {
+      const lines = content.trim().split('\n');
+      const newQAs: QA[] = [];
+      
+      for (const line of lines) {
+        // タブ区切りまたはカンマ区切りのデータを解析
+        const columns = line.split('\t').length > 1 ? line.split('\t') : line.split(',');
+        
+        if (columns.length >= 3) {
+          // A列: カテゴリ, B列: 質問, C列: 回答
+          const category = columns[0]?.trim();
+          const question = columns[1]?.trim();
+          const answer = columns[2]?.trim();
+          
+          if (question && answer && category !== 'カテゴリ' && category !== 'Category') { // ヘッダー行をスキップ
+            newQAs.push({ category, question, answer });
+          }
+        }
+      }
+      
+      if (newQAs.length > 0) {
+        onImport(newQAs);
+        console.log(`${newQAs.length}件のQ&Aをインポートしました`);
+        // ファイル入力をリセット
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
+    } catch (error) {
+      console.error("File import error:", error);
+    }
+  };
 
   const handleSubmit = (data: BulkImportFormValues) => {
     try {
@@ -112,8 +163,12 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
       en: 'Text Format'
     },
     excelImport: {
-      ja: 'エクセル形式',
-      en: 'Excel Format'
+      ja: 'エクセル貼り付け',
+      en: 'Excel Paste'
+    },
+    fileUpload: {
+      ja: 'ファイルアップロード',
+      en: 'File Upload'
     },
     excelInstructions: {
       ja: 'エクセルからコピーして貼り付けてください',
@@ -122,6 +177,18 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
     excelDescription: {
       ja: 'エクセルで A列:カテゴリ、B列:質問、C列:回答 の形式でデータを貼り付けてください',
       en: 'Paste data in the format: Column A: Category, Column B: Question, Column C: Answer'
+    },
+    fileUploadInstructions: {
+      ja: 'CSVまたはExcelファイルをアップロードしてください',
+      en: 'Upload CSV or Excel file'
+    },
+    fileUploadDescription: {
+      ja: 'ファイルは A列:カテゴリ、B列:質問、C列:回答 の形式で保存してください',
+      en: 'File should be in format: Column A: Category, Column B: Question, Column C: Answer'
+    },
+    chooseFile: {
+      ja: 'ファイルを選択',
+      en: 'Choose File'
     }
   };
 
@@ -139,8 +206,12 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="excel" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="file" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="file" className="flex items-center gap-2">
+              <File className="h-4 w-4" />
+              {tabTranslations.fileUpload[language]}
+            </TabsTrigger>
             <TabsTrigger value="excel" className="flex items-center gap-2">
               <FileSpreadsheet className="h-4 w-4" />
               {tabTranslations.excelImport[language]}
@@ -149,6 +220,37 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
               {tabTranslations.textImport[language]}
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="file" className="mt-4">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  {tabTranslations.fileUploadInstructions[language]}
+                </label>
+                <div className="flex items-center gap-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv,.xlsx,.xls,.txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    {tabTranslations.chooseFile[language]}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {tabTranslations.fileUploadDescription[language]}
+                </p>
+              </div>
+            </div>
+          </TabsContent>
 
           <TabsContent value="excel" className="mt-4">
             <Form {...excelForm}>
