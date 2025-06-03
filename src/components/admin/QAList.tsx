@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
 import { QA } from './types';
@@ -32,36 +33,40 @@ export function QAList({ qaList, onEdit, translations, language }: QAListProps) 
             <TableHead className="w-24">{translations.actions[language]}</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {qaList.length > 0 ? (
-            qaList.map((qa, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
-                <TableCell className="font-medium">{qa.category || 'カテゴリなし'}</TableCell>
-                <TableCell className="font-medium">{qa.question}</TableCell>
-                <TableCell>{qa.answer.length > 50 ? `${qa.answer.slice(0, 50)}...` : qa.answer}</TableCell>
-                <TableCell>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0"
-                    onClick={() => onEdit(index, qa)}
-                  >
-                    <span className="sr-only">{translations.edit[language]}</span>
-                    <Edit className="h-4 w-4" />
-                  </Button>
+      </Table>
+      <ScrollArea className="h-[400px]">
+        <Table>
+          <TableBody>
+            {qaList.length > 0 ? (
+              qaList.map((qa, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium text-muted-foreground w-16">{index + 1}</TableCell>
+                  <TableCell className="font-medium">{qa.category || 'カテゴリなし'}</TableCell>
+                  <TableCell className="font-medium">{qa.question}</TableCell>
+                  <TableCell>{qa.answer.length > 50 ? `${qa.answer.slice(0, 50)}...` : qa.answer}</TableCell>
+                  <TableCell className="w-24">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => onEdit(index, qa)}
+                    >
+                      <span className="sr-only">{translations.edit[language]}</span>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                  {translations.noData[language]}
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                {translations.noData[language]}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      </ScrollArea>
     </div>
   );
 }
