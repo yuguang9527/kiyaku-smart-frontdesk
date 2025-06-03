@@ -341,35 +341,35 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[500px] flex flex-col">
+      <DialogContent className="max-w-4xl h-[600px] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            {selectedEntry 
-              ? (language === 'ja' ? 'チャット詳細' : 'Chat Details')
-              : (language === 'ja' ? '対応履歴' : 'Support History')
-            }
-            {reservationId && !selectedEntry && (
-              <Badge variant="outline" className="ml-2">
-                {reservationId}
-              </Badge>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              {selectedEntry 
+                ? (language === 'ja' ? 'チャット詳細' : 'Chat Details')
+                : (language === 'ja' ? '対応履歴' : 'Support History')
+              }
+              {reservationId && !selectedEntry && (
+                <Badge variant="outline" className="ml-2">
+                  {reservationId}
+                </Badge>
+              )}
+            </DialogTitle>
+            
+            {selectedEntry && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBackToList}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {language === 'ja' ? '戻る' : 'Back'}
+              </Button>
             )}
-          </DialogTitle>
-        </DialogHeader>
-
-        {selectedEntry && (
-          <div className="flex justify-end mb-4">
-            <Button
-              variant="default"
-              size="default"
-              onClick={handleBackToList}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {language === 'ja' ? '戻る' : 'Back'}
-            </Button>
           </div>
-        )}
+        </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
           {selectedEntry ? renderChatView() : renderHistoryList()}
