@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -40,7 +39,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       action: language === 'ja' ? 'チェックイン手続き案内' : 'Check-in procedure guidance',
       details: language === 'ja' ? '到着時間の確認とチェックイン手続きについて案内しました。' : 'Confirmed arrival time and provided check-in procedure guidance.',
       hasChat: true,
-      reservationNumber: 'RES001'
+      reservationNumber: 'RES001',
+      customerName: '田中太郎'
     },
     {
       id: 'support-002',
@@ -49,7 +49,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       action: language === 'ja' ? '朝食時間問い合わせ対応' : 'Breakfast time inquiry',
       details: language === 'ja' ? '朝食提供時間について回答しました。' : 'Provided information about breakfast serving hours.',
       hasChat: true,
-      reservationNumber: 'RES002'
+      reservationNumber: 'RES002',
+      customerName: '佐藤花子'
     },
     {
       id: 'support-003',
@@ -58,12 +59,19 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
       action: language === 'ja' ? '周辺観光地案内' : 'Local attractions guidance',
       details: language === 'ja' ? '近隣の観光スポットとアクセス方法を案内しました。' : 'Provided information about nearby tourist attractions and access methods.',
       hasChat: true,
-      reservationNumber: 'RES003'
+      reservationNumber: 'RES003',
+      customerName: 'John Smith'
     }
   ];
 
   // Find the selected entry based on reservationId
   const selectedEntry = supportHistory.find(entry => entry.id === reservationId);
+
+  // Get inquiry number based on the selected entry
+  const getInquiryNumber = (entryId: string) => {
+    const index = supportHistory.findIndex(entry => entry.id === entryId);
+    return index + 1;
+  };
 
   const getChatHistory = (entryId: string) => {
     const entry = supportHistory.find(e => e.id === entryId);
@@ -211,6 +219,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     );
   }
 
+  const inquiryNumber = getInquiryNumber(selectedEntry.id);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[600px] flex flex-col">
@@ -218,11 +228,23 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           <div className="flex items-center justify-between pr-8">
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              {language === 'ja' ? 'チャット詳細' : 'Chat Details'}
-              <Badge variant="outline" className="ml-2">
-                {reservationId}
-              </Badge>
+              <span className="text-blue-700 font-bold">#{inquiryNumber}</span>
+              <span>{selectedEntry.action}</span>
             </DialogTitle>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+            <div>
+              <span className="font-medium">
+                {language === 'ja' ? '予約番号:' : 'Reservation #:'}
+              </span>
+              <span className="ml-1">{selectedEntry.reservationNumber}</span>
+            </div>
+            <div>
+              <span className="font-medium">
+                {language === 'ja' ? 'お客様名:' : 'Customer:'}
+              </span>
+              <span className="ml-1">{selectedEntry.customerName}</span>
+            </div>
           </div>
         </DialogHeader>
 
