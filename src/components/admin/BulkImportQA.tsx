@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Import, FileSpreadsheet, File } from 'lucide-react';
+import { Upload, Import, File } from 'lucide-react';
 import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QA } from './types';
@@ -18,14 +18,7 @@ const bulkImportSchema = z.object({
   }),
 });
 
-const excelImportSchema = z.object({
-  excelContent: z.string().min(10, {
-    message: "Excel content must be at least 10 characters.",
-  }),
-});
-
 export type BulkImportFormValues = z.infer<typeof bulkImportSchema>;
-export type ExcelImportFormValues = z.infer<typeof excelImportSchema>;
 
 interface BulkImportQAProps {
   onImport: (qas: QA[]) => void;
@@ -44,13 +37,6 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
     resolver: zodResolver(bulkImportSchema),
     defaultValues: {
       qaContent: "",
-    },
-  });
-
-  const excelForm = useForm<ExcelImportFormValues>({
-    resolver: zodResolver(excelImportSchema),
-    defaultValues: {
-      excelContent: "",
     },
   });
 
@@ -126,57 +112,14 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
     }
   };
 
-  const handleExcelSubmit = (data: ExcelImportFormValues) => {
-    try {
-      const lines = data.excelContent.trim().split('\n');
-      const newQAs: QA[] = [];
-      
-      for (const line of lines) {
-        // タブ区切りまたはカンマ区切りのデータを解析
-        const columns = line.split('\t').length > 1 ? line.split('\t') : line.split(',');
-        
-        if (columns.length >= 3) {
-          // A列: カテゴリ, B列: 質問, C列: 回答
-          const category = columns[0]?.trim();
-          const question = columns[1]?.trim();
-          const answer = columns[2]?.trim();
-          
-          if (question && answer && category !== 'カテゴリ') { // ヘッダー行をスキップ
-            newQAs.push({ category, question, answer });
-          }
-        }
-      }
-      
-      if (newQAs.length > 0) {
-        onImport(newQAs);
-        excelForm.reset();
-        console.log(`${newQAs.length}件のQ&Aをインポートしました`);
-      }
-    } catch (error) {
-      console.error("Excel import error:", error);
-    }
-  };
-
   const tabTranslations = {
     textImport: {
       ja: 'テキスト形式',
       en: 'Text Format'
     },
-    excelImport: {
-      ja: 'エクセル貼り付け',
-      en: 'Excel Paste'
-    },
     fileUpload: {
       ja: 'ファイルアップロード',
       en: 'File Upload'
-    },
-    excelInstructions: {
-      ja: 'エクセルからコピーして貼り付けてください',
-      en: 'Copy and paste from Excel'
-    },
-    excelDescription: {
-      ja: 'エクセルで A列:カテゴリ、B列:質問、C列:回答 の形式でデータを貼り付けてください',
-      en: 'Paste data in the format: Column A: Category, Column B: Question, Column C: Answer'
     },
     fileUploadInstructions: {
       ja: 'CSVまたはExcelファイルをアップロードしてください',
@@ -207,14 +150,10 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="file" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="file" className="flex items-center gap-2">
               <File className="h-4 w-4" />
               {tabTranslations.fileUpload[language]}
-            </TabsTrigger>
-            <TabsTrigger value="excel" className="flex items-center gap-2">
-              <FileSpreadsheet className="h-4 w-4" />
-              {tabTranslations.excelImport[language]}
             </TabsTrigger>
             <TabsTrigger value="text">
               {tabTranslations.textImport[language]}
@@ -250,42 +189,6 @@ export function BulkImportQA({ onImport, translations, language }: BulkImportQAP
                 </p>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="excel" className="mt-4">
-            <Form {...excelForm}>
-              <form onSubmit={excelForm.handleSubmit(handleExcelSubmit)} className="space-y-4">
-                <FormField
-                  control={excelForm.control}
-                  name="excelContent"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{tabTranslations.excelInstructions[language]}</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder={
-                            language === 'ja' 
-                              ? 'カテゴリ	質問	回答\n宿泊	チェックイン時間は何時ですか？	チェックインは15時からです\n館内サービス	Wi-Fiは使えますか？	はい、全館およびロビーで無料Wi-Fiをご利用いただけます'
-                              : 'Category	Question	Answer\nAccommodation	What time is check-in?	Check-in is from 3:00 PM\nServices	Is Wi-Fi available?	Yes, free Wi-Fi is available throughout the hotel'
-                          }
-                          className="min-h-[200px] font-mono text-sm" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {tabTranslations.excelDescription[language]}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button type="submit" className="w-full flex items-center justify-center gap-2">
-                  <Upload className="h-4 w-4" />
-                  {translations.importButton[language]}
-                </Button>
-              </form>
-            </Form>
           </TabsContent>
 
           <TabsContent value="text" className="mt-4">
