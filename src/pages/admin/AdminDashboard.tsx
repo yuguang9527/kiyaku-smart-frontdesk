@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -119,47 +118,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Sample statistics for the admin dashboard
-  const stats = [
-    { 
-      icon: <MessageSquare className="h-8 w-8 text-white" />, 
-      value: 24, 
-      label: translations.stats.chatRequests[language], 
-      trend: "+12%",
-      positive: true,
-      key: "chatRequests"
-    },
-    { 
-      icon: <Phone className="h-8 w-8 text-white" />, 
-      value: 18, 
-      label: translations.stats.phoneCallsToday[language], 
-      trend: "-3%",
-      positive: false,
-      key: "calls"
-    },
-    { 
-      icon: <Calendar className="h-8 w-8 text-white" />, 
-      value: 3, 
-      label: translations.stats.newReservations[language], 
-      subtext: translations.stats.newReservationsSubtext[language],
-      trend: "+5%",
-      positive: true,
-      key: "reservations"
-    },
-    { 
-      icon: <User className="h-8 w-8 text-white" />, 
-      value: 156, 
-      label: translations.stats.activeUsers[language], 
-      trend: "+8%",
-      positive: true,
-      key: "users"
-    },
-  ];
-
-  // Filter stats for main display and smaller boxes
-  const mainStats = stats.filter(stat => stat.key === "chatRequests" || stat.key === "reservations");
-  const secondaryStats = stats.filter(stat => stat.key === "calls" || stat.key === "users");
-
   // Sample support inquiries data with reservation numbers and customer names
   const inquiries = [
     { 
@@ -206,6 +164,47 @@ const AdminDashboard: React.FC = () => {
 
   const completedInquiries = inquiries.filter(inq => inq.status === 'resolved');
   const incompleteInquiries = inquiries.filter(inq => inq.status !== 'resolved');
+
+  // Sample statistics for the admin dashboard - チャットリクエスト数を未完了件数と一致させる
+  const stats = [
+    { 
+      icon: <MessageSquare className="h-8 w-8 text-white" />, 
+      value: incompleteInquiries.length, 
+      label: translations.stats.chatRequests[language], 
+      trend: "+12%",
+      positive: true,
+      key: "chatRequests"
+    },
+    { 
+      icon: <Phone className="h-8 w-8 text-white" />, 
+      value: 18, 
+      label: translations.stats.phoneCallsToday[language], 
+      trend: "-3%",
+      positive: false,
+      key: "calls"
+    },
+    { 
+      icon: <Calendar className="h-8 w-8 text-white" />, 
+      value: 3, 
+      label: translations.stats.newReservations[language], 
+      subtext: translations.stats.newReservationsSubtext[language],
+      trend: "+5%",
+      positive: true,
+      key: "reservations"
+    },
+    { 
+      icon: <User className="h-8 w-8 text-white" />, 
+      value: 156, 
+      label: translations.stats.activeUsers[language], 
+      trend: "+8%",
+      positive: true,
+      key: "users"
+    },
+  ];
+
+  // Filter stats for main display and smaller boxes
+  const mainStats = stats.filter(stat => stat.key === "chatRequests" || stat.key === "reservations");
+  const secondaryStats = stats.filter(stat => stat.key === "calls" || stat.key === "users");
 
   // Helper function to get the appropriate inquiries based on active tab
   const getFilteredInquiries = () => {
