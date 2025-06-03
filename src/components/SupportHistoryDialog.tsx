@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -191,16 +192,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
     return (
       <div className="h-full flex flex-col">
-        <div className="flex items-center gap-2 mb-4 pb-4 border-b">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBackToList}
-            className="flex items-center gap-1"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {language === 'ja' ? '戻る' : 'Back'}
-          </Button>
+        <div className="mb-4 pb-4 border-b">
           <div className="flex-1">
             <h4 className="font-medium">{entry?.action}</h4>
             <p className="text-sm text-muted-foreground">{entry?.timestamp}</p>
@@ -282,18 +274,31 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl h-[500px] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            {selectedEntry 
-              ? (language === 'ja' ? 'チャット詳細' : 'Chat Details')
-              : (language === 'ja' ? '対応履歴' : 'Support History')
-            }
-            {reservationId && !selectedEntry && (
-              <Badge variant="outline" className="ml-2">
-                {reservationId}
-              </Badge>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              {selectedEntry 
+                ? (language === 'ja' ? 'チャット詳細' : 'Chat Details')
+                : (language === 'ja' ? '対応履歴' : 'Support History')
+              }
+              {reservationId && !selectedEntry && (
+                <Badge variant="outline" className="ml-2">
+                  {reservationId}
+                </Badge>
+              )}
+            </DialogTitle>
+            {selectedEntry && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackToList}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {language === 'ja' ? '戻る' : 'Back'}
+              </Button>
             )}
-          </DialogTitle>
+          </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
