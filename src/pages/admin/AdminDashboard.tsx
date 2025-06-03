@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -9,12 +7,15 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useNavigate } from 'react-router-dom';
+import SupportHistoryDialog from '@/components/SupportHistoryDialog';
 
 const AdminDashboard: React.FC = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [activeInquiryTab, setActiveInquiryTab] = useState<'all' | 'completed' | 'incomplete'>('all');
+  const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
 
   const translations = {
     title: {
@@ -230,6 +231,12 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Handle inquiry click
+  const handleInquiryClick = (inquiryId: number) => {
+    setSelectedInquiryId(inquiryId.toString());
+    setIsHistoryDialogOpen(true);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-blue-300 via-blue-100 to-white relative overflow-hidden">
       {/* Decorative airplane */}
@@ -361,7 +368,11 @@ const AdminDashboard: React.FC = () => {
                   </TableHeader>
                   <TableBody>
                     {getFilteredInquiries().map(inquiry => (
-                      <TableRow key={inquiry.id} className="hover:bg-blue-50 transition-colors">
+                      <TableRow 
+                        key={inquiry.id} 
+                        className="hover:bg-blue-50 transition-colors cursor-pointer"
+                        onClick={() => handleInquiryClick(inquiry.id)}
+                      >
                         <TableCell className="font-medium text-blue-900">{inquiry.title} #{inquiry.id}</TableCell>
                         <TableCell className="text-sm text-blue-600">{inquiry.time} {translations.inquiries.time.hoursAgo[language]}</TableCell>
                         <TableCell>
@@ -406,9 +417,18 @@ const AdminDashboard: React.FC = () => {
           <p>&copy; 2025 Yotta! {language === 'ja' ? '管理システム' : 'Admin System'}</p>
         </div>
       </main>
+
+      {/* Support History Dialog */}
+      <SupportHistoryDialog
+        reservationId={selectedInquiryId}
+        isOpen={isHistoryDialogOpen}
+        onClose={() => {
+          setIsHistoryDialogOpen(false);
+          setSelectedInquiryId(null);
+        }}
+      />
     </div>
   );
 };
 
 export default AdminDashboard;
-
