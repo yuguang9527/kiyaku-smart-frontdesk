@@ -242,10 +242,13 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Handle card click
+  // Handle card click - updated to handle chat requests
   const handleCardClick = (statKey: string) => {
     if (statKey === 'reservations') {
       navigate('/admin/reservations');
+    } else if (statKey === 'chatRequests') {
+      // チャットリクエストがクリックされたら未完了件数タブを選択
+      setActiveInquiryTab('incomplete');
     }
   };
 
@@ -310,9 +313,7 @@ const AdminDashboard: React.FC = () => {
           {mainStats.map((stat, index) => (
             <Card 
               key={index} 
-              className={`overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm ${
-                stat.key === 'reservations' ? 'cursor-pointer hover:scale-105' : ''
-              }`}
+              className={`overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm cursor-pointer hover:scale-105`}
               style={{ 
                 animationDelay: `${index * 0.1}s`,
               }}
