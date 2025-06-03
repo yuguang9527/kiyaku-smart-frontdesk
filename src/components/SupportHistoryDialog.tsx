@@ -265,7 +265,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
                   <FormControl>
                     <Textarea
                       placeholder={language === 'ja' ? 'コメントを入力してください...' : 'Enter your comment...'}
-                      className="min-h-[80px] resize-none"
+                      className="min-h-[60px] resize-none"
                       {...field}
                     />
                   </FormControl>
