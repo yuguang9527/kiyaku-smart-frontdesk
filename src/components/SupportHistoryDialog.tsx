@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +14,7 @@ interface SupportHistoryDialogProps {
   isOpen: boolean;
   onClose: () => void;
   updateHistory?: ReservationUpdateHistory[];
+  onStatusChange?: (inquiryId: string, isCompleted: boolean) => void;
 }
 
 interface CommentForm {
@@ -25,7 +25,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   reservationId,
   isOpen,
   onClose,
-  updateHistory = []
+  updateHistory = [],
+  onStatusChange
 }) => {
   const { language } = useLanguage();
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
@@ -198,11 +199,17 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     if (selectedEntry) {
       setCompletedEntries(prev => {
         const newSet = new Set(prev);
-        if (newSet.has(selectedEntry)) {
+        const isCompleted = newSet.has(selectedEntry);
+        if (isCompleted) {
           newSet.delete(selectedEntry);
         } else {
           newSet.add(selectedEntry);
         }
+        
+        // 親コンポーネントに変更を通知
+        const inquiryId = parseInt(selectedEntry.replace('support-', ''));
+        onStatusChange?.(inquiryId.toString(), !isCompleted);
+        
         return newSet;
       });
     }
@@ -212,11 +219,17 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     event.stopPropagation();
     setCompletedEntries(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(entryId)) {
+      const isCompleted = newSet.has(entryId);
+      if (isCompleted) {
         newSet.delete(entryId);
       } else {
         newSet.add(entryId);
       }
+      
+      // 親コンポーネントに変更を通知
+      const inquiryId = parseInt(entryId.replace('support-', ''));
+      onStatusChange?.(inquiryId.toString(), !isCompleted);
+      
       return newSet;
     });
   };

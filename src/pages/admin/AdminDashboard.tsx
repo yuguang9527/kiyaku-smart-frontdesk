@@ -16,6 +16,13 @@ const AdminDashboard: React.FC = () => {
   const [activeInquiryTab, setActiveInquiryTab] = useState<'all' | 'completed' | 'incomplete'>('all');
   const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [inquiryStatuses, setInquiryStatuses] = useState<{ [key: string]: string }>({
+    '1': 'resolved',
+    '2': 'in-progress', 
+    '3': 'new',
+    '4': 'resolved',
+    '5': 'in-progress'
+  });
 
   const translations = {
     title: {
@@ -132,7 +139,7 @@ const AdminDashboard: React.FC = () => {
       id: 1, 
       title: language === 'ja' ? '予約確認の問い合わせ' : 'Reservation Confirmation',
       time: 2,
-      status: 'resolved',
+      status: inquiryStatuses['1'],
       reservationNumber: 'RES001',
       customerName: '田中太郎'
     },
@@ -140,7 +147,7 @@ const AdminDashboard: React.FC = () => {
       id: 2, 
       title: language === 'ja' ? 'チェックアウト時間の変更' : 'Change in Check-out Time',
       time: 4,
-      status: 'in-progress',
+      status: inquiryStatuses['2'],
       reservationNumber: 'RES002',
       customerName: '佐藤花子'
     },
@@ -148,7 +155,7 @@ const AdminDashboard: React.FC = () => {
       id: 3, 
       title: language === 'ja' ? '部屋の設備について' : 'Room Facilities Inquiry',
       time: 6,
-      status: 'new',
+      status: inquiryStatuses['3'],
       reservationNumber: 'RES003',
       customerName: 'John Smith'
     },
@@ -156,7 +163,7 @@ const AdminDashboard: React.FC = () => {
       id: 4, 
       title: language === 'ja' ? '朝食オプションの追加' : 'Adding Breakfast Option',
       time: 8,
-      status: 'resolved',
+      status: inquiryStatuses['4'],
       reservationNumber: 'RES004',
       customerName: '山田一郎'
     },
@@ -164,7 +171,7 @@ const AdminDashboard: React.FC = () => {
       id: 5, 
       title: language === 'ja' ? '追加料金について' : 'Additional Charges',
       time: 10,
-      status: 'in-progress',
+      status: inquiryStatuses['5'],
       reservationNumber: 'RES005',
       customerName: 'Emily Johnson'
     }
@@ -274,6 +281,14 @@ const AdminDashboard: React.FC = () => {
     setIsHistoryDialogOpen(true);
   };
 
+  // Handle status change from SupportHistoryDialog
+  const handleStatusChange = (inquiryId: string, isCompleted: boolean) => {
+    setInquiryStatuses(prev => ({
+      ...prev,
+      [inquiryId]: isCompleted ? 'resolved' : 'in-progress'
+    }));
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-blue-300 via-blue-100 to-white relative overflow-hidden">
       {/* Decorative airplane */}
@@ -286,6 +301,7 @@ const AdminDashboard: React.FC = () => {
       
       <AdminNav />
       <main className="flex-1 py-6 px-6 md:px-8 lg:px-10 relative z-10">
+        {/* Header section */}
         <div className="mb-8 border-b border-blue-100 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -325,6 +341,7 @@ const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
+        {/* Stats cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {mainStats.map((stat, index) => (
             <Card 
@@ -368,6 +385,7 @@ const AdminDashboard: React.FC = () => {
           ))}
         </div>
 
+        {/* Recent Inquiries and System Status */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="border-0 shadow-md overflow-hidden bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
@@ -460,6 +478,7 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </div>
 
+        {/* Footer */}
         <div className="mt-8 text-center text-sm text-blue-400">
           <p>&copy; 2025 Yotta! {language === 'ja' ? '管理システム' : 'Admin System'}</p>
         </div>
@@ -473,6 +492,7 @@ const AdminDashboard: React.FC = () => {
           setIsHistoryDialogOpen(false);
           setSelectedInquiryId(null);
         }}
+        onStatusChange={handleStatusChange}
       />
     </div>
   );
