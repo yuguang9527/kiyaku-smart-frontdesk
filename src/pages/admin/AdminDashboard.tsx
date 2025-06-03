@@ -17,11 +17,9 @@ const AdminDashboard: React.FC = () => {
   const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [inquiryStatuses, setInquiryStatuses] = useState<{ [key: string]: string }>({
-    '1': 'resolved',
-    '2': 'in-progress', 
-    '3': 'new',
-    '4': 'resolved',
-    '5': 'in-progress'
+    'support-001': 'resolved',
+    'support-002': 'in-progress', 
+    'support-003': 'new'
   });
 
   const translations = {
@@ -133,54 +131,37 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Sample support inquiries data with reservation numbers and customer names
+  // Support inquiries data that matches the SupportHistoryDialog data
   const inquiries = [
     { 
-      id: 1, 
-      title: language === 'ja' ? '予約確認の問い合わせ' : 'Reservation Confirmation',
+      id: 'support-001', 
+      title: language === 'ja' ? 'チェックイン手続き案内' : 'Check-in procedure guidance',
       time: 2,
-      status: inquiryStatuses['1'],
+      status: inquiryStatuses['support-001'],
       reservationNumber: 'RES001',
       customerName: '田中太郎'
     },
     { 
-      id: 2, 
-      title: language === 'ja' ? 'チェックアウト時間の変更' : 'Change in Check-out Time',
+      id: 'support-002', 
+      title: language === 'ja' ? '朝食時間問い合わせ対応' : 'Breakfast time inquiry',
       time: 4,
-      status: inquiryStatuses['2'],
+      status: inquiryStatuses['support-002'],
       reservationNumber: 'RES002',
       customerName: '佐藤花子'
     },
     { 
-      id: 3, 
-      title: language === 'ja' ? '部屋の設備について' : 'Room Facilities Inquiry',
+      id: 'support-003', 
+      title: language === 'ja' ? '周辺観光地案内' : 'Local attractions guidance',
       time: 6,
-      status: inquiryStatuses['3'],
+      status: inquiryStatuses['support-003'],
       reservationNumber: 'RES003',
       customerName: 'John Smith'
-    },
-    { 
-      id: 4, 
-      title: language === 'ja' ? '朝食オプションの追加' : 'Adding Breakfast Option',
-      time: 8,
-      status: inquiryStatuses['4'],
-      reservationNumber: 'RES004',
-      customerName: '山田一郎'
-    },
-    { 
-      id: 5, 
-      title: language === 'ja' ? '追加料金について' : 'Additional Charges',
-      time: 10,
-      status: inquiryStatuses['5'],
-      reservationNumber: 'RES005',
-      customerName: 'Emily Johnson'
     }
   ];
 
   const completedInquiries = inquiries.filter(inq => inq.status === 'resolved');
   const incompleteInquiries = inquiries.filter(inq => inq.status !== 'resolved');
 
-  // Sample statistics for the admin dashboard - チャットリクエスト数を未完了件数と一致させる
   const stats = [
     { 
       icon: <MessageSquare className="h-8 w-8 text-white" />, 
@@ -217,11 +198,9 @@ const AdminDashboard: React.FC = () => {
     },
   ];
 
-  // Filter stats for main display and smaller boxes
   const mainStats = stats.filter(stat => stat.key === "chatRequests" || stat.key === "reservations");
   const secondaryStats = stats.filter(stat => stat.key === "calls" || stat.key === "users");
 
-  // Helper function to get the appropriate inquiries based on active tab
   const getFilteredInquiries = () => {
     switch (activeInquiryTab) {
       case 'completed':
@@ -233,7 +212,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Helper function to get badge styling by status
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'resolved':
@@ -245,7 +223,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Helper function to get status text
   const getStatusText = (status: string) => {
     switch (status) {
       case 'resolved':
@@ -257,7 +234,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Helper function to get row styling based on status
   const getRowStyling = (status: string) => {
     if (status !== 'resolved') {
       return 'hover:bg-red-100 transition-colors cursor-pointer bg-red-50';
@@ -265,23 +241,19 @@ const AdminDashboard: React.FC = () => {
     return 'hover:bg-blue-50 transition-colors cursor-pointer';
   };
 
-  // Handle card click - updated to handle chat requests
   const handleCardClick = (statKey: string) => {
     if (statKey === 'reservations') {
       navigate('/admin/reservations');
     } else if (statKey === 'chatRequests') {
-      // チャットリクエストがクリックされたら未完了件数タブを選択
       setActiveInquiryTab('incomplete');
     }
   };
 
-  // Handle inquiry click
-  const handleInquiryClick = (inquiryId: number) => {
-    setSelectedInquiryId(inquiryId.toString());
+  const handleInquiryClick = (inquiryId: string) => {
+    setSelectedInquiryId(inquiryId);
     setIsHistoryDialogOpen(true);
   };
 
-  // Handle status change from SupportHistoryDialog
   const handleStatusChange = (inquiryId: string, isCompleted: boolean) => {
     setInquiryStatuses(prev => ({
       ...prev,
@@ -436,7 +408,7 @@ const AdminDashboard: React.FC = () => {
                         className={getRowStyling(inquiry.status)}
                         onClick={() => handleInquiryClick(inquiry.id)}
                       >
-                        <TableCell className="font-medium text-blue-900">{inquiry.title} #{inquiry.id}</TableCell>
+                        <TableCell className="font-medium text-blue-900">{inquiry.title}</TableCell>
                         <TableCell className="text-sm text-blue-600">{inquiry.reservationNumber}</TableCell>
                         <TableCell className="text-sm text-blue-800">{inquiry.customerName}</TableCell>
                         <TableCell className="text-sm text-blue-600">{inquiry.time} {translations.inquiries.time.hoursAgo[language]}</TableCell>

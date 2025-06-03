@@ -33,6 +33,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [completedEntries, setCompletedEntries] = useState<Set<string>>(new Set());
 
+  // Filter to show only the selected inquiry's history
   const supportHistory = [
     {
       id: 'support-001',
@@ -63,8 +64,13 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
     }
   ];
 
+  // Show only the history for the selected reservation ID
+  const filteredSupportHistory = reservationId 
+    ? supportHistory.filter(entry => entry.id === reservationId)
+    : supportHistory;
+
   const combinedHistory = [
-    ...supportHistory,
+    ...filteredSupportHistory,
     ...updateHistory
       .filter(update => update.reservationId === reservationId)
       .map(update => ({
@@ -206,9 +212,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           newSet.add(selectedEntry);
         }
         
-        // 親コンポーネントに変更を通知
-        const inquiryId = parseInt(selectedEntry.replace('support-', ''));
-        onStatusChange?.(inquiryId.toString(), !isCompleted);
+        // 親コンポーネントに変更を通知 - 正しいIDを使用
+        onStatusChange?.(selectedEntry, !isCompleted);
         
         return newSet;
       });
@@ -226,9 +231,8 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
         newSet.add(entryId);
       }
       
-      // 親コンポーネントに変更を通知
-      const inquiryId = parseInt(entryId.replace('support-', ''));
-      onStatusChange?.(inquiryId.toString(), !isCompleted);
+      // 親コンポーネントに変更を通知 - 正しいIDを使用
+      onStatusChange?.(entryId, !isCompleted);
       
       return newSet;
     });
