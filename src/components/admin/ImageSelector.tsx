@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -165,22 +166,6 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
           {translations.uploadImage[language]}
         </Button>
       </div>
-
-      {/* 選択された画像のプレビュー */}
-      {selectedImage && (
-        <div className="mt-4">
-          <h4 className="text-sm font-medium mb-2">
-            {language === 'ja' ? '選択された画像' : 'Selected Image'}
-          </h4>
-          <Card className="p-4 max-w-xs">
-            <img
-              src={selectedImage}
-              alt="Selected"
-              className="w-full h-32 object-cover rounded"
-            />
-          </Card>
-        </div>
-      )}
     </div>
   );
 };
