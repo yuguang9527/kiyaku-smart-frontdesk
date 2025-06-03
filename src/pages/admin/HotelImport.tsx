@@ -16,8 +16,8 @@ const HotelImport: React.FC = () => {
       en: 'Hotel Information'
     },
     description: {
-      ja: 'ホテル情報と質問応答のインポート・管理',
-      en: 'Import and manage hotel information and Q&A'
+      ja: 'ホテル情報と質問応答の管理',
+      en: 'Manage hotel information and Q&A'
     },
     tabs: {
       hotelInfo: {
