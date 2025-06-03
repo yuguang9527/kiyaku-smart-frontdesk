@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -36,6 +37,10 @@ const AdminDashboard: React.FC = () => {
       newReservations: {
         ja: '新規予約',
         en: 'New Reservations'
+      },
+      newReservationsSubtext: {
+        ja: '過去24時間以内の予約件数',
+        en: 'Reservations in the last 24 hours'
       },
       activeUsers: {
         ja: 'アクティブユーザー',
@@ -124,8 +129,9 @@ const AdminDashboard: React.FC = () => {
     },
     { 
       icon: <Calendar className="h-8 w-8 text-white" />, 
-      value: 7, 
+      value: 3, 
       label: translations.stats.newReservations[language], 
+      subtext: translations.stats.newReservationsSubtext[language],
       trend: "+5%",
       positive: true,
       key: "reservations"
@@ -293,7 +299,12 @@ const AdminDashboard: React.FC = () => {
                     <div className="bg-blue-700/50 p-3 rounded-lg backdrop-blur-sm">
                       {stat.icon}
                     </div>
-                    <span className="text-white text-lg font-medium">{stat.label}</span>
+                    <div className="flex flex-col">
+                      <span className="text-white text-lg font-medium">{stat.label}</span>
+                      {stat.subtext && (
+                        <span className="text-blue-100 text-xs">{stat.subtext}</span>
+                      )}
+                    </div>
                   </div>
                   <Badge className={`${stat.positive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-medium`}>
                     {stat.trend}
@@ -400,3 +411,4 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
+
