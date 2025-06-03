@@ -207,7 +207,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="flex-1 h-[350px]">
+        <ScrollArea className="flex-1 h-[260px]">
           <div className="space-y-4 pr-4">
             {chatMessages.map((message: any) => (
               <ChatBubble
@@ -224,7 +224,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
   };
 
   const renderHistoryList = () => (
-    <ScrollArea className="h-[500px] pr-4">
+    <ScrollArea className="h-[400px] pr-4">
       <div className="space-y-4">
         {combinedHistory.length > 0 ? (
           combinedHistory.map((entry, index) => (
@@ -280,7 +280,7 @@ const SupportHistoryDialog: React.FC<SupportHistoryDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+      <DialogContent className="max-w-2xl h-[500px] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
