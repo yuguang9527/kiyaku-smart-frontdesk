@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: kiyaku-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kiyaku_hotel
+      MYSQL_USER: kiyaku
+      MYSQL_PASSWORD: kiyaku123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kiyaku-backend
+    environment:
+      DATABASE_URL: "mysql://kiyaku:kiyaku123@mysql:3306/kiyaku_hotel"
+      JWT_SECRET: "your-super-secret-jwt-key-change-in-production"
+      NODE_ENV: development
+      PORT: 3001
+      FRONTEND_URL: "http://localhost:5173"
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: kiyaku-frontend
+    environment:
+      VITE_API_URL: "http://localhost:3001/api"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+volumes:
+  mysql_data:

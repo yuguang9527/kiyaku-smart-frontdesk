@@ -1,73 +1,217 @@
-# Welcome to your Lovable project
+# Kiyaku Smart Frontdesk
 
-## Project info
+A modern, full-stack hotel management system with AI-powered customer service and phone integration.
 
-**URL**: https://lovable.dev/projects/721a3b5c-5310-46aa-8403-092bb2ab6d42
+## 🚀 Features
 
-## How can I edit this code?
+- **Smart Chat System**: AI-powered customer service using Groq
+- **Phone Integration**: Voice calls and transcription via Twilio  
+- **Reservation Management**: Complete booking system
+- **Multi-language Support**: Japanese and English
+- **Admin Dashboard**: Hotel management interface
+- **Real-time Communication**: Chat and voice support
+- **Responsive Design**: Mobile-friendly interface
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+### Frontend
+- **Framework**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Build Tool**: Vite
+- **State Management**: React hooks + Context
+- **Routing**: React Router
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/721a3b5c-5310-46aa-8403-092bb2ab6d42) and start prompting.
+### Backend  
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js + TypeScript
+- **Database**: MySQL + Prisma ORM
+- **Authentication**: JWT
+- **AI**: Groq SDK for chat responses
+- **Phone**: Twilio for voice calls
+- **Security**: Helmet, CORS, Rate limiting
 
-Changes made via Lovable will be committed automatically to this repo.
+### Infrastructure
+- **Database**: MySQL 8.0
+- **Containerization**: Docker + Docker Compose
+- **Development**: Hot reload for both frontend and backend
 
-**Use your preferred IDE**
+## 🚀 Quick Start
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js 18+ 
+- Docker & Docker Compose
+- Git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yuguang9527/kiyaku-smart-frontdesk.git
+cd kiyaku-smart-frontdesk
+```
 
-Follow these steps:
+### 2. Environment Setup
+```bash
+# Copy environment files
+cp .env.example .env
+cp backend/.env.example backend/.env
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Update the environment files with your API keys:
+- Groq API key for AI chat
+- Twilio credentials for phone integration
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 3. Start the Application
+```bash
+# Make start script executable and run
+chmod +x start.sh
+./start.sh
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+This will:
+- Start MySQL database
+- Set up database schema and seed data  
+- Start backend API server
+- Start frontend development server
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 4. Access the Application
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3001  
+- **Database**: localhost:3306
+
+### Default Admin Login
+- **Email**: admin@kiyaku.com
+- **Password**: admin123
+
+## 📁 Project Structure
+
+```
+kiyaku-smart-frontdesk/
+├── src/                          # Frontend source code
+│   ├── components/              # React components
+│   ├── pages/                   # Page components
+│   ├── services/                # API services
+│   ├── hooks/                   # Custom hooks
+│   └── types/                   # TypeScript types
+├── backend/                     # Backend source code
+│   ├── src/
+│   │   ├── routes/             # API routes
+│   │   ├── controllers/        # Route handlers
+│   │   ├── middleware/         # Express middleware
+│   │   ├── services/           # Business logic
+│   │   └── lib/                # Utilities
+│   ├── prisma/                 # Database schema and migrations
+│   └── README.md               # Backend documentation
+├── docker-compose.yml          # Multi-container setup
+└── start.sh                    # Quick start script
+```
+
+## 🔧 Development
+
+### Frontend Development
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Backend Development  
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Database Operations
+```bash
+cd backend
 
-**Use GitHub Codespaces**
+# Generate Prisma client
+npx prisma generate
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Run migrations
+npx prisma migrate dev
 
-## What technologies are used for this project?
+# Seed database
+npx prisma db seed
 
-This project is built with:
+# Reset database
+npx prisma migrate reset
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📚 API Documentation
 
-## How can I deploy this project?
+The backend provides REST APIs for:
 
-Simply open [Lovable](https://lovable.dev/projects/721a3b5c-5310-46aa-8403-092bb2ab6d42) and click on Share -> Publish.
+- **Authentication**: Login/Register
+- **Reservations**: CRUD operations
+- **Hotels**: Management interface
+- **Chat**: AI-powered conversations
+- **Twilio**: Phone call integration
+- **Q&A**: Knowledge base management
 
-## Can I connect a custom domain to my Lovable project?
+See `backend/README.md` for detailed API documentation.
 
-Yes, you can!
+## 🐳 Docker Usage
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Start all services
+```bash
+docker-compose up -d
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### View logs
+```bash
+docker-compose logs -f
+```
+
+### Stop all services
+```bash
+docker-compose down
+```
+
+### Reset everything
+```bash
+docker-compose down -v
+./start.sh
+```
+
+## 🔐 Environment Variables
+
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:3001/api
+VITE_GROQ_API_KEY=your-groq-api-key
+```
+
+### Backend (backend/.env)
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/kiyaku_hotel"
+JWT_SECRET=your-jwt-secret
+GROQ_API_KEY=your-groq-api-key
+TWILIO_ACCOUNT_SID=your-twilio-sid
+TWILIO_AUTH_TOKEN=your-twilio-token
+TWILIO_PHONE_NUMBER=your-twilio-number
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For issues and questions:
+- Create an issue on GitHub
+- Check the documentation in `backend/README.md`
+
+---
+
+## Original Lovable Info
+
+**Lovable Project URL**: https://lovable.dev/projects/721a3b5c-5310-46aa-8403-092bb2ab6d42
+
+You can also edit this project directly through [Lovable](https://lovable.dev/projects/721a3b5c-5310-46aa-8403-092bb2ab6d42) for rapid prototyping.
