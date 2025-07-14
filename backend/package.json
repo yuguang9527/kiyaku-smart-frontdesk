@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "start": "npm run build && npm run db:deploy && node dist/server.js",
+    "start": "prisma generate && npm run build && npm run db:deploy && node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "test": "jest",
@@ -13,8 +13,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset && npm run db:seed",
-    "db:deploy": "prisma migrate deploy && tsx prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "db:deploy": "prisma migrate deploy && tsx prisma/seed.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
