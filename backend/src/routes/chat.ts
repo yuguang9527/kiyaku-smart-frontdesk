@@ -1,11 +1,11 @@
 import express from 'express';
 import { prisma } from '../lib/prisma.js';
-import Groq from 'groq-sdk';
+import Anthropic from '@anthropic-ai/sdk';
 
 export const chatRoutes = express.Router();
 
-const groq = process.env.GROQ_API_KEY ? new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const anthropic = process.env.CLAUDE_API_KEY ? new Anthropic({
+  apiKey: process.env.CLAUDE_API_KEY,
 }) : null;
 
 chatRoutes.post('/message', async (req, res) => {
@@ -39,24 +39,23 @@ ${qaItems.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n')}`;
 
     let response: string;
     
-    if (groq) {
-      const chatCompletion = await groq.chat.completions.create({
+    if (anthropic) {
+      const completion = await anthropic.messages.create({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 1024,
+        temperature: 0.7,
+        system: `You are a helpful hotel assistant for Kiyaku Smart Hotel. Use the following context to answer questions about the hotel:\n\n${context}`,
         messages: [
-          {
-            role: 'system',
-            content: `You are a helpful hotel assistant. Use the following context to answer questions about the hotel:\n\n${context}`,
-          },
           {
             role: 'user',
             content: message,
           },
         ],
-        model: 'llama3-8b-8192',
-        temperature: 0.7,
-        max_tokens: 1024,
       });
       
-      response = chatCompletion.choices[0]?.message?.content || 'I apologize, but I could not generate a response at this time.';
+      response = completion.content[0]?.type === 'text' 
+        ? completion.content[0].text 
+        : 'I apologize, but I could not generate a response at this time.';
     } else {
       response = `Thank you for your message: "${message}". I'm a helpful hotel assistant, but AI chat is currently unavailable. Please contact our staff for assistance.`;
     }
