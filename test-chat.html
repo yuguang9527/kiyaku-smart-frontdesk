@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Claude Chat</title>
+</head>
+<body>
+    <h1>Test Claude Chat API</h1>
+    <button onclick="testChat()">Test Chat</button>
+    <div id="result"></div>
+
+    <script>
+        async function testChat() {
+            try {
+                const response = await fetch('https://responsible-expression-production.up.railway.app/api/chat/message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Hello, tell me about hotel amenities",
+                        sessionId: "test-123",
+                        hotelId: "kiyaku-hotel-1"
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
