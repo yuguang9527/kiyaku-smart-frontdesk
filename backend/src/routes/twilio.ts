@@ -68,21 +68,126 @@ twilioRoutes.post('/voice', async (req, res) => {
 
   const twiml = new twilio.twiml.VoiceResponse();
 
+  // Welcome message
   twiml.say(
     {
       voice: 'alice',
       language: 'en-US',
     },
-    'Hello! Thank you for calling Kiyaku Smart Hotel. How can I assist you today?'
+    'Hello! Thank you for calling Kiyaku Smart Hotel. I am your AI assistant ready to help with room bookings, hotel amenities, and any questions you may have. Please speak after the tone, and press pound when finished.'
   );
 
+  // Record user input
   twiml.record({
-    transcribe: true,
-    transcribeCallback: '/api/twilio/transcription',
     maxLength: 30,
     finishOnKey: '#',
+    action: '/api/twilio/handle-recording',
+    method: 'POST',
   });
 
+  // Fallback if no input
+  twiml.say(
+    {
+      voice: 'alice', 
+      language: 'en-US',
+    },
+    'I did not receive your message. Please call back if you need assistance. Thank you for calling Kiyaku Smart Hotel.'
+  );
+
+  res.type('text/xml');
+  res.send(twiml.toString());
+});
+
+// Handle recording and generate AI response
+twilioRoutes.post('/handle-recording', async (req, res) => {
+  try {
+    const { CallSid, RecordingUrl } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    // Simple AI response without complex processing
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for your message about room booking. I would be happy to help you with that. Our hotel has various room types available including standard rooms, deluxe rooms, and suites. All rooms include complimentary breakfast and WiFi. For specific availability and pricing, I can connect you with our reservations team. Would you like me to transfer your call?'
+    );
+    
+    // Option to record another message
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Press 1 to speak with our reservations team, or press 2 to leave another message.'
+    );
+    
+    twiml.gather({
+      numDigits: 1,
+      action: '/api/twilio/handle-choice',
+      method: 'POST',
+    });
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+    
+    console.log('✅ Recording handled for call:', CallSid);
+  } catch (error) {
+    console.error('❌ Recording handling error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for calling. Our team will assist you shortly.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Handle user choices
+twilioRoutes.post('/handle-choice', async (req, res) => {
+  const { Digits } = req.body;
+  const twiml = new twilio.twiml.VoiceResponse();
+  
+  if (Digits === '1') {
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Connecting you to our reservations team now. Please hold.'
+    );
+    // In real implementation, this would transfer to a human agent
+  } else if (Digits === '2') {
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Please leave your message after the tone.'
+    );
+    twiml.record({
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/handle-recording',
+      method: 'POST',
+    });
+  } else {
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for calling Kiyaku Smart Hotel. Have a great day!'
+    );
+  }
+  
   res.type('text/xml');
   res.send(twiml.toString());
 });
