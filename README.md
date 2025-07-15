@@ -4,7 +4,7 @@ A modern, full-stack hotel management system with AI-powered customer service an
 
 ## 🚀 Features
 
-- **Smart Chat System**: AI-powered customer service using Groq
+- **Smart Chat System**: AI-powered customer service using Claude
 - **Phone Integration**: Voice calls and transcription via Twilio  
 - **Reservation Management**: Complete booking system
 - **Multi-language Support**: Japanese and English
@@ -26,7 +26,7 @@ A modern, full-stack hotel management system with AI-powered customer service an
 - **Framework**: Express.js + TypeScript
 - **Database**: MySQL + Prisma ORM
 - **Authentication**: JWT
-- **AI**: Groq SDK for chat responses
+- **AI**: Claude API for chat responses
 - **Phone**: Twilio for voice calls
 - **Security**: Helmet, CORS, Rate limiting
 
@@ -56,7 +56,7 @@ cp backend/.env.example backend/.env
 ```
 
 Update the environment files with your API keys:
-- Groq API key for AI chat
+- Claude API key for AI chat
 - Twilio credentials for phone integration
 
 ### 3. Start the Application
@@ -178,14 +178,14 @@ docker-compose down -v
 ### Frontend (.env)
 ```env
 VITE_API_URL=http://localhost:3001/api
-VITE_GROQ_API_KEY=your-groq-api-key
+VITE_CLAUDE_API_KEY=your-claude-api-key
 ```
 
 ### Backend (backend/.env)
 ```env
 DATABASE_URL="mysql://username:password@localhost:3306/kiyaku_hotel"
 JWT_SECRET=your-jwt-secret
-GROQ_API_KEY=your-groq-api-key
+CLAUDE_API_KEY=your-claude-api-key
 TWILIO_ACCOUNT_SID=your-twilio-sid
 TWILIO_AUTH_TOKEN=your-twilio-token
 TWILIO_PHONE_NUMBER=your-twilio-number
