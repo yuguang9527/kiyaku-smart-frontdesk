@@ -11,6 +11,7 @@ import { hotelRoutes } from './routes/hotels.js';
 import { chatRoutes } from './routes/chat.js';
 import { twilioRoutes } from './routes/twilio.js';
 import { qaRoutes } from './routes/qa.js';
+import { testClaudeRoutes } from './routes/test-claude.js';
 
 // Debug: Log imported routes
 console.log('🔍 Debug: Routes imported:', {
@@ -57,6 +58,7 @@ app.use('/api/hotels', hotelRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/twilio', twilioRoutes);
 app.use('/api/qa', qaRoutes);
+app.use('/api/test-claude', testClaudeRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
