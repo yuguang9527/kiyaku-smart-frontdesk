@@ -371,12 +371,22 @@ The transcript contains multiple responses from the customer answering different
 - Fourth response: check-out date
 - Fifth response: room type preference
 
+IMPORTANT DATE HANDLING:
+- Today's date is ${new Date().toISOString().split('T')[0]}
+- For check-in dates, interpret relative terms correctly:
+  - "tomorrow" = today + 1 day
+  - "next week" = today + 7 days
+  - "July 16th" = 2025-07-16 (current year)
+  - Always use format YYYY-MM-DD
+- Check-out must be after check-in
+- If dates are unclear, use: checkIn = today + 1 day, checkOut = today + 3 days
+
 If any information is missing or unclear, use reasonable defaults:
 - name: "Guest" + random number
 - email: Use name to create email like "guest123@booking.com"
 - phone: Use the calling number
-- checkIn: Today + 1 day
-- checkOut: checkIn + 2 days  
+- checkIn: "${new Date(Date.now() + 24*60*60*1000).toISOString().split('T')[0]}"
+- checkOut: "${new Date(Date.now() + 3*24*60*60*1000).toISOString().split('T')[0]}"
 - roomType: "Standard Room"
 - guests: 1
 
@@ -396,14 +406,37 @@ ONLY return the JSON object, no other text.`,
         let bookingData;
         try {
           bookingData = JSON.parse(aiResponse);
+          
+          // Validate and fix dates if needed
+          if (bookingData.checkIn && bookingData.checkOut) {
+            const checkInDate = new Date(bookingData.checkIn);
+            const checkOutDate = new Date(bookingData.checkOut);
+            const today = new Date();
+            
+            // If dates are in the past or invalid, use default dates
+            if (checkInDate < today || checkOutDate <= checkInDate || isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+              const tomorrow = new Date();
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              const dayAfterTomorrow = new Date();
+              dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 3);
+              
+              bookingData.checkIn = tomorrow.toISOString().split('T')[0];
+              bookingData.checkOut = dayAfterTomorrow.toISOString().split('T')[0];
+            }
+          }
         } catch (parseError) {
           // Fallback data if AI response isn't valid JSON
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const dayAfterTomorrow = new Date();
+          dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 3);
+          
           bookingData = {
             name: `Guest${Math.floor(Math.random() * 1000)}`,
             email: `guest${Math.floor(Math.random() * 1000)}@booking.com`,
             phone: call.to || '+1234567890',
-            checkIn: new Date(Date.now() + 24*60*60*1000).toISOString().split('T')[0],
-            checkOut: new Date(Date.now() + 3*24*60*60*1000).toISOString().split('T')[0],
+            checkIn: tomorrow.toISOString().split('T')[0],
+            checkOut: dayAfterTomorrow.toISOString().split('T')[0],
             roomType: 'Standard Room',
             guests: 1
           };
@@ -545,6 +578,45 @@ twilioRoutes.get('/calls', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch calls',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Fix reservation dates endpoint
+twilioRoutes.post('/fix-dates', async (req, res) => {
+  try {
+    const { reservationId } = req.body;
+    
+    if (!reservationId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Reservation ID is required',
+      });
+    }
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 3);
+
+    const updatedReservation = await prisma.reservation.update({
+      where: { id: reservationId },
+      data: {
+        checkIn: tomorrow,
+        checkOut: dayAfterTomorrow,
+      },
+    });
+
+    res.json({
+      success: true,
+      data: updatedReservation,
+      message: 'Reservation dates updated successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update reservation dates',
       error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
