@@ -58,7 +58,8 @@ twilioRoutes.post('/call', async (req, res) => {
   }
 });
 
-twilioRoutes.post('/voice', async (req, res) => {
+// Handle both GET and POST for voice webhook
+twilioRoutes.all('/voice', async (req, res) => {
   if (!client) {
     return res.status(503).json({
       success: false,
