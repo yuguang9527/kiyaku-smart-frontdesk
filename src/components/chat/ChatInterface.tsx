@@ -6,6 +6,7 @@ import { Message, ChatInterfaceProps } from './types';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { chatHistoryService } from '@/services/chatHistory';
+import { apiService } from '@/services/api';
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   title,
@@ -69,21 +70,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     };
     
     setMessages((prev) => [...prev, userMessage]);
-    
-    // Simulate AI response
     setIsLoading(true);
     
-    setTimeout(() => {
+    try {
+      // Use actual API call to backend with Claude
+      const sessionId = reservationNumber || `session-${Date.now()}`;
+      const response = await apiService.sendChatMessage(
+        content,
+        sessionId,
+        undefined, // userId - can be added later if needed
+        hotelInfo?.id || 'yotta-hotel-1' // use hotel ID from props or default
+      );
+      
       const botMessage: Message = {
         id: uuidv4(),
-        content: `Thank you for your message. Our team will respond to your inquiry about "${content}" as soon as possible.`,
+        content: response.data?.response || 'Sorry, I encountered an error. Please try again.',
         isUser: false,
         timestamp: formatTime(),
       };
       
       setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Chat API error:', error);
+      const errorMessage: Message = {
+        id: uuidv4(),
+        content: 'Sorry, I encountered an error. Please try again.',
+        isUser: false,
+        timestamp: formatTime(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
