@@ -3,11 +3,11 @@ import { prisma } from '../lib/prisma.js';
 
 export const chatRoutes = express.Router();
 
-import Anthropic from '@anthropic-ai/sdk';
-
-const anthropic = process.env.CLAUDE_API_KEY ? new Anthropic({
-  apiKey: process.env.CLAUDE_API_KEY,
-}) : null;
+// 暂时注释掉 Anthropic 导入，确保路由先工作
+// import Anthropic from '@anthropic-ai/sdk';
+// const anthropic = process.env.CLAUDE_API_KEY ? new Anthropic({
+//   apiKey: process.env.CLAUDE_API_KEY,
+// }) : null;
 
 chatRoutes.post('/message', async (req, res) => {
   try {
@@ -38,28 +38,17 @@ ${qaItems.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n')}`;
       }
     }
 
-    let response: string;
+    // 暂时使用固定回复测试路由
+    const response = `Thank you for your message: "${message}". I'm a helpful hotel assistant for Kiyaku Smart Hotel. 
     
-    if (anthropic) {
-      const completion = await anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 1024,
-        temperature: 0.7,
-        system: `You are a helpful hotel assistant for Kiyaku Smart Hotel. Use the following context to answer questions about the hotel:\n\n${context}`,
-        messages: [
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
-      });
-      
-      response = completion.content[0]?.type === 'text' 
-        ? completion.content[0].text 
-        : 'I apologize, but I could not generate a response at this time.';
-    } else {
-      response = `Thank you for your message: "${message}". I'm a helpful hotel assistant, but AI chat is currently unavailable. Please contact our staff for assistance.`;
-    }
+Our hotel features:
+- Free WiFi throughout the hotel
+- 24/7 concierge service  
+- Fitness center and spa
+- Restaurant and room service
+- Convenient location in Shibuya, Tokyo
+
+How can I further assist you today?`;
 
     await prisma.chatHistory.create({
       data: {
