@@ -11,6 +11,16 @@ import { hotelRoutes } from './routes/hotels.js';
 import { chatRoutes } from './routes/chat.js';
 import { twilioRoutes } from './routes/twilio.js';
 import { qaRoutes } from './routes/qa.js';
+
+// Debug: Log imported routes
+console.log('🔍 Debug: Routes imported:', {
+  authRoutes: !!authRoutes,
+  reservationRoutes: !!reservationRoutes,
+  hotelRoutes: !!hotelRoutes,
+  chatRoutes: !!chatRoutes,
+  twilioRoutes: !!twilioRoutes,
+  qaRoutes: !!qaRoutes,
+});
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 
