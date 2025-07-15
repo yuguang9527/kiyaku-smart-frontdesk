@@ -3,20 +3,7 @@ import { prisma } from '../lib/prisma.js';
 
 export const chatRoutes = express.Router();
 
-// 使用动态导入确保安全加载
-let anthropic: any = null;
-
-if (process.env.CLAUDE_API_KEY) {
-  try {
-    const Anthropic = await import('@anthropic-ai/sdk');
-    anthropic = new Anthropic.default({
-      apiKey: process.env.CLAUDE_API_KEY,
-    });
-    console.log('✅ Claude API initialized successfully');
-  } catch (error) {
-    console.error('❌ Failed to initialize Claude API:', error);
-  }
-}
+// Claude API will be initialized per request to handle dynamic imports properly
 
 chatRoutes.post('/message', async (req, res) => {
   try {
@@ -49,30 +36,38 @@ ${qaItems.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n')}`;
 
     let response: string;
     
-    if (anthropic) {
-      try {
-        const completion = await anthropic.messages.create({
-          model: 'claude-3-haiku-20240307',
-          max_tokens: 1024,
-          temperature: 0.7,
-          system: `You are a helpful hotel assistant for Kiyaku Smart Hotel. Use the following context to answer questions about the hotel:\n\n${context}\n\nPlease respond naturally and helpfully. If asked in Japanese, respond in Japanese. If asked in English, respond in English.`,
-          messages: [
-            {
-              role: 'user',
-              content: message,
-            },
-          ],
-        });
-        
-        response = completion.content[0]?.type === 'text' 
-          ? completion.content[0].text 
-          : 'I apologize, but I could not generate a response at this time.';
-      } catch (error) {
-        console.error('Claude API error:', error);
-        response = `Thank you for your message: "${message}". I'm a helpful hotel assistant, but AI chat is temporarily unavailable. Please contact our staff for assistance.`;
+    // Initialize Claude API per request
+    try {
+      if (!process.env.CLAUDE_API_KEY) {
+        throw new Error('Claude API key not configured');
       }
-    } else {
-      response = `Thank you for your message: "${message}". I'm a helpful hotel assistant for Kiyaku Smart Hotel. Our AI chat service is currently being set up. Please contact our staff for immediate assistance.`;
+
+      const Anthropic = await import('@anthropic-ai/sdk');
+      const anthropic = new Anthropic.default({
+        apiKey: process.env.CLAUDE_API_KEY,
+      });
+
+      const completion = await anthropic.messages.create({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 1024,
+        temperature: 0.7,
+        system: `You are a helpful hotel assistant for Kiyaku Smart Hotel. Use the following context to answer questions about the hotel:\n\n${context}\n\nPlease respond naturally and helpfully. If asked in Japanese, respond in Japanese. If asked in English, respond in English.`,
+        messages: [
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+      });
+      
+      response = completion.content[0]?.type === 'text' 
+        ? completion.content[0].text 
+        : 'I apologize, but I could not generate a response at this time.';
+        
+      console.log('✅ Claude API response generated successfully');
+    } catch (error) {
+      console.error('❌ Claude API error:', error);
+      response = `Thank you for your message: "${message}". I'm a helpful hotel assistant, but AI chat is temporarily unavailable. Please contact our staff for assistance.`;
     }
 
     await prisma.chatHistory.create({
