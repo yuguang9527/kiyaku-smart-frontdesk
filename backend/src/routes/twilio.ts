@@ -124,15 +124,15 @@ twilioRoutes.post('/handle-recording', async (req, res) => {
         voice: 'alice',
         language: 'en-US',
       },
-      'To proceed with your booking, I need some information. Please tell me your full name, your email address, your phone number, your check-in date, check-out date, and preferred room type. Speak clearly and press pound when finished.'
+      'To proceed with your booking, I need some information. First, please tell me your full name. Speak clearly and press pound when finished.'
     );
     
     twiml.record({
       transcribe: true,
       transcribeCallback: '/api/twilio/transcription',
-      maxLength: 60,
+      maxLength: 30,
       finishOnKey: '#',
-      action: '/api/twilio/collect-details',
+      action: '/api/twilio/collect-name',
       method: 'POST',
     });
 
@@ -157,8 +157,180 @@ twilioRoutes.post('/handle-recording', async (req, res) => {
   }
 });
 
-// Collect customer details and create reservation
-twilioRoutes.post('/collect-details', async (req, res) => {
+// Step 1: Collect customer name
+twilioRoutes.post('/collect-name', async (req, res) => {
+  try {
+    const { CallSid } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you. Now, please tell me your email address so I can send you a confirmation. Speak clearly and press pound when finished.'
+    );
+    
+    twiml.record({
+      transcribe: true,
+      transcribeCallback: '/api/twilio/transcription',
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/collect-email',
+      method: 'POST',
+    });
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('❌ Name collection error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'I apologize for the technical difficulty. Please call back to complete your booking.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Step 2: Collect email
+twilioRoutes.post('/collect-email', async (req, res) => {
+  try {
+    const { CallSid } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Great! Now, what is your preferred check-in date? Please say the date clearly, for example, July 16th, and press pound when finished.'
+    );
+    
+    twiml.record({
+      transcribe: true,
+      transcribeCallback: '/api/twilio/transcription',
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/collect-checkin',
+      method: 'POST',
+    });
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('❌ Email collection error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'I apologize for the technical difficulty. Please call back to complete your booking.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Step 3: Collect check-in date
+twilioRoutes.post('/collect-checkin', async (req, res) => {
+  try {
+    const { CallSid } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Perfect! And what is your check-out date? Please say the date clearly and press pound when finished.'
+    );
+    
+    twiml.record({
+      transcribe: true,
+      transcribeCallback: '/api/twilio/transcription',
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/collect-checkout',
+      method: 'POST',
+    });
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('❌ Check-in collection error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'I apologize for the technical difficulty. Please call back to complete your booking.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Step 4: Collect check-out date
+twilioRoutes.post('/collect-checkout', async (req, res) => {
+  try {
+    const { CallSid } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Excellent! Finally, which room type would you prefer? We have standard rooms at 150 dollars per night, deluxe rooms at 200 dollars, or luxury suites at 300 dollars. Please tell me your preference and press pound when finished.'
+    );
+    
+    twiml.record({
+      transcribe: true,
+      transcribeCallback: '/api/twilio/transcription',
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/create-booking',
+      method: 'POST',
+    });
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('❌ Check-out collection error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'I apologize for the technical difficulty. Please call back to complete your booking.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Step 5: Create booking with collected information
+twilioRoutes.post('/create-booking', async (req, res) => {
   try {
     const { CallSid, RecordingUrl } = req.body;
     
@@ -171,7 +343,7 @@ twilioRoutes.post('/collect-details', async (req, res) => {
     
     if (call && call.transcript) {
       try {
-        // Use Claude AI to extract booking information
+        // Use Claude AI to extract booking information from the complete transcript
         const Anthropic = await import('@anthropic-ai/sdk');
         const anthropic = new Anthropic.default({
           apiKey: process.env.CLAUDE_API_KEY,
@@ -181,7 +353,7 @@ twilioRoutes.post('/collect-details', async (req, res) => {
           model: 'claude-3-haiku-20240307',
           max_tokens: 1000,
           temperature: 0.3,
-          system: `You are a hotel booking assistant. Extract customer booking information from the transcript and return ONLY a JSON object with these exact fields:
+          system: `You are a hotel booking assistant. Extract customer booking information from the conversation transcript and return ONLY a JSON object with these exact fields:
 {
   "name": "Full Name",
   "email": "email@example.com", 
@@ -191,6 +363,13 @@ twilioRoutes.post('/collect-details', async (req, res) => {
   "roomType": "Standard Room|Deluxe Room|Suite",
   "guests": 1
 }
+
+The transcript contains multiple responses from the customer answering different questions step by step. Extract the information accordingly:
+- First response: customer name
+- Second response: customer email 
+- Third response: check-in date
+- Fourth response: check-out date
+- Fifth response: room type preference
 
 If any information is missing or unclear, use reasonable defaults:
 - name: "Guest" + random number
@@ -205,7 +384,7 @@ ONLY return the JSON object, no other text.`,
           messages: [
             {
               role: 'user',
-              content: `Extract booking details from: "${call.transcript}". Calling phone number: ${call.to}`,
+              content: `Extract booking details from this step-by-step conversation: "${call.transcript}". Calling phone number: ${call.to}`,
             },
           ],
         });
