@@ -82,10 +82,99 @@ twilioRoutes.all('/voice', async (req, res) => {
     transcribeCallback: '/api/twilio/transcription',
     maxLength: 30,
     finishOnKey: '#',
+    action: '/api/twilio/handle-recording',
+    method: 'POST',
   });
 
   res.type('text/xml');
   res.send(twiml.toString());
+});
+
+// Handle recording completion and provide AI response
+twilioRoutes.post('/handle-recording', async (req, res) => {
+  try {
+    const { CallSid, RecordingUrl } = req.body;
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    // Provide immediate AI response for room booking
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for your interest in booking a room with us! I would be happy to help you with that. Our Kiyaku Smart Hotel offers beautiful rooms with modern amenities. We have standard rooms, deluxe rooms, and suites available. All rooms include complimentary WiFi, breakfast, and 24-hour room service. What type of room are you interested in, and what dates would you like to stay?'
+    );
+    
+    // Allow for another message
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Please tell me your preferred dates and room type after the tone, and press pound when finished.'
+    );
+    
+    twiml.record({
+      transcribe: true,
+      transcribeCallback: '/api/twilio/transcription',
+      maxLength: 30,
+      finishOnKey: '#',
+      action: '/api/twilio/handle-followup',
+      method: 'POST',
+    });
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+    
+    console.log('✅ AI response provided for call:', CallSid);
+  } catch (error) {
+    console.error('❌ Recording handling error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for calling. Our reservations team will contact you shortly to assist with your booking.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
+});
+
+// Handle follow-up messages
+twilioRoutes.post('/handle-followup', async (req, res) => {
+  try {
+    const twiml = new twilio.twiml.VoiceResponse();
+    
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Perfect! I have received your room booking details. Our reservations team will contact you within the next hour to confirm your booking and provide you with a confirmation number. Thank you for choosing Kiyaku Smart Hotel. Have a wonderful day!'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  } catch (error) {
+    console.error('❌ Follow-up handling error:', error);
+    
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(
+      {
+        voice: 'alice',
+        language: 'en-US',
+      },
+      'Thank you for calling Kiyaku Smart Hotel.'
+    );
+    
+    res.type('text/xml');
+    res.send(twiml.toString());
+  }
 });
 
 twilioRoutes.post('/transcription', async (req, res) => {
