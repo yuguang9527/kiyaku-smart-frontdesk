@@ -7,7 +7,7 @@ Backend API for the Kiyaku Smart Hotel management system built with Node.js, Exp
 - **Authentication**: JWT-based user authentication
 - **Reservation Management**: Complete CRUD operations for hotel reservations
 - **Hotel Management**: Hotel information and settings
-- **Chat System**: AI-powered chat using Groq SDK
+- **Chat System**: AI-powered chat using Claude API
 - **Phone Integration**: Twilio integration for voice calls
 - **Q&A Management**: Knowledge base for hotel information
 - **Database**: MySQL with Prisma ORM
@@ -19,7 +19,7 @@ Backend API for the Kiyaku Smart Hotel management system built with Node.js, Exp
 - **Language**: TypeScript
 - **Database**: MySQL with Prisma ORM
 - **Authentication**: JWT
-- **AI**: Groq SDK for chat responses
+- **AI**: Claude API for chat responses
 - **Phone**: Twilio for voice calls
 - **Validation**: express-validator
 - **Security**: Helmet, CORS, Rate limiting
@@ -45,7 +45,7 @@ Required environment variables:
 ```env
 DATABASE_URL="mysql://username:password@localhost:3306/kiyaku_hotel"
 JWT_SECRET=your-super-secret-jwt-key-here
-GROQ_API_KEY=your-groq-api-key
+CLAUDE_API_KEY=your-claude-api-key
 TWILIO_ACCOUNT_SID=your-twilio-account-sid
 TWILIO_AUTH_TOKEN=your-twilio-auth-token
 TWILIO_PHONE_NUMBER=your-twilio-phone-number
