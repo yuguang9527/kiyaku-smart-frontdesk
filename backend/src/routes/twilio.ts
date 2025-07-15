@@ -81,17 +81,15 @@ twilioRoutes.post('/voice', async (req, res) => {
   twiml.record({
     maxLength: 30,
     finishOnKey: '#',
-    action: '/api/twilio/handle-recording',
-    method: 'POST',
   });
 
-  // Fallback if no input
+  // Simple response after recording
   twiml.say(
     {
       voice: 'alice', 
       language: 'en-US',
     },
-    'I did not receive your message. Please call back if you need assistance. Thank you for calling Kiyaku Smart Hotel.'
+    'Thank you for your message about room booking. Our hotel offers standard rooms, deluxe rooms, and suites, all with complimentary breakfast and WiFi. Our team will contact you shortly to assist with your reservation. Thank you for calling Kiyaku Smart Hotel.'
   );
 
   res.type('text/xml');
