@@ -5,9 +5,10 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "start": "prisma generate && npm run build && node dist/server.js",
+    "start": "node dist/server.js",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && tsc",
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
     "test": "jest",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
