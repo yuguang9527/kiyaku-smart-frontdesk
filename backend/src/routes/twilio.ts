@@ -4,10 +4,9 @@ import { prisma } from '../lib/prisma.js';
 
 export const twilioRoutes = express.Router();
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const client = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN 
+  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+  : null;
 
 twilioRoutes.post('/call', async (req, res) => {
   try {
@@ -17,6 +16,13 @@ twilioRoutes.post('/call', async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Phone number is required',
+      });
+    }
+
+    if (!client) {
+      return res.status(503).json({
+        success: false,
+        message: 'Phone service is currently unavailable. Please contact support.',
       });
     }
 
@@ -53,6 +59,13 @@ twilioRoutes.post('/call', async (req, res) => {
 });
 
 twilioRoutes.post('/voice', async (req, res) => {
+  if (!client) {
+    return res.status(503).json({
+      success: false,
+      message: 'Voice service is currently unavailable.',
+    });
+  }
+
   const twiml = new twilio.twiml.VoiceResponse();
 
   twiml.say(
