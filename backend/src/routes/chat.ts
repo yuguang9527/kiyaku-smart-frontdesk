@@ -4,9 +4,9 @@ import Groq from 'groq-sdk';
 
 export const chatRoutes = express.Router();
 
-const groq = new Groq({
+const groq = process.env.GROQ_API_KEY ? new Groq({
   apiKey: process.env.GROQ_API_KEY,
-});
+}) : null;
 
 chatRoutes.post('/message', async (req, res) => {
   try {
@@ -37,23 +37,29 @@ ${qaItems.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n')}`;
       }
     }
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful hotel assistant. Use the following context to answer questions about the hotel:\n\n${context}`,
-        },
-        {
-          role: 'user',
-          content: message,
-        },
-      ],
-      model: 'llama3-8b-8192',
-      temperature: 0.7,
-      max_tokens: 1024,
-    });
-
-    const response = chatCompletion.choices[0]?.message?.content || 'I apologize, but I could not generate a response at this time.';
+    let response: string;
+    
+    if (groq) {
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are a helpful hotel assistant. Use the following context to answer questions about the hotel:\n\n${context}`,
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        model: 'llama3-8b-8192',
+        temperature: 0.7,
+        max_tokens: 1024,
+      });
+      
+      response = chatCompletion.choices[0]?.message?.content || 'I apologize, but I could not generate a response at this time.';
+    } else {
+      response = `Thank you for your message: "${message}". I'm a helpful hotel assistant, but AI chat is currently unavailable. Please contact our staff for assistance.`;
+    }
 
     await prisma.chatHistory.create({
       data: {
