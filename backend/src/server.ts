@@ -30,7 +30,7 @@ app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, 'https://*.vercel.app']
+    ? [process.env.FRONTEND_URL || 'https://kiyaku-smart-frontdesk.vercel.app', 'https://*.vercel.app']
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
 }));
