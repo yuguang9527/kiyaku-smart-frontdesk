@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
-import { recentReservations } from '@/data/reservations';
 import { exportReservationsToCSV } from '@/utils/exportReservations';
+import { apiService } from '@/services/api';
 import ReservationCard from '@/components/ReservationCard';
 import SupportHistoryDialog from '@/components/SupportHistoryDialog';
 import ReservationListHeader from '@/components/admin/ReservationListHeader';
@@ -22,7 +22,8 @@ interface DateRange {
 const ReservationList: React.FC = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
-  const [reservations, setReservations] = useState(recentReservations);
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
@@ -31,6 +32,54 @@ const ReservationList: React.FC = () => {
   const [editingReservation, setEditingReservation] = useState<ReservationProps | null>(null);
   const [updateHistory, setUpdateHistory] = useState<ReservationUpdateHistory[]>([]);
   const reservationsPerPage = 10;
+
+  // Fetch real reservations from API
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getReservations();
+        
+        if (response.success) {
+          // Transform API data to match the expected format
+          const transformedReservations = response.data.map((reservation: any) => ({
+            id: reservation.id,
+            guestName: reservation.guestName,
+            guestEmail: reservation.guestEmail,
+            phone: reservation.guestPhone,
+            checkIn: reservation.checkIn,
+            checkOut: reservation.checkOut,
+            roomType: reservation.roomType,
+            guests: reservation.guests,
+            status: reservation.status.toLowerCase(),
+            totalAmount: reservation.totalAmount,
+            notes: reservation.notes,
+            createdAt: reservation.createdAt,
+            updatedAt: reservation.updatedAt
+          }));
+          
+          setReservations(transformedReservations);
+        } else {
+          toast({
+            title: language === 'ja' ? 'エラー' : 'Error',
+            description: language === 'ja' ? '予約データの取得に失敗しました' : 'Failed to fetch reservation data',
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch reservations:', error);
+        toast({
+          title: language === 'ja' ? 'エラー' : 'Error',
+          description: language === 'ja' ? '予約データの取得に失敗しました' : 'Failed to fetch reservation data',
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReservations();
+  }, [language, toast]);
 
   const filteredReservations = reservations.filter(reservation => {
     const matchesSearch = reservation.guestName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,15 +248,35 @@ const ReservationList: React.FC = () => {
               />
             </div>
 
-            <ReservationTable
-              reservations={currentReservations}
-              onViewHistory={handleViewHistory}
-              onEditReservation={handleEditReservation}
-            />
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="mt-4 text-gray-600">
+                    {language === 'ja' ? 'データを読み込み中...' : 'Loading data...'}
+                  </p>
+                </div>
+              </div>
+            ) : reservations.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">
+                  {language === 'ja' ? '予約データがありません' : 'No reservation data found'}
+                </p>
+                <p className="text-gray-500 mt-2">
+                  {language === 'ja' ? '新しい予約が追加されるとここに表示されます' : 'New reservations will appear here when added'}
+                </p>
+              </div>
+            ) : (
+              <ReservationTable
+                reservations={currentReservations}
+                onViewHistory={handleViewHistory}
+                onEditReservation={handleEditReservation}
+              />
+            )}
 
             {/* Mobile Card View */}
             <div className="md:hidden space-y-4">
-              {currentReservations.map((reservation) => (
+              {!loading && reservations.length > 0 && currentReservations.map((reservation) => (
                 <ReservationCard 
                   key={reservation.id} 
                   {...reservation}
@@ -216,11 +285,13 @@ const ReservationList: React.FC = () => {
               ))}
             </div>
 
-            <ReservationPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+            {!loading && reservations.length > 0 && (
+              <ReservationPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </CardContent>
         </Card>
 
