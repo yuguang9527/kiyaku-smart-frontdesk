@@ -93,13 +93,18 @@ twilioRoutes.post('/transcription', async (req, res) => {
 
     if (CallSid && TranscriptionText) {
       // Save transcription to database
-      await prisma.twilioCall.update({
-        where: { callSid: CallSid },
-        data: {
-          transcript: TranscriptionText,
-          status: 'COMPLETED',
-        },
-      });
+      try {
+        await prisma.twilioCall.update({
+          where: { callSid: CallSid },
+          data: {
+            transcript: TranscriptionText,
+            status: 'COMPLETED',
+          },
+        });
+      } catch (dbError) {
+        console.error('Database update error:', dbError);
+        // Continue with AI response even if DB update fails
+      }
 
       // Generate Claude AI response
       try {
