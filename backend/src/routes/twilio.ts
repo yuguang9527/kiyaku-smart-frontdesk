@@ -103,7 +103,7 @@ twilioRoutes.post('/handle-recording', async (req, res) => {
       await prisma.twilioCall.update({
         where: { callSid: CallSid },
         data: {
-          status: 'BOOKING_STEP_1',
+          status: 'INITIATED',
         },
       });
     } catch (dbError) {
@@ -256,7 +256,7 @@ ONLY return the JSON object, no other text.`,
         await prisma.twilioCall.update({
           where: { callSid: CallSid },
           data: {
-            status: 'BOOKING_COMPLETED',
+            status: 'COMPLETED',
             summary: `Reservation created: ${reservationId} for ${bookingData.name}`,
           },
         });
