@@ -179,33 +179,24 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Support inquiries data that matches the SupportHistoryDialog data
-  const inquiries = [
-    { 
-      id: 'support-001', 
-      title: language === 'ja' ? 'チェックイン手続き案内' : 'Check-in procedure guidance',
-      time: 2,
-      status: inquiryStatuses['support-001'],
-      reservationNumber: 'RES001',
-      customerName: '田中太郎'
-    },
-    { 
-      id: 'support-002', 
-      title: language === 'ja' ? '朝食時間問い合わせ対応' : 'Breakfast time inquiry',
-      time: 4,
-      status: inquiryStatuses['support-002'],
-      reservationNumber: 'RES002',
-      customerName: '佐藤花子'
-    },
-    { 
-      id: 'support-003', 
-      title: language === 'ja' ? '周辺観光地案内' : 'Local attractions guidance',
-      time: 6,
-      status: inquiryStatuses['support-003'],
-      reservationNumber: 'RES003',
-      customerName: 'John Smith'
-    }
-  ];
+  // Convert Twilio calls to support inquiries format
+  const inquiries = twillioCalls
+    .filter(call => call.transcript && call.transcript.length > 0)
+    .map((call, index) => ({
+      id: call.callSid,
+      title: call.transcript.includes('book') || call.transcript.includes('room') 
+        ? (language === 'ja' ? '電話予約問い合わせ' : 'Phone booking inquiry')
+        : (language === 'ja' ? '一般問い合わせ' : 'General inquiry'),
+      time: Math.floor((new Date().getTime() - new Date(call.createdAt).getTime()) / (1000 * 60 * 60)), // hours ago
+      status: call.status === 'COMPLETED' ? 'resolved' : 'in-progress',
+      reservationNumber: call.summary?.includes('Reservation created:') 
+        ? call.summary.split('Reservation created: ')[1]?.split(' ')[0] 
+        : `CALL-${call.callSid.slice(-4)}`,
+      customerName: call.summary?.includes('for ') 
+        ? call.summary.split('for ')[1] 
+        : `Guest ${call.to?.slice(-4) || 'Unknown'}`
+    }))
+    .slice(0, 10); // Show latest 10 inquiries
 
   const completedInquiries = inquiries.filter(inq => inq.status === 'resolved');
   const incompleteInquiries = inquiries.filter(inq => inq.status !== 'resolved');
@@ -217,7 +208,12 @@ const AdminDashboard: React.FC = () => {
     return callDate.toDateString() === today.toDateString();
   }).length;
 
-  const recentReservations = reservations.filter(reservation => {
+  // Filter out seed data and only show real reservations
+  const realReservations = reservations.filter(reservation => 
+    reservation.id.startsWith('res-') && reservation.guestEmail && reservation.guestEmail.includes('@')
+  );
+
+  const recentReservations = realReservations.filter(reservation => {
     const reservationDate = new Date(reservation.createdAt);
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -506,12 +502,12 @@ const AdminDashboard: React.FC = () => {
                   <div className="p-4 text-center text-purple-600">
                     {language === 'ja' ? 'データを読み込み中...' : 'Loading data...'}
                   </div>
-                ) : reservations.length === 0 ? (
+                ) : realReservations.length === 0 ? (
                   <div className="p-4 text-center text-purple-600">
-                    {language === 'ja' ? '予約データがありません' : 'No reservation data found'}
+                    {language === 'ja' ? '真実の予約データがありません' : 'No real reservation data found'}
                   </div>
                 ) : (
-                  reservations.slice(0, 5).map((reservation, i) => (
+                  realReservations.slice(0, 5).map((reservation, i) => (
                     <div key={reservation.id} className="flex items-center justify-between p-4 hover:bg-purple-50 transition-colors">
                       <div className="flex-1">
                         <p className="font-medium text-purple-800">{reservation.guestName}</p>
@@ -531,13 +527,13 @@ const AdminDashboard: React.FC = () => {
                   ))
                 )}
               </div>
-              {reservations.length > 5 && (
+              {realReservations.length > 5 && (
                 <div className="p-3 bg-purple-50 text-center">
                   <button 
                     onClick={() => navigate('/admin/reservations')}
                     className="text-purple-600 hover:text-purple-800 text-sm font-medium"
                   >
-                    {language === 'ja' ? `他の ${reservations.length - 5} 件を表示` : `View ${reservations.length - 5} more`}
+                    {language === 'ja' ? `他の ${realReservations.length - 5} 件を表示` : `View ${realReservations.length - 5} more`}
                   </button>
                 </div>
               )}
